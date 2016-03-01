@@ -1,0 +1,7 @@
+NUMBER ISDATA_FLAG 0
+STRING SAMPLE_NAME TTbarDM
+STRING UNCERTAINTY MC
+STRING TREE_PATH /cmshome/dimarcoe/TREES_SYNCH_Summer2015/TTbarDM/treeProducerDarkMatterMonoJet/tree.root
+STRING FRIEND_TREE_PATH /cmshome/dimarcoe/TREES_SYNCH_Summer2015/friends/evVarFriend_TTbarDM.root
+#
+#STOP
