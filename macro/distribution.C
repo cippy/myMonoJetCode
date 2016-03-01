@@ -295,7 +295,8 @@ void distribution(const string folderNameWithRootFiles = "",
 
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPath = "/cmshome/ciprianim/CMSSW721/output/monojet/" + folderNameWithRootFiles + "/";
+  //string fileDirectoryPath = "/cmshome/ciprianim/CMSSW721/output/monojet/" + folderNameWithRootFiles + "/";
+  string fileDirectoryPath = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -781,8 +782,8 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = "/cmshome/ciprianim/CMSSW721/output/monojet/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = "/cmshome/ciprianim/CMSSW721/output/monojet/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)
