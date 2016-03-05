@@ -65,6 +65,7 @@ void monojet_PhotonControlRegion::setSelections() {
   recoilC.set(Form("recoil > %2.0lf",METNOLEP_START),Form("metNoPhoton > %4.0lf",METNOLEP_START),"first cut on met");
   muonLooseVetoC.set("muon veto","muons veto");
   electronLooseVetoC.set("ele veto","electrons veto");
+  tightPhotonC.set("tight photon","tight photon",Form("tight photon: pT > %3.0lf, pT < %2.0lf",PH1PT,PH1ETA));
 
   selection::checkMaskLength();
   selection::printActiveSelections(cout); 
@@ -178,7 +179,8 @@ void monojet_PhotonControlRegion::setNumberParameterValue(const std::string para
 	 	 
   AnalysisDarkMatter::setNumberParameterValue(parameterName, value);
 
-  //parameters specific to monojet selection (but not to control regions) must be set here as in AnalysisDarkMatter::setNumberParameterValue()
+  if (parameterName == "PH1PT") PH1PT = value;
+  else if (parameterName == "PH1ETA") PH1ETA = value;
 
 }
 
@@ -280,8 +282,6 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("GammaGood_pdgId",1);
    fChain->SetBranchStatus("GammaGood_pt",1);
    fChain->SetBranchStatus("GammaGood_eta",1);
-   fChain->SetBranchStatus("",1);
-   fChain->SetBranchStatus("",1);
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);
