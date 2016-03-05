@@ -328,15 +328,15 @@ void distribution(const string folderNameWithRootFiles = "",
   string suffix;
 
   if (z0_w1_g2 == 0) {
-    if (mu0_e1 == 0) suffix = "mumu";
-    else if (mu0_e1 == 1) suffix = "ee";
+    if (mu0_e1 == 0) suffix = "zmumu";
+    else if (mu0_e1 == 1) suffix = "zee";
     else {
       cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
       exit(EXIT_FAILURE);
     }
   } else if (z0_w1_g2 == 1) {
-    if (mu0_e1 == 0) suffix = "munu";
-    else if (mu0_e1 == 1) suffix = "enu";
+    if (mu0_e1 == 0) suffix = "wmunu";
+    else if (mu0_e1 == 1) suffix = "wenu";
     else {
       cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
       exit(EXIT_FAILURE);
@@ -399,24 +399,27 @@ void distribution(const string folderNameWithRootFiles = "",
     
   } else {
     
-    if(z0_w1_g2 == 0) {
+    canvasName = var + "_" + suffix + "jetsCR";
+    filenameBase = suffix + "jets_CR_";
+
+    // if(z0_w1_g2 == 0) {
       
-      canvasName = var + "_z" + suffix + "jetsCR";
-      if (mu0_e1 == 0) filenameBase = "zmumujets_CR_";
-      else if (mu0_e1 == 1) filenameBase = "zeejets_CR_";
+    //   canvasName = var + "_" + suffix + "jetsCR";
+    //   if (mu0_e1 == 0) filenameBase = "zmumujets_CR_";
+    //   else if (mu0_e1 == 1) filenameBase = "zeejets_CR_";
        
-    } else if(z0_w1_g2 == 1) {
+    // } else if(z0_w1_g2 == 1) {
 
-      canvasName = var + "_w" + suffix + "jetsCR";
-      if (mu0_e1 == 0) filenameBase = "wmunujets_CR_";
-      else if (mu0_e1 == 1) filenameBase = "wenujets_CR_";
+    //   canvasName = var + "_" + suffix + "jetsCR";
+    //   if (mu0_e1 == 0) filenameBase = "wmunujets_CR_";
+    //   else if (mu0_e1 == 1) filenameBase = "wenujets_CR_";
       
-    } else if(z0_w1_g2 == 2) {
+    // } else if(z0_w1_g2 == 2) {
 
-      canvasName = var + "_" + suffix + "jetsCR";
-      filenameBase = "gammajets_CR_";
+    //   canvasName = var + "_" + suffix + "jetsCR";
+    //   filenameBase = "gammajets_CR_";
       
-    }
+    // }
 
   }
 
@@ -851,6 +854,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   suffixCR.push_back("zee");   texSuffixCR.push_back("Z(ee)");
   suffixCR.push_back("wmunu"); texSuffixCR.push_back("W(#mu#nu)");
   suffixCR.push_back("wenu");  texSuffixCR.push_back("W(#e#nu)");
+  suffixCR.push_back("gamma");  texSuffixCR.push_back("#gamma");
 
   Int_t indexRightSuffixSR = -1;
   Int_t indexRightSuffixCR = -1;
@@ -904,6 +908,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
     filenameCR += suffixCR.at(indexRightSuffixCR) + "jets_CR_"; 
     if (plotDirName.find("z") != string::npos) filenameCR += ("DYJetsToLL" + filenameExtension);
     else if (plotDirName.find("w") != string::npos) filenameCR += ("WJetsToLNu" + filenameExtension); 
+    else if (plotDirName.find("gamma") != string::npos) filenameCR += ("GJets" + filenameExtension); 
   }
 
   TH1D* hvar = NULL;   // to get histogram from file
