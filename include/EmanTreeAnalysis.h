@@ -58,6 +58,47 @@ namespace myAnalyzerTEman {
 
   //====================================================
 
+  class monojet_PhotonControlRegion : public AnalysisDarkMatter {
+  public:
+
+    monojet_PhotonControlRegion(TTree *tree);  
+    virtual ~monojet_PhotonControlRegion() { std::cout<<"~monojet_PhotonControlRegion() called"<<std::endl; }
+    
+    void setSelections(); 
+    void setMask();
+    void setHistograms();
+    void setHistogramLastBinAsOverFlow(const Int_t);
+    void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
+    void setControlSampleSpecificParameter();
+    void setVarFromConfigFile();
+    Double_t computeEventWeight();
+    //void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    
+    selection tightPhotonC;
+    
+    Int_t PHOTON_PDG_ID;
+    Double_t PH1PT;
+    Double_t PH1ETA;
+    
+    Int_t using_gammajets_MCsample_flag;
+    
+    // control samples specific parameters
+    char FLAVOUR[10];                   // e.g. "photon"
+    char CONTROL_SAMPLE[10];   // e.g. "gamma"
+    
+    TH1D *Hphoton1ptDistribution = NULL;
+    TH1D *Hphoton1etaDistribution = NULL;
+    
+    TH1D *Hphoton1ptDistribution_monoV = NULL;
+    TH1D *Hphoton1etaDistribution_monoV = NULL;
+    
+    
+  };
+  
+
+  //====================================================
+
   class monojet_LeptonControlRegion : public AnalysisDarkMatter {
   public:
 
