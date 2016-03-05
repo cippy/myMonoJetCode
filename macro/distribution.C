@@ -68,13 +68,13 @@ void myRebinHisto(TH1D *h, const Int_t rebinFactor = 1) {
 
 }
 
-void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1 = 0, const Int_t mumu0_ee1 = 0) {
+void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1_g2 = 0, const Int_t mumu0_ee1 = 0) {
 
   // for Control region, mumu0_ee1 says if we use muon (0) or electron (1)
 
   if (signalRegion0_controlRegion1 == 0) {
 
-    //sampleName.push_back("GJets");
+    sampleName.push_back("GJets");
     sampleName.push_back("DYJetsToLL");
     sampleName.push_back("QCD");
     sampleName.push_back("Diboson");
@@ -82,7 +82,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     sampleName.push_back("WJetsToLNu");
     sampleName.push_back("ZJetsToNuNu");
        
-    //MC_TexLabel.push_back("#gamma + jets");
+    MC_TexLabel.push_back("#gamma + jets");
     MC_TexLabel.push_back("Z(ll)+jets");
     MC_TexLabel.push_back("QCD");
     MC_TexLabel.push_back("Diboson");
@@ -92,10 +92,10 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     
   } else {
 
-    if(z0_w1 == 0) {
+    if(z0_w1_g2 == 0) {
 
       sampleName.push_back("ZJetsToNuNu");
-      //sampleName.push_back("GJets");
+      sampleName.push_back("GJets");
       sampleName.push_back("QCD");
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("Diboson");
@@ -103,7 +103,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
       sampleName.push_back("DYJetsToLL");
 
       MC_TexLabel.push_back("Z(#nu#nu)+jets");
-      //MC_TexLabel.push_back("#gamma + jets");
+      MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("QCD");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("Diboson");
@@ -112,11 +112,11 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
       if (mumu0_ee1 == 0) MC_TexLabel.push_back("Z(#mu#mu)+jets");
       else MC_TexLabel.push_back("Z(ee)+jets");
 
-    } else if(z0_w1 == 1) {
+    } else if(z0_w1_g2 == 1) {
 
       sampleName.push_back("ZJetsToNuNu");
       sampleName.push_back("DYJetsToLL");
-      //sampleName.push_back("GJets");
+      sampleName.push_back("GJets");
       sampleName.push_back("QCD");      
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");   
@@ -124,13 +124,31 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
       MC_TexLabel.push_back("Z(#nu#nu)+jets");
       MC_TexLabel.push_back("Z(ll)+jets");
-      //MC_TexLabel.push_back("#gamma + jets");
+      MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("QCD");     
       MC_TexLabel.push_back("Diboson");
       MC_TexLabel.push_back("t#bar{t},single t");
 
       if (mumu0_ee1 == 0) MC_TexLabel.push_back("W(#mu#nu)+jets");
       else MC_TexLabel.push_back("W(e#nu)+jets");
+
+    } else if(z0_w1_g2 == 2) {
+
+      sampleName.push_back("ZJetsToNuNu");
+      sampleName.push_back("DYJetsToLL");
+      sampleName.push_back("Diboson");
+      sampleName.push_back("Top");   
+      sampleName.push_back("WJetsToLNu");
+      sampleName.push_back("QCD");      
+      sampleName.push_back("GJets");
+
+      MC_TexLabel.push_back("Z(#nu#nu)+jets");
+      MC_TexLabel.push_back("Z(ll)+jets");
+      MC_TexLabel.push_back("Diboson");
+      MC_TexLabel.push_back("t#bar{t},single t");
+      MC_TexLabel.push_back("W(l#nu)+jets");
+      MC_TexLabel.push_back("QCD");     
+      MC_TexLabel.push_back("#gamma + jets");
 
     }
 
@@ -142,7 +160,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
 void setHistColor(vector<Int_t> &histColor, const Int_t nSamples) {
 
-  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, /*kOrange+1, */kYellow, kGreen};  // the first color is for the main object. This array may contain more values than nSamples
+  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1};  // the first color is for the main object. This array may contain more values than nSamples
 
   for (Int_t i = 0; i < nSamples; i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
 
@@ -165,7 +183,7 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
 
   } else if ( !(strcmp("met",var.c_str())) ) {
 
-    hvarName = "HmetNoLepDistribution"; 
+    hvarName = "HrecoilDistribution"; 
     //xAxisName = "#slash{E}_{T} [GeV]";
     xAxisName = "recoil [GeV]";
 
@@ -220,12 +238,17 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
     hvarName = "HzptDistribution";
     xAxisName = "p_{T}(Z) [GeV]";
 
-  } else if ( !(strcmp("gammapt",var.c_str())) ) {
+  } else if ( !(strcmp("ph1pt",var.c_str())) ) {
 
-    hvarName = "HgammaptDistribution";
-    xAxisName = "p_{T}(#gamma) [GeV]";
+    hvarName = "Hphoton1ptDistribution";
+    xAxisName = "leading photon p_{T} [GeV]";
 
-  }else if ( !(strcmp("Mt",var.c_str())) ) {
+  } else if ( !(strcmp("ph1eta",var.c_str())) ) {
+
+    hvarName = "Hphoton1etaDistribution";
+    xAxisName = "leading photon #eta [GeV]";
+
+  } else if ( !(strcmp("Mt",var.c_str())) ) {
 
     hvarName = "HtransverseMass";
     xAxisName = "m_{T} [GeV]";
@@ -258,7 +281,7 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
 
 void distribution(const string folderNameWithRootFiles = "", 
 		  const Int_t signalRegion0_controlRegion1 = 0, 
-		  const Int_t z0_w1 = 0,
+		  const Int_t z0_w1_g2 = 0,
 		  const Int_t mu0_e1 = 0,
 		  const Int_t data0_noData1 = 0, 
 		  const Int_t monoJ0_monoV1 = 0,
@@ -278,9 +301,9 @@ void distribution(const string folderNameWithRootFiles = "",
 
   // if signalRegion0_controlRegion1 == 0 (default), will do met distribution in the monojet signal region, else it will do the control region
 
-  // z0_w1 is for CR to choose between Z or W to leptons
+  // z0_w1_g2 is for CR to choose among Z or W to leptons or photons
 
-  // mu0_e1 is for lepton flavour in CS (not used in SR)
+  // mu0_e1 is for lepton flavour in CR (not used in SR)
 
   // data0_noData1 is to use or not a data file to compared with MC
 
@@ -304,16 +327,38 @@ void distribution(const string folderNameWithRootFiles = "",
   string plotFileExtension = ".pdf"; //could be png
   string suffix;
 
-  if (mu0_e1 == 0) {
-    if (z0_w1 == 0) suffix = "mumu";
-    if (z0_w1 == 1) suffix = "munu";
-  } else if (mu0_e1 == 1) {
-    if (z0_w1 == 0) suffix = "ee";
-    if (z0_w1 == 1) suffix = "enu";
+  if (z0_w1_g2 == 0) {
+    if (mu0_e1 == 0) suffix = "mumu";
+    else if (mu0_e1 == 1) suffix = "ee";
+    else {
+      cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
+      exit(EXIT_FAILURE);
+    }
+  } else if (z0_w1_g2 == 1) {
+    if (mu0_e1 == 0) suffix = "munu";
+    else if (mu0_e1 == 1) suffix = "enu";
+    else {
+      cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
+      exit(EXIT_FAILURE);
+    }
+  } else if (z0_w1_g2 == 2) {
+    suffix = "gamma";
   } else {
-    cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
+    cout << "Error: z0_w1_g2 must be 0, 1 or 2. End of programme." << endl;
     exit(EXIT_FAILURE);
   }
+
+
+  // if (mu0_e1 == 0) {
+  //   if (z0_w1_g2 == 0) suffix = "mumu";
+  //   if (z0_w1_g2 == 1) suffix = "munu";
+  // } else if (mu0_e1 == 1) {
+  //   if (z0_w1_g2 == 0) suffix = "ee";
+  //   if (z0_w1_g2 == 1) suffix = "enu";
+  // } else {
+  //   cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
+  //   exit(EXIT_FAILURE);
+  // }
 
   TH1D* hvar = NULL;   // to get histogram from file
   string hvarName;          // name of histogram to take from file
@@ -321,7 +366,7 @@ void distribution(const string folderNameWithRootFiles = "",
 
   // ===== TO BE MODIFIED =====
 
-  // hvarName = "HmetNoLepDistribution";
+  // hvarName = "HrecoilDistribution";
   // xAxisName = "#slash{E}_{T} [GeV]";
 
   setDistribution(mu0_e1, var, hvarName, xAxisName);
@@ -334,8 +379,8 @@ void distribution(const string folderNameWithRootFiles = "",
 
   vector<string> sampleName;
   vector<string> MC_TexLabel;
-  if (data0_noData1 == 1) setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1, mu0_e1);
-  else setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1, mu0_e1);
+  if (data0_noData1 == 1) setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1_g2, mu0_e1);
+  else setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1_g2, mu0_e1);
 
   string data_TexLabel = "data";
 
@@ -354,17 +399,22 @@ void distribution(const string folderNameWithRootFiles = "",
     
   } else {
     
-    if(z0_w1 == 0) {
+    if(z0_w1_g2 == 0) {
       
       canvasName = var + "_z" + suffix + "jetsCR";
       if (mu0_e1 == 0) filenameBase = "zmumujets_CR_";
       else if (mu0_e1 == 1) filenameBase = "zeejets_CR_";
        
-    } else if(z0_w1 == 1) {
+    } else if(z0_w1_g2 == 1) {
 
       canvasName = var + "_w" + suffix + "jetsCR";
       if (mu0_e1 == 0) filenameBase = "wmunujets_CR_";
       else if (mu0_e1 == 1) filenameBase = "wenujets_CR_";
+      
+    } else if(z0_w1_g2 == 2) {
+
+      canvasName = var + "_" + suffix + "jetsCR";
+      filenameBase = "gammajets_CR_";
       
     }
 
@@ -412,15 +462,19 @@ void distribution(const string folderNameWithRootFiles = "",
 
     } else {
 
-      if(z0_w1 == 0) {
+      if(z0_w1_g2 == 0) {
 
        if (mu0_e1 == 0) datafileName += "zmumujets_CR_DATA.root";
        else if (mu0_e1 == 1) datafileName += "zeejets_CR_DATA.root";
 
-     } else if(z0_w1 == 1) {
+     } else if(z0_w1_g2 == 1) {
 
        if (mu0_e1 == 0) datafileName += "wmunujets_CR_DATA.root";
        else if (mu0_e1 == 1) datafileName += "wenujets_CR_DATA.root";
+
+     } else if(z0_w1_g2 == 2) {
+
+	datafileName += "gammajets_CR_DATA.root";
 
      }
 
@@ -1051,7 +1105,7 @@ Int_t main(int argc, char* argv[]) {
   // distribution() function template
   /*distribution(const string folderNameWithRootFiles = "", 
 	       const Int_t signalRegion0_controlRegion1 = 0, 
-	       const Int_t z0_w1 = 0,
+	       const Int_t z0_w1_g1 = 0,
 	       const Int_t mu0_e1 = 0,
 	       const Int_t data0_noData1 = 0, 
 	       const Int_t monoJ0_monoV1 = 0,
