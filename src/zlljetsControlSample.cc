@@ -575,9 +575,6 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
-
-     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
-     else Vtagged_flag = 0;
      
      //cout << "CHECK in zll"<< endl;
 
@@ -667,8 +664,10 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      }
 
-     // beginning of eventMask building
+     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
+     else Vtagged_flag = 0;
 
+     // beginning of eventMask building
      
      // genLepC added to mask above if ISDATA_FLAG == false (in order not to repeat here the check) 
      

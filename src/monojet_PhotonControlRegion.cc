@@ -402,7 +402,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
 
      // beginning of eventMask building
-     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
+     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (phmet_pt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
      //if (Vtagged_flag == 1) cout << "jentry n: "<<jentry << " V TAGGED!"<<endl;
 
