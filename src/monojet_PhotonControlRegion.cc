@@ -143,9 +143,15 @@ void monojet_PhotonControlRegion::setHistograms() {
 
   AnalysisDarkMatter::setHistograms();
 
-  // following histograms are really needed only when using Zvv or Wlv samples, so they are not instantiated in AnalysisDarkMatter::setHistograms();
+  Hphoton1ptDistribution = new TH1D("Hphoton1ptDistribution","",135,150.0,1500.0);
+  Hphoton1etaDistribution = new TH1D("Hphoton1etaDistribution","",50,-2.5,2.5);
 
-  if (suffix == "ZJetsToNuNu" || suffix == "WJetsToLNu") {
+  Hphoton1ptDistribution_monoV = new TH1D("Hphoton1ptDistribution_monoV","",135,150.0,1500.0);
+  Hphoton1etaDistribution_monoV = new TH1D("Hphoton1etaDistribution_monoV","",50,-2.5,2.5);
+
+  // following histograms are really needed only when using GJets samples, so they are not instantiated in AnalysisDarkMatter::setHistograms();
+
+  if (suffix == "GJets") {
     hasScaledHistograms_flag = 1;
     setScaleFactorHistograms();
   }
@@ -159,6 +165,10 @@ void monojet_PhotonControlRegion::setHistograms() {
 void monojet_PhotonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
   AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
+
+  myAddOverflowInLastBin(Hphoton1ptDistribution);
+  
+  myAddOverflowInLastBin(Hphoton1ptDistribution_monoV);
 
 }
 
@@ -198,13 +208,7 @@ void monojet_PhotonControlRegion::setVarFromConfigFile() {
 Double_t monojet_PhotonControlRegion::computeEventWeight() {
 
   if (ISDATA_FLAG || unweighted_event_flag) return 1.0;
-  else {
-    // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
-    // return LUMI * weight * vtxWeight * SF_BTag * sf_nlo_weight; //SF_BTag is in evVarFriend, not sfFriend
-    if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK / 1.23; //SF_BTag is in evVarFriend, not sfFriend
-    else if (suffix == "WJetsToLNu") return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK / 1.21; //SF_BTag is in evVarFriend, not sfFriend
-    else return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK; //SF_BTag is in evVarFriend, not sfFriend
-  }
+  else return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK; //SF_BTag is in evVarFriend, not sfFriend
 
 }
 
@@ -229,6 +233,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("nMu10V",1);  // # of muons passing loose selection
    fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
    //fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
+   fChain->SetBranchStatus("nGamma175T",1); 
    //fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (pt > 20 + everything else)
    //fChain->SetBranchStatus("nTau18V",1);
    fChain->SetBranchStatus("nTauClean18V",1);
@@ -261,11 +266,22 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("metNoMu_pt",1);
    //fChain->SetBranchStatus("metNoMu_eta",1);
    fChain->SetBranchStatus("metNoMu_phi",1);
-   fChain->SetBranchStatus("htJet25",1);
+   fChain->SetBranchStatus("htJet25",1);            // HT with jets and leptons with pT>25 and |eta| < 2.4
+
+   fChain->SetBranchStatus("phmet_pt",1);
+   fChain->SetBranchStatus("phmet_phi",1);
 
    fChain->SetBranchStatus("nVert",1);  // number of good vertices 
    //fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
    //fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
+
+   //photon variables for this sample
+   fChain->SetBranchStatus("nGammaGood;",1);
+   fChain->SetBranchStatus("GammaGood_pdgId",1);
+   fChain->SetBranchStatus("GammaGood_pt",1);
+   fChain->SetBranchStatus("GammaGood_eta",1);
+   fChain->SetBranchStatus("",1);
+   fChain->SetBranchStatus("",1);
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);
@@ -334,24 +350,11 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
    }
 
-   // vector< Double_t > &yRow = *(yieldsVectorList[0]);
-   // vector< Double_t > &eRow = *(efficiencyVectorList[0]); 
-   // vector< Double_t > &uncRow = *(uncertaintyVectorList[0]);
-   // vector< Double_t > &yRow_monoJ = *(yieldsVectorList[1]);
-   // vector< Double_t > &eRow_monoJ = *(efficiencyVectorList[1]); 
-   // vector< Double_t > &uncRow_monoJ = *(uncertaintyVectorList[1]);
-   // vector< Double_t > &yRow_monoV = *(yieldsVectorList[2]);
-   // vector< Double_t > &eRow_monoV = *(efficiencyVectorList[2]); 
-   // vector< Double_t > &uncRow_monoV = *(uncertaintyVectorList[2]);
-
-   //cout << "CHECK1 " << endl;
    setVarFromConfigFile();
-   //cout << "CHECK2 " << endl;
    setSelections();
-   //cout << "CHECK3 " << endl;
    setMask();
-   //cout << "CHECK4 " << endl;
-   //set_SF_NLO_pointers(sf_nlo, ptr_sf_nlo_QCD, ptr_sf_nlo_EWK);
+
+   Int_t HLT_passed_flag = 1;  
 
    cout << "Opening file " <<ROOT_FNAME<< " in folder " << outputFolder << endl;
 
@@ -367,10 +370,6 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    TVirtualFitter::SetDefaultFitter("Minuit");
   
    setHistograms();
-
-   // Double_t nTotalWeightedEvents = 0.0;     
-   // // deciding  what is the event weight
-   // Double_t newwgt;
 
    Long64_t nentries = fChain->GetEntriesFast();
    cout<<"monojet_PhotonControlRegion::loop()"<<endl;
@@ -391,15 +390,16 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
        cout << "entry: " << jentry << endl;
      }
 
-     // if (ISDATA_FLAG || unweighted_event_flag) newwgt = 1.0;
-     // else {
-
-     //   newwgt = LUMI * vtxWeight * weight * SF_trigmetnomu * SF_BTag;/* / events_ntot*/;  // starting from 17 November, "events_ntot" substitutes SUMWEIGHT and is already present in the trees. Same for weight, which is now defined as "1000 * xsec * genWeight" (1000*xsec is the cross section in fb, since xsec is in pb.)
-
-     // }
-
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
+
+     if ( HLT_FLAG != 0) {
+
+       if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <====
+       else HLT_passed_flag = 0;
+	 
+     }  // end of   if ( HLT_FLAG )
+
 
      // beginning of eventMask building
      if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
@@ -414,10 +414,10 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
      eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
      eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
-     eventMask += recoilC.addToMask(metNoMu_pt > METNOLEP_START);
+     eventMask += tightPhotonC.addToMask(nGamma175T > 0.5 && nGammaGood > 0 && GammaGood_eta[0] < PH1ETA);  // PH1ETA = 1.442
+     eventMask += recoilC.addToMask(phmet_pt > METNOLEP_START);
      eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
-     eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5); //HLT_* variables are stored as float, so using "== 1" might yield unexpected results
+     eventMask += HLTC.addToMask(HLT_passed_flag);  
      eventMask += VtagC.addToMask(Vtagged_flag);
      eventMask += noVtagC.addToMask(!Vtagged_flag);
      
@@ -433,11 +433,13 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
        HYieldsMetBin->Fill(metNoMu_pt,newwgt);
 	 
        HhtDistribution->Fill(htJet25,newwgt);
-       HmetNoLepDistribution->Fill(metNoMu_pt,newwgt);
+       HrecoilDistribution->Fill(metNoMu_pt,newwgt);
        HvtxDistribution->Fill(nVert,newwgt);
        HnjetsDistribution->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution->Fill(JetClean_eta[0],newwgt);
        Hjet1ptDistribution->Fill(JetClean_pt[0],newwgt);
+       Hphoton1ptDistribution->Fill(GammaGood_pt[0],newwgt);
+       Hphoton1etaDistribution->Fill(GammaGood_eta[0],newwgt);
        HjetMetDphiMinDistribution->Fill(dphijm,newwgt);
        if (nJetClean30 >= 2) {
 	 Hj1j2dphiDistribution->Fill(dphijj,newwgt);
@@ -464,11 +466,13 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
        HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
 	 
        HhtDistribution_monoV->Fill(htJet25,newwgt);
-       HmetNoLepDistribution_monoV->Fill(metNoMu_pt,newwgt);
+       HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
        HvtxDistribution_monoV->Fill(nVert,newwgt);
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution_monoV->Fill(FatJet_eta[0],newwgt);
        Hjet1ptDistribution_monoV->Fill(FatJet_pt[0],newwgt);
+       Hphoton1ptDistribution_monoV-->Fill(GammaGood_pt[0],newwgt);
+       Hphoton1etaDistribution_monoV-->Fill(GammaGood_eta[0],newwgt);
        HprunedMassDistribution_monoV->Fill(FatJet_mass[0],newwgt);
        Htau2OverTau1Distribution_monoV->Fill(FatJet_tau2[0]/FatJet_tau1[0],newwgt);
 

@@ -77,7 +77,6 @@ namespace myAnalyzerTEman {
     
     selection tightPhotonC;
     
-    Int_t PHOTON_PDG_ID;
     Double_t PH1PT;
     Double_t PH1ETA;
     

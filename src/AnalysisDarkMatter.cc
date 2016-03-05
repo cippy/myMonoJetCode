@@ -330,7 +330,7 @@ void AnalysisDarkMatter::setHistograms() {
   HjetMetDphiMinDistribution = new TH1D("HjetMetDphiMinDistribution","",32,0.0,3.2);
   Hjet1etaDistribution = new TH1D("Hjet1etaDistribution","",60,-3.0,3.0);
   Hjet2etaDistribution = new TH1D("Hjet2etaDistribution","",60,-3.0,3.0);
-  HmetNoLepDistribution = new TH1D("HmetNoLepDistribution","",100,0.0,1000.0);
+  HrecoilDistribution = new TH1D("HrecoilDistribution","",100,0.0,1000.0);
   Hjet1ptDistribution = new TH1D("Hjet1ptDistribution","",100,0.0,1000.0); 
   Hjet2ptDistribution = new TH1D("Hjet2ptDistribution","",100,0.0,1000.0);
 
@@ -347,7 +347,7 @@ void AnalysisDarkMatter::setHistograms() {
   HvtxDistribution_monoV = new TH1D("HvtxDistribution_monoV","",40,-0.5,39.5);   
   HnjetsDistribution_monoV = new TH1D("HnjetsDistribution_monoV","njets using nJetClean30",10,-0.5,9.5);   
   Hjet1etaDistribution_monoV = new TH1D("Hjet1etaDistribution_monoV","leading ak8 jets",60,-3.0,3.0);
-  HmetNoLepDistribution_monoV = new TH1D("HmetNoLepDistribution_monoV","",100,0.0,1000.0);
+  HrecoilDistribution_monoV = new TH1D("HrecoilDistribution_monoV","",100,0.0,1000.0);
   Hjet1ptDistribution_monoV = new TH1D("Hjet1ptDistribution_monoV","leading ak8 jets",100,0.0,1000.0); 
   HprunedMassDistribution_monoV = new TH1D("HprunedMassDistribution_monoV","",16,65.0,105.0);
   Htau2OverTau1Distribution_monoV = new TH1D("Htau2OverTau1Distribution_monoV","",20,0.0,1.0);
@@ -403,13 +403,13 @@ void AnalysisDarkMatter::setHistogramLastBinAsOverFlow(const Int_t hasScaledHist
 
   myAddOverflowInLastBin(HYieldsMetBin);
   myAddOverflowInLastBin(HhtDistribution);
-  myAddOverflowInLastBin(HmetNoLepDistribution);
+  myAddOverflowInLastBin(HrecoilDistribution);
   myAddOverflowInLastBin(Hjet1ptDistribution);
   myAddOverflowInLastBin(Hjet2ptDistribution);
 
   myAddOverflowInLastBin(HYieldsMetBin_monoV);
   myAddOverflowInLastBin(HhtDistribution_monoV);
-  myAddOverflowInLastBin(HmetNoLepDistribution_monoV);
+  myAddOverflowInLastBin(HrecoilDistribution_monoV);
   myAddOverflowInLastBin(Hjet1ptDistribution_monoV);
 
   if (hasScaledHistograms) {
