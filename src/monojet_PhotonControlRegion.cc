@@ -191,7 +191,7 @@ void monojet_PhotonControlRegion::setControlSampleSpecificParameter() {
   if ( !ISDATA_FLAG && ( suffix == "GJets" )  )  using_gammajets_MCsample_flag = 1; 
   else using_gammajets_MCsample_flag = 0;
 
-  strcpy(FLAVOUR,"photons");
+  // strcpy(FLAVOUR,"photons");
   strcpy(CONTROL_SAMPLE,"gamma");
 
 
@@ -235,7 +235,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("nMu10V",1);  // # of muons passing loose selection
    fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
    //fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
-   fChain->SetBranchStatus("nGamma175T",1); 
+   fChain->SetBranchStatus("nGamma175T",1);   // tight id for photon + pt > 175 and eta < 2.5 (but you should check that the eta cut is really 2.5 or it was changed to 1.442
    //fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (pt > 20 + everything else)
    //fChain->SetBranchStatus("nTau18V",1);
    fChain->SetBranchStatus("nTauClean18V",1);
