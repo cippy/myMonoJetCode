@@ -471,8 +471,8 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution_monoV->Fill(FatJet_eta[0],newwgt);
        Hjet1ptDistribution_monoV->Fill(FatJet_pt[0],newwgt);
-       Hphoton1ptDistribution_monoV-->Fill(GammaGood_pt[0],newwgt);
-       Hphoton1etaDistribution_monoV-->Fill(GammaGood_eta[0],newwgt);
+       Hphoton1ptDistribution_monoV->Fill(GammaGood_pt[0],newwgt);
+       Hphoton1etaDistribution_monoV->Fill(GammaGood_eta[0],newwgt);
        HprunedMassDistribution_monoV->Fill(FatJet_mass[0],newwgt);
        Htau2OverTau1Distribution_monoV->Fill(FatJet_tau2[0]/FatJet_tau1[0],newwgt);
 
