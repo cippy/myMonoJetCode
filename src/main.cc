@@ -822,7 +822,12 @@ int main(int argc, char* argv[]) {
     // }
     // cout << endl;
 
-    cout<<"creating file '"<<finalFileName<<"' to save table with yields in folder " << outputFolder << " ..."<<endl;
+    cout <<"-----------------"<<endl;
+    cout<<"creating file "<<endl;
+    cout <<"'"<<finalFileName<<"'"<<endl;
+    cout"to save table with yields in folder " << endl;
+    cout << outputFolder << endl;
+    cout <<"-----------------"<<endl;
 
     buildFinalTable(fp, sampleName, selectionDefinition, yieldsRow, efficiencyRow, uncertaintyRow);
     fprintf(fp,"\n\n");
