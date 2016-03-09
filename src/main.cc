@@ -649,6 +649,18 @@ int main(int argc, char* argv[]) {
 	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
 	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
 	    }
+	  } else if (controlSample_boson == "GAMMA") {
+	    monojet_PhotonControlRegion tree( chain);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setDirNameSuffix(dirName_suffix);
+	    // tree.set_SF_NLO_name(sf_nlo_option);
+	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    if (nSample == 0) {
+	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	    }
 	  } 
 
 	} else if (metResolutionAndResponse_flag == 1) {
