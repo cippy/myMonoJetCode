@@ -825,7 +825,7 @@ int main(int argc, char* argv[]) {
     cout <<"-----------------"<<endl;
     cout<<"creating file "<<endl;
     cout <<"'"<<finalFileName<<"'"<<endl;
-    cout"to save table with yields in folder " << endl;
+    cout <<"to save table with yields in folder " << endl;
     cout << outputFolder << endl;
     cout <<"-----------------"<<endl;
 

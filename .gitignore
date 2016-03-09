@@ -1,15 +1,19 @@
 # txt files#
 ###################
-#*.txt
+std_output.txt
 #
 ###################
 # some directories#
 #*/
 .SCRAM/
+$CMSSW_BASE/src/myMonoJetCode/src/tmp/
 #
 ###################
 # other files#
 *~
 *C.d
 *C.so
-#
+###################
+#executables
+$CMSSW_BASE/src/myMonoJetCode/macro/distribution
+###################
