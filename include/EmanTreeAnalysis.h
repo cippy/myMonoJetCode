@@ -83,7 +83,7 @@ namespace myAnalyzerTEman {
     Int_t using_gammajets_MCsample_flag;
     
     // control samples specific parameters
-    char FLAVOUR[10];                   // e.g. "photon"
+    // char FLAVOUR[10];          // e.g. "photon"
     char CONTROL_SAMPLE[10];   // e.g. "gamma"
     
     TH1D *Hphoton1ptDistribution = NULL;
