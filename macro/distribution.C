@@ -625,6 +625,8 @@ void distribution(const string folderNameWithRootFiles = "",
 
   if (yAxisMin < yAxisMax) {  // default option [0,-1] implies default axis
  
+    if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range                                        
+    else c->Update();
     hMCstack->GetYaxis()->SetRangeUser(yAxisMin,yAxisMax);
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
     else c->Update(); 
