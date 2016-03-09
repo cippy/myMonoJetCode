@@ -323,8 +323,6 @@ void distribution(const string folderNameWithRootFiles = "",
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
-  //string plotDirectoryPath = "./distributions/";
-  string plotFileExtension = ".pdf"; //could be png
   string suffix;
 
   if (z0_w1_g2 == 0) {
@@ -610,6 +608,7 @@ void distribution(const string folderNameWithRootFiles = "",
     subpad_2->SetBottomMargin(0.3);
     subpad_1->Draw();
     subpad_2->Draw();
+    if (yAxisLog_flag) subpad_1->SetLogy();
 
     subpad_1->cd();
 
@@ -623,6 +622,13 @@ void distribution(const string folderNameWithRootFiles = "",
   // stackCopy->SetFillColor(kBlack);
   // stackCopy->SetFillStyle(3144);
 
+  // will use the following value to set the maximum Y axis value
+  Double_t maxYvalue =  hMCstack->GetMaximum();
+  if (data0_noData1 == 0 && (hMCstack->GetMaximum() < hdata->GetMaximum())) maxYvalue = hdata->GetMaximum();
+  Double_t minYvalue =  hMCstack->GetMinimum();
+  if (data0_noData1 == 0 && (hMCstack->GetMinimum() < hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
+  if (minYvalue < 0.001) minYvalue = 0.01;
+
   if (yAxisMin < yAxisMax) {  // default option [0,-1] implies default axis
  
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range                                        
@@ -633,23 +639,25 @@ void distribution(const string folderNameWithRootFiles = "",
 
   } else if (yAxisMin > yAxisMax && yAxisMax == -1) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
 
-    if (data0_noData1 == 0) {
-      hMCstack->GetYaxis()->SetRangeUser(yAxisMin,subpad_1->GetY2());
-      subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range      
-    } else {
-      hMCstack->GetYaxis()->SetRangeUser(yAxisMin,c->GetY2());
-      c->Update();  
-    }
+    Double_t stackYmax = hMCstack->GetYaxis()->GetYmax();
+
+    hMCstack->GetYaxis()->SetRangeUser(yAxisMin,stackYmax);
+    if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
+    else c->Update();  
+    hMCstack->GetYaxis()->SetRangeUser(yAxisMin,stackYmax);
 
   }
 
-  // if (data0_noData1 == 0) {
+  // getting histogram used to draw axis (retrieved using THStack::GetHistogram() ) 
+  TH1* histForAxis = THStack->GetHistogram();
+  if (yAxisLog_flag == 0) histForAxis->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram
+  else histForAxis->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y
+  if (yAxisMin > yAxisMax && yAxisMax == -1) histForAxis->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum
+  else histForAxis->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0)
 
-  //   if (yAxisMin > 0) hMCstack->GetYaxis()->SetRangeUser(yAxisMin, subpad_1->GetY2());
-  //   else hMCstack->GetYaxis()->SetRangeUser(yAxisMin, c->GetY2());
-
-  // }
-
+  //update pad just in case
+  if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
+  else c->Update(); 
   //hMCstack->SetMaximum(4000.0);
 
   if (data0_noData1 == 1) {    //  when using data ( == 0) the x axis will not have labels (they will only be below in the ratio plot)
@@ -734,74 +742,14 @@ void distribution(const string folderNameWithRootFiles = "",
 
   }
 
-  //c->SaveAs( (plotDirectoryPath + c->GetName() + plotFileExtension).c_str() );
   c->SaveAs( (plotDirectoryPath + c->GetName() + ".pdf").c_str() );
   c->SaveAs( (plotDirectoryPath + c->GetName() + ".png").c_str() );
 
 }
 
-//==========================================================================
-// useless, doing this in analyzer
-// void fillSystematic(TFile *f, vector<Double_t> &systVec, const string& norm, const string& up, const string& down) {
 
-//   TH1D *hnorm = NULL;
-//   TH1D *hup = NULL;
-//   TH1D *hdown = NULL;
+// =========================================================
 
-//   hnorm = (TH1D*)f->Get(norm.c_str());
-//   //cout << h->GetName() << endl;
-//   if (!hnorm) {
-//     cout << "Error in computeSystematicError(): histogram not found in file. End of programme." << endl;
-//     exit(EXIT_FAILURE);
-//   }
-//   hup = (TH1D*)f->Get(up.c_str());
-//   //cout << h->GetName() << endl;
-//   if (!hup) {
-//     cout << "Error in computeSystematicError(): histogram not found in file. End of programme." << endl;
-//     exit(EXIT_FAILURE);
-//   }
-//   hdown = (TH1D*)f->Get(down.c_str());
-//   //cout << h->GetName() << endl;
-//   if (!hdown) {
-//     cout << "Error in computeSystematicError(): histogram not found in file. End of programme." << endl;
-//     exit(EXIT_FAILURE);
-//   }
-  
-//   if (TH1::CheckConsistency(hnorm,hup) && TH1::CheckConsistency(hnorm,hdown)) {
-
-//     Int_t nbins = hnorm->GetNbinsX();
-//     Double_t maxdiff = 0.0;
-//     Double_t updiff = 0.0;
-//     Double_t downdiff = 0.0;
-
-//     for (Int_t i = 1; i <= nbins; i++) {
-
-//       updiff = fabs(hnorm->GetBinContent(i) - hup->GetBinContent(i));
-//       downdiff = fabs(hnorm->GetBinContent(i) - hdown->GetBinContent(i)); 
-//       maxdiff = (updiff > downdiff) ? updiff : downdiff; 
-//       systVec.push_back(maxdiff);
-
-//     }
-
-//   } else {
-//     cout << "Error in fillSystematic(): TH1::CheckConsistency() returned false. End of programme." << endl;
-//     exit(EXIT_FAILURE);
-//   }  
-
-// }
-
-//==========================================================================
-// useless, doing this in analyzer
-// void computeSystematicError(TFile *f, vector<Double_t> &qcdRenScale, vector<Double_t> &qcdFacScale, vector<Double_t> &qcdPdf, vector<Double_t> &ewk) {
-
-//   // here the file is read inside fillSystematic and histograms are used to compute systematics bin by bin for each scale factor
-    
-//   fillSystematic(f, qcdRenScale, "HYieldsMetBin", "HYieldsMetBin_qcdRenScaleUp", "HYieldsMetBin_qcdRenScaleDown");
-//   fillSystematic(f, qcdFacScale, "HYieldsMetBin", "HYieldsMetBin_qcdFacScaleUp", "HYieldsMetBin_qcdFacScaleDown");
-//   fillSystematic(f, qcdPdf, "HYieldsMetBin", "HYieldsMetBin_qcdPdfUp", "HYieldsMetBin_qcdPdfDown");
-//   fillSystematic(f, ewk, "HYieldsMetBin", "HYieldsMetBin_ewkUp", "HYieldsMetBin_ewkDown");
-
-// }
 
 void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 			const string folderNameWithRootFilesCR = "",
