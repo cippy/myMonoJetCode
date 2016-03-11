@@ -627,7 +627,7 @@ void distribution(const string folderNameWithRootFiles = "",
   if (data0_noData1 == 0 && (hMCstack->GetMaximum() < hdata->GetMaximum())) maxYvalue = hdata->GetMaximum();
   Double_t minYvalue =  hMCstack->GetMinimum();
   if (data0_noData1 == 0 && (hMCstack->GetMinimum() > hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
-  if (fabs(minYvalue) < 0.001) minYvalue = 0.01;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
+  if (fabs(minYvalue) < 0.001) minYvalue = 0.05;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
 
   // ===> WARNING: seting the minimum to 0.01 could be bad if one has histograms normalized to 1
 
@@ -654,14 +654,17 @@ void distribution(const string folderNameWithRootFiles = "",
 
     //Double_t stackYmax = hMCstack->GetYaxis()->GetXmax();
 
+    if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range                                        
+    else c->Update();
+
     // getting histogram used to draw axis (retrieved using THStack::GetHistogram() )                                                                               
     // if (yAxisLog_flag == 0) histForAxis->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram               
-    // else histForAxis->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                                
+    // else histForAxis->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                            
     // if (fabs(yAxisMin) > 0.00001) histForAxis->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum        
     // else histForAxis->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0) 
 
     if (yAxisLog_flag == 0) hMCstack->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram                  
-    else hMCstack->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                                
+    else hMCstack->SetMaximum(10 * maxYvalue);  // for log scale use 10 times bigger value for max Y                                                                
     if (fabs(yAxisMin) > 0.00001) hMCstack->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum                      
     else hMCstack->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0)
 
