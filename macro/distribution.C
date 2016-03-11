@@ -134,18 +134,18 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     } else if(z0_w1_g2 == 2) {
 
-      sampleName.push_back("ZJetsToNuNu");
+      //sampleName.push_back("ZJetsToNuNu");
       sampleName.push_back("DYJetsToLL");
-      sampleName.push_back("Diboson");
-      sampleName.push_back("Top");   
+      //sampleName.push_back("Diboson");
+      //sampleName.push_back("Top");   
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("QCD");      
       sampleName.push_back("GJets");
 
-      MC_TexLabel.push_back("Z(#nu#nu)+jets");
+      //MC_TexLabel.push_back("Z(#nu#nu)+jets");
       MC_TexLabel.push_back("Z(ll)+jets");
-      MC_TexLabel.push_back("Diboson");
-      MC_TexLabel.push_back("t#bar{t},single t");
+      //MC_TexLabel.push_back("Diboson");
+      //MC_TexLabel.push_back("t#bar{t},single t");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("QCD");     
       MC_TexLabel.push_back("#gamma + jets");
@@ -617,7 +617,7 @@ void distribution(const string folderNameWithRootFiles = "",
   
   hMCstack->Draw("HIST");
   //if (yAxisMin > 0) hMCstack->SetMinimum(yAxisMin);
-  TH1D* stackCopy = (TH1D*)hMCstack->GetStack()->Last();
+  TH1D* stackCopy = (TH1D*)hMCstack->GetStack()->Last();   // used to make ratioplot without affecting the plot
   // TH1D* stackCopy = (TH1D*)(((TH1D*)hMCstack->GetStack()->Last())->DrawCopy("E2 SAME"));
   // stackCopy->SetFillColor(kBlack);
   // stackCopy->SetFillStyle(3144);
@@ -626,9 +626,12 @@ void distribution(const string folderNameWithRootFiles = "",
   Double_t maxYvalue =  hMCstack->GetMaximum();
   if (data0_noData1 == 0 && (hMCstack->GetMaximum() < hdata->GetMaximum())) maxYvalue = hdata->GetMaximum();
   Double_t minYvalue =  hMCstack->GetMinimum();
-  if (data0_noData1 == 0 && (hMCstack->GetMinimum() < hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
-  if (minYvalue < 0.001) minYvalue = 0.01;
-  TH1* histForAxis = hMCstack->GetHistogram();
+  if (data0_noData1 == 0 && (hMCstack->GetMinimum() > hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
+  if (fabs(minYvalue) < 0.001) minYvalue = 0.01;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
+
+  // ===> WARNING: seting the minimum to 0.01 could be bad if one has histograms normalized to 1
+
+  //  TH1* histForAxis = hMCstack->GetHistogram();
 
   if (yAxisMin < yAxisMax) {  // default option [0,-1] implies default axis (this case is contemplated by the else condition below)
  
@@ -636,21 +639,31 @@ void distribution(const string folderNameWithRootFiles = "",
     else c->Update();
     //    hMCstack->GetYaxis()->SetRangeUser(yAxisMin,yAxisMax);
     // getting histogram used to draw axis (retrieved using THStack::GetHistogram() )                                                                                 
-    histForAxis->SetMaximum(yAxisMax);
-    if (fabs(yAxisMin) > 0.00001) histForAxis->SetMinimum(yAxisMin);  // if lower limit is set by user for Y axis, use it to set the minimum         
-    else histForAxis->SetMinimum(minYvalue);  // in lower limit left as default, use lowest possible value (for log scale, use 0.01 if it would be 0) 
+    // histForAxis->SetMaximum(yAxisMax);
+    // if (fabs(yAxisMin) > 0.00001) histForAxis->SetMinimum(yAxisMin);  // if lower limit is set by user for Y axis, use it to set the minimum         
+    // else histForAxis->SetMinimum(minYvalue);  // in lower limit left as default, use lowest possible value (for log scale, use 0.01 if it would be 0) 
+
+    hMCstack->SetMaximum(yAxisMax);
+    if (fabs(yAxisMin) > 0.00001) hMCstack->SetMinimum(yAxisMin);  // if lower limit is set by user for Y axis, use it to set the minimum                           
+    else hMCstack->SetMinimum(minYvalue);  // if lower limit is left as default, use lowest possible value (for log scale, use 0.01 if it would be 0) 
+
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
     else c->Update(); 
 
-  } else if (yAxisMin > yAxisMax && (fabs(yAxisMax - 1.0) < 0.0001)) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
+  } else if (yAxisMin > yAxisMax && (fabs(yAxisMax + 1.0) < 0.0001)) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
 
     //Double_t stackYmax = hMCstack->GetYaxis()->GetXmax();
 
     // getting histogram used to draw axis (retrieved using THStack::GetHistogram() )                                                                               
-    if (yAxisLog_flag == 0) histForAxis->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram               
-    else histForAxis->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                                
-    if (fabs(yAxisMin) > 0.00001) histForAxis->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum        
-    else histForAxis->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0) 
+    // if (yAxisLog_flag == 0) histForAxis->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram               
+    // else histForAxis->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                                
+    // if (fabs(yAxisMin) > 0.00001) histForAxis->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum        
+    // else histForAxis->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0) 
+
+    if (yAxisLog_flag == 0) hMCstack->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram                  
+    else hMCstack->SetMaximum(20 * maxYvalue);  // for log scale use 20 times bigger value for max Y                                                                
+    if (fabs(yAxisMin) > 0.00001) hMCstack->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum                      
+    else hMCstack->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0)
 
     //hMCstack->GetYaxis()->SetRangeUser(yAxisMin,stackYmax);
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
@@ -683,19 +696,14 @@ void distribution(const string folderNameWithRootFiles = "",
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
     else c->Update();  
     hMCstack->GetXaxis()->SetRangeUser(xAxisMin,xAxisMax);
-  } else if (xAxisMin > xAxisMax && xAxisMax == -1) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
+
+  } else if (xAxisMin > xAxisMax && (fabs(xAxisMax + 1.0) < 0.0001)) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
 
     stackXmax = hMCstack->GetXaxis()->GetXmax();
     //cout << "stackXmax: " << stackXmax << endl;
 
-    if (data0_noData1 == 0) {
-      subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range  
-      //hMCstack->GetXaxis()->SetRangeUser(xAxisMin,subpad_1->GetX2());
-      //cout << "subpad_1->GetX2(): " << subpad_1->GetX2() << endl;
-    } else {
-      c->Update();  
-      //hMCstack->GetXaxis()->SetRangeUser(xAxisMin,c->GetX2());
-    }
+    if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range 
+    else c->Update();       //hMCstack->GetXaxis()->SetRangeUser(xAxisMin,c->GetX2());
 
     hMCstack->GetXaxis()->SetRangeUser(xAxisMin,stackXmax);   // N.B. SetRangeUser cannot set axis ranges outside the original coordinates: if they are 5-10, I can set them 6-9, 5-8 ecc... but if I do 5-12, the range will be set to 5-10
 
@@ -742,7 +750,7 @@ void distribution(const string folderNameWithRootFiles = "",
     ratioplot->GetYaxis()->SetNdivisions(011);
     ratioplot->SetMarkerStyle(8);  //medium dot
     if (xAxisMin < xAxisMax) ratioplot->GetXaxis()->SetRangeUser(xAxisMin,xAxisMax); 
-    else if (xAxisMin > xAxisMax && xAxisMax == -1) {
+    else if (xAxisMin > xAxisMax && (fabs(xAxisMax + 1.0) < 0.0001) ) {
       Double_t ratioplotXmax = ratioplot->GetXaxis()->GetXmax();
       //cout << "ratioplotXmax: " << ratioplotXmax << endl;
       subpad_2->Update();
