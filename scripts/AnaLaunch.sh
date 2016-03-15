@@ -5,36 +5,39 @@
 # bsub -q cmsan -J <jobname> -o <output-logfile> "source <script_name.sh>"
 #
 #
-echo
-#./tmp/main config/monojet_signalRegion_config_spring15_25ns.txt
-pwd
-ls
-echo
-echo
-#./tmp/main config/zmumujets_ControlRegion_config_spring15_25ns.txt
+MY_PATH=$CMSSW_BASE/src/myMonoJetCode
+MY_CFG_PATH=$MY_PATH/config
+MY_MACRO_PATH=$MY_PATH/macro
+cd $MY_PATH/src
 echo
 echo
-#./tmp/main config/wmunujets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/monojet_signalRegion_config_spring15_25ns.txt
 echo
 echo
-#./tmp/main config/zeejets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/zmumujets_ControlRegion_config_spring15_25ns.txt
+echo
+echo
+./tmp/main $MY_CFG_PATH/wmunujets_ControlRegion_config_spring15_25ns.txt
+echo
+echo
+#./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt
 #echo
 #echo
-#./tmp/main config/zeejets_ControlRegion_config_spring15_25ns.txt -calibEle
+#./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt -calibEle
 #echo
 #echo
-#./tmp/main config/wenujets_ControlRegion_config_spring15_25ns.txt
+#./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt
 #echo
 #echo
-#./tmp/main config/wenujets_ControlRegion_config_spring15_25ns.txt -calibEle
+#./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt -calibEle
 #echo
 #echo
 #echo "producing plots for monojet (exclusive)"
-#./macro/distribution 0
+./../macro/distribution 0
 echo
 echo
 #echo "producing plots for monoV"
-#./macro/distribution 1
+./../macro/distribution 1
 echo
 echo
 echo "========================"

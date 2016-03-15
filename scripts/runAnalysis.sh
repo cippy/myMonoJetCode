@@ -8,8 +8,8 @@ cmsenv
 #echo
 #echo "changing directory to $MY_PATH/myMonoJetCode/src"
 echo
-MY_PATH=$MY_PATH/myMonoJetCode/src
-cd $MY_PATH
+MY_PATH=$MY_PATH/myMonoJetCode
+cd $MY_PATH/src
 echo "Compiling code with make command"
 echo
 make
@@ -25,5 +25,5 @@ echo "Calling --> bsub -q cmsan -o std_output.txt -J runAnalysis \"source $MY_PA
 #bsub -q cmsan -Is /bin/bash < AnaLaunch.sh
 bsub -q cmsan -o std_output.txt -J runAnalysis "source $MY_PATH/scripts/AnaLaunch.sh"
 echo
-echo "THE END!"
+echo "Job submitted. It might still be running, check with --> bjobs"
 
