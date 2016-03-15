@@ -74,7 +74,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
   if (signalRegion0_controlRegion1 == 0) {
 
-    sampleName.push_back("GJets");
+    //sampleName.push_back("GJets");
     sampleName.push_back("DYJetsToLL");
     sampleName.push_back("QCD");
     sampleName.push_back("Diboson");
@@ -82,7 +82,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     sampleName.push_back("WJetsToLNu");
     sampleName.push_back("ZJetsToNuNu");
        
-    MC_TexLabel.push_back("#gamma + jets");
+    //MC_TexLabel.push_back("#gamma + jets");
     MC_TexLabel.push_back("Z(ll)+jets");
     MC_TexLabel.push_back("QCD");
     MC_TexLabel.push_back("Diboson");
@@ -124,7 +124,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
       MC_TexLabel.push_back("Z(#nu#nu)+jets");
       MC_TexLabel.push_back("Z(ll)+jets");
-      MC_TexLabel.push_back("#gamma + jets");
+      //MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("QCD");     
       MC_TexLabel.push_back("Diboson");
       MC_TexLabel.push_back("t#bar{t},single t");
