@@ -104,6 +104,14 @@ void monojet_LeptonControlRegion::setHistograms() {
 
 //===============================================
 
+void monojet_LeptonControlRegion::setScaleFactorHistograms() {
+
+  AnalysisDarkMatter::setScaleFactorHistograms();
+  
+}
+
+//===============================================
+
 void monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
   AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
@@ -156,7 +164,13 @@ void monojet_LeptonControlRegion::setVarFromConfigFile() {
 
 //===============================================
 
+void monojet_LeptonControlRegion::createSystematicsHistogram() {
 
+  AnalysisDarkMatter::createSystematicsHistogram();
+
+}
+
+//===============================================
 
 
 

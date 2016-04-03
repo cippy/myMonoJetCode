@@ -189,6 +189,28 @@ void zlljetsControlSample::setHistograms() {
 
 //===============================================
 
+void zlljetsControlSample::setScaleFactorHistograms() {
+
+  monojet_LeptonControlRegion::setScaleFactorHistograms();
+
+  // monoJet
+  HYieldsMetBin_LepTightLooseUp = new TH1D("HYieldsMetBin_LepTightLooseUp","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
+  HYieldsMetBin_LepTightLooseDown = new TH1D("HYieldsMetBin_LepTightLooseDown","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
+
+  HSyst_LepTightLoose = new TH1D("HSyst_LepTightLoose","systematic uncertainty for lepton tight and loose id",nMetBins,metBinEdgesVector.data());
+
+  // mono-V
+  HYieldsMetBin_LepTightLooseUp_monoV = new TH1D("HYieldsMetBin_LepTightLooseUp_monoV","yields in bins of met; #slash{E}_{T};# of events",nMetBins_monoV,metBinEdgesVector_monoV.data());
+  HYieldsMetBin_LepTightLooseDown_monoV = new TH1D("HYieldsMetBin_LepTightLooseDown_monoV","yields in bins of met; #slash{E}_{T};# of events",nMetBins_monoV,metBinEdgesVector_monoV.data());
+
+  HSyst_LepTightLoose_monoV = new TH1D("HSyst_LepTightLoose_monoV","systematic uncertainty for lepton tight and loose id",nMetBins_monoV,metBinEdgesVector_monoV.data());
+ 
+
+}
+
+
+//===============================================
+
 void zlljetsControlSample::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
   monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(hasScaledHistograms);
@@ -198,6 +220,16 @@ void zlljetsControlSample::setHistogramLastBinAsOverFlow(const Int_t hasScaledHi
 
   myAddOverflowInLastBin(Hlep2ptDistribution_monoV);
   myAddOverflowInLastBin(HzptDistribution_monoV);
+
+  if (hasScaledHistograms) {
+
+    myAddOverflowInLastBin(HYieldsMetBin_LepTightLooseUp);
+    myAddOverflowInLastBin(HYieldsMetBin_LepTightLooseDown);
+
+    myAddOverflowInLastBin(HYieldsMetBin_LepTightLooseUp_monoV);
+    myAddOverflowInLastBin(HYieldsMetBin_LepTightLooseDown_monoV);
+
+  }
 
 }
 
@@ -275,6 +307,9 @@ Double_t zlljetsControlSample::computeEventWeight() {
 
     Double_t tmp = LUMI * weight * vtxWeight * SF_BTag; //SF_BTag is in evVarFriend, not sfFriend
 
+    if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") tmp /= 1.23;
+    else if (suffix == "WJetsToLNu") tmp/= 1.21; 
+   
     if (hasSFfriend_flag != 0) { 
       // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
       // if (fabs(LEP_PDG_ID) == 13) tmp *= SF_trigmetnomu;
@@ -282,13 +317,65 @@ Double_t zlljetsControlSample::computeEventWeight() {
       // return tmp * sf_nlo_weight * SF_LepTightLoose;
       if (fabs(LEP_PDG_ID) == 13) tmp *= SF_trigmetnomu;
       else if (fabs(LEP_PDG_ID) == 11) tmp *= SF_trig1lep;
-      if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") tmp /= 1.23;
-      else if (suffix == "WJetsToLNu") tmp/= 1.21; 
       return tmp * SF_NLO_QCD * SF_NLO_EWK * SF_LepTightLoose;
 
     } else return tmp; 
 
   }
+
+}
+
+//===============================================
+
+void zlljetsControlSample::createSystematicsHistogram() {
+
+  // first step is calling the AnalysisDarkMatter method through monoJet_LeptonControlRegion
+  monojet_LeptonControlRegion::createSystematicsHistogram();
+    
+  //for monojet
+
+  // computing systematic uncertainties and saving them as histograms.
+  myBuildSystematicsHistogram(HSyst_LepTightLoose, HYieldsMetBin, HYieldsMetBin_LepTightLooseUp, HYieldsMetBin_LepTightLooseDown);
+
+  // define an empty histogram to sum uncertainties in a clean way
+  TH1D *Htmp = new TH1D("Htmp","",nMetBins,metBinEdgesVector.data());
+  vector<TH1D*> hptr;
+  hptr.push_back(HSyst_LepTightLoose);
+
+  for (Int_t i = 0; i < hptr.size(); i++) {
+    Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
+    HSyst_total->Add(Htmp);             // adding the squares
+  }
+
+  for (Int_t i = 0; i <= (HSyst_total->GetNbinsX() + 1); i++) {  // computing square root of each bin's content (from underflow to overflow bin, but they should be empty)
+    HSyst_total->SetBinContent(i, sqrt(HSyst_total->GetBinContent(i)));
+
+  }
+
+  delete Htmp;
+
+  // same for monoV
+
+  // computing systematic uncertainties and saving them as histograms.
+  myBuildSystematicsHistogram(HSyst_LepTightLoose_monoV, HYieldsMetBin_monoV, HYieldsMetBin_LepTightLooseUp_monoV, HYieldsMetBin_LepTightLooseDown_monoV);
+
+  // define an empty histogram to sum uncertainties in a clean way
+  Htmp = new TH1D("Htmp","",nMetBins_monoV,metBinEdgesVector_monoV.data());
+  hptr.clear(); // erase all elements (now it is as if it was created at this point)
+  hptr.push_back(HSyst_LepTightLoose_monoV);
+     
+  for (Int_t i = 0; i < hptr.size(); i++) {
+    Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
+    HSyst_total_monoV->Add(Htmp);             // adding the squares
+  }
+
+  for (Int_t i = 0; i <= (HSyst_total_monoV->GetNbinsX() + 1); i++) {  // computing square root of each bin's content (from underflow to overflow bin, but they should be empty)
+    HSyst_total_monoV->SetBinContent(i, sqrt(HSyst_total_monoV->GetBinContent(i)));
+
+  }
+
+  delete Htmp;
+  
 
 }
 
@@ -350,6 +437,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1); 
    fChain->SetBranchStatus("HLT_SingleEl",1);
+   fChain->SetBranchStatus("HLT_SinglePho",1); 
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);
@@ -403,7 +491,11 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      fChain->SetBranchStatus("SF_trig1lep",1);
      fChain->SetBranchStatus("SF_trigmetnomu",1);
      fChain->SetBranchStatus("SF_LepTightLoose",1);
+     fChain->SetBranchStatus("SF_LepTightLooseUp",1);
+     fChain->SetBranchStatus("SF_LepTightLooseDown",1);
      fChain->SetBranchStatus("SF_LepTight",1);
+     fChain->SetBranchStatus("SF_LepTightUp",1);
+     fChain->SetBranchStatus("SF_LepTightDown",1);
      fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
@@ -493,23 +585,23 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      ptr_nLepLoose = &nEle10V;                      // ask 2 electrons
      ptr_nLep10V = &nMu10V;                         // veto on muons  
      if (fChain->GetBranch("nEle40T")) ptr_nLepTight = &nEle40T;
-     else if (fChain->GetBranch("nEle20T")) ptr_nLepTight = &nEle20T;  // the most recent version for this variable si nEle40T, but older versions use nEle20T
+     //else if (fChain->GetBranch("nEle20T")) ptr_nLepTight = &nEle20T;  // the most recent version for this variable si nEle40T, but older versions use nEle20T
      // or alternatively use the following methods
      //if (fChain->GetListOfBranches()->FindObject("nEle40T"))
 
-     if (calibEle_flag == 0) {
+     //if (calibEle_flag == 0) {
        ptr_nRecoLepton = &nLepGood;
        ptr_lepton_pt = LepGood_pt;
        ptr_lepton_eta = LepGood_eta;
        ptr_lepton_phi = LepGood_phi;
        ptr_lepton_mass = LepGood_mass;
-     } else {
-       ptr_nRecoLepton = &nCalibEle;
-       ptr_lepton_pt = CalibEle_pt;
-       ptr_lepton_eta = CalibEle_eta;
-       ptr_lepton_phi = CalibEle_phi;
-       ptr_lepton_mass = CalibEle_mass;
-     }
+       //} else {
+      //  ptr_nRecoLepton = &nCalibEle;
+     //   ptr_lepton_pt = CalibEle_pt;
+     //   ptr_lepton_eta = CalibEle_eta;
+     //   ptr_lepton_phi = CalibEle_phi;
+     //   ptr_lepton_mass = CalibEle_mass;
+     // }
 
    }
 

@@ -106,7 +106,9 @@ namespace myAnalyzerTEman {
    
     //virtual void setMask();
     virtual void setHistograms();
+    virtual void setScaleFactorHistograms();
     virtual void setHistogramLastBinAsOverFlow(const Int_t);
+    virtual void createSystematicsHistogram();
     virtual void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     virtual void setControlSampleSpecificParameter();
     virtual void setVarFromConfigFile();
@@ -160,7 +162,9 @@ namespace myAnalyzerTEman {
     void setSelections(); 
     void setMask();
     void setHistograms();
+    void setScaleFactorHistograms();
     void setHistogramLastBinAsOverFlow(const Int_t);
+    void createSystematicsHistogram();
     void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     void setControlSampleSpecificParameter();
     void setVarFromConfigFile();
@@ -191,17 +195,29 @@ namespace myAnalyzerTEman {
     // unless it is Z->tautau, in which case I start from generated taus and apply selection (tau can produce muon or electron)
     Int_t using_zlljets_MCsample_flag; 
     Int_t using_ztautaujets_MCsample_flag;
-    
+
+    // monojet histograms    
     TH1D *HinvMass = NULL;
     TH1D *HzptDistribution = NULL;    
     TH1D *Hlep2ptDistribution = NULL;
     TH1D *Hlep2etaDistribution = NULL;
+    //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
+    TH1D *HYieldsMetBin_LepTightLooseUp = NULL;
+    TH1D *HYieldsMetBin_LepTightLooseDown = NULL;
+    // syst. uncertainty
+    TH1D *HSyst_LepTightLoose = NULL; 
 
+    // monoV histograms
     TH1D *HinvMass_monoV = NULL;
     TH1D *HzptDistribution_monoV = NULL;    
     TH1D *Hlep2ptDistribution_monoV = NULL;
     TH1D *Hlep2etaDistribution_monoV = NULL;
-   
+    //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
+    TH1D *HYieldsMetBin_LepTightLooseUp_monoV = NULL;
+    TH1D *HYieldsMetBin_LepTightLooseDown_monoV = NULL;
+    // syst. uncertainty
+    TH1D *HSyst_LepTightLoose_monoV = NULL; 
+
   };
 
   //====================================================
@@ -215,7 +231,9 @@ namespace myAnalyzerTEman {
     void setSelections(); 
     void setMask();
     void setHistograms();
+    void setScaleFactorHistograms();
     void setHistogramLastBinAsOverFlow(const Int_t);
+    void createSystematicsHistogram();
     void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     void setControlSampleSpecificParameter();
     void setVarFromConfigFile();
@@ -235,8 +253,22 @@ namespace myAnalyzerTEman {
     Int_t using_wlnujets_MCsample_flag; 
     Int_t using_wtaunujets_MCsample_flag;
         
+    // monoJet histograms
     TH1D *HtransverseMass = NULL;
+    //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
+    TH1D *HYieldsMetBin_LepTightUp = NULL;
+    TH1D *HYieldsMetBin_LepTightDown = NULL;
+    // syst. uncertainty
+    TH1D *HSyst_LepTight = NULL; 
+
+    // monoV histograms
     TH1D *HtransverseMass_monoV = NULL;
+    //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
+    TH1D *HYieldsMetBin_LepTightUp_monoV = NULL;
+    TH1D *HYieldsMetBin_LepTightDown_monoV = NULL;
+    // syst. uncertainty
+    TH1D *HSyst_LepTight_monoV = NULL; 
+
 
   };
 

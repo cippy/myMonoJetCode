@@ -189,9 +189,12 @@ Double_t monojet_SignalRegion::computeEventWeight() {
   else {
     // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
     // return LUMI * weight * vtxWeight * SF_BTag * sf_nlo_weight; //SF_BTag is in evVarFriend, not sfFriend
-    if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK / 1.23; //SF_BTag is in evVarFriend, not sfFriend
-    else if (suffix == "WJetsToLNu") return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK / 1.21; //SF_BTag is in evVarFriend, not sfFriend
-    else return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK; //SF_BTag is in evVarFriend, not sfFriend
+    Double_t tmp = LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK;
+    if (hasSFfriend_flag != 0) tmp *= SF_trigmetnomu;
+    if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") return tmp / 1.23; //SF_BTag is in evVarFriend, not sfFriend
+    else if (suffix == "WJetsToLNu") return tmp / 1.21; //SF_BTag is in evVarFriend, not sfFriend
+    else return tmp; //SF_BTag is in evVarFriend, not sfFriend
+
   }
 
 }
@@ -307,7 +310,11 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      fChain->SetBranchStatus("SF_trig1lep",1);
      fChain->SetBranchStatus("SF_trigmetnomu",1);
      fChain->SetBranchStatus("SF_LepTightLoose",1);
+     fChain->SetBranchStatus("SF_LepTightLooseUp",1);
+     fChain->SetBranchStatus("SF_LepTightLooseDown",1);
      fChain->SetBranchStatus("SF_LepTight",1);
+     fChain->SetBranchStatus("SF_LepTightUp",1);
+     fChain->SetBranchStatus("SF_LepTightDown",1);
      fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);

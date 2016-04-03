@@ -260,7 +260,7 @@ void AnalysisDarkMatter::setVarFromConfigFile() {
 
   // in case the config doesn't have the binning. Btw, having the binning in the config allows me to choose it for every analysis without modifying and compiling again the code
   if (metBinEdgesVector.size() == 0) {
-    Double_t tmpBinEdges[] = {200.,230.,260.,290.,320.,350.,390.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,116.,1250.}; 
+    Double_t tmpBinEdges[] = {200.,230.,260.,290.,320.,350.,390.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.}; 
     metBinEdgesVector.assign(tmpBinEdges,tmpBinEdges+23);
   }
   if (metBinEdgesVector_monoV.size() == 0) {
@@ -372,7 +372,7 @@ void AnalysisDarkMatter::setScaleFactorHistograms() {
   HYieldsMetBin_qcdPdfDown = new TH1D("HYieldsMetBin_qcdPdfDown","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
   HYieldsMetBin_ewkUp = new TH1D("HYieldsMetBin_ewkUp","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
   HYieldsMetBin_ewkDown = new TH1D("HYieldsMetBin_ewkDown","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
-    
+
   HSyst_qcdRenScale = new TH1D("HSyst_qcdRenScale","systematic uncertainty for QCD renormalization scale",nMetBins,metBinEdgesVector.data());
   HSyst_qcdFacScale = new TH1D("HSyst_qcdFacScale","systematic uncertainty for QCD factorization scale",nMetBins,metBinEdgesVector.data());
   HSyst_qcdPdf = new TH1D("HSyst_qcdPdf","systematic uncertainty for QCD due to PDF uncertainty",nMetBins,metBinEdgesVector.data());
@@ -496,6 +496,8 @@ void AnalysisDarkMatter::createSystematicsHistogram() {
   
 
 }
+
+//===============================================
 
 void AnalysisDarkMatter::fillRowVector(const Double_t nTotalWeightedEvents, const selectionManager &selMan, const mask & m, vector<Double_t> & yRow, vector<Double_t> & eRow, vector<Double_t> & uncRow, const Int_t hasPreselection_flag = 0) {
 

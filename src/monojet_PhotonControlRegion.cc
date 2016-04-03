@@ -157,7 +157,6 @@ void monojet_PhotonControlRegion::setHistograms() {
     setScaleFactorHistograms();
   }
 
-  //histograms specific to monojet selection (but not to control regions) must be set here as in AnalysisDarkMatter::setHistograms()
 
 }
 
@@ -210,7 +209,16 @@ void monojet_PhotonControlRegion::setVarFromConfigFile() {
 Double_t monojet_PhotonControlRegion::computeEventWeight() {
 
   if (ISDATA_FLAG || unweighted_event_flag) return 1.0;
-  else return LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK; //SF_BTag is in evVarFriend, not sfFriend
+  else {
+
+    Double_t tmp = LUMI * weight * vtxWeight * SF_BTag; //SF_BTag is in evVarFriend, not sfFriend
+    if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") tmp /= 1.23;
+    else if (suffix == "WJetsToLNu") tmp/= 1.21;
+
+    if (hasSFfriend_flag != 0) return tmp * SF_NLO_QCD * SF_NLO_EWK; //SF_BTag is in evVarFriend, not sfFriend
+    else return tmp;
+
+  }
 
 }
 
@@ -276,6 +284,8 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("nVert",1);  // number of good vertices 
    //fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
    //fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
+   fChain->SetBranchStatus("HLT_SingleEl",1);
+   fChain->SetBranchStatus("HLT_SinglePho",1);
 
    //photon variables for this sample
    fChain->SetBranchStatus("nGammaGood;",1);
@@ -335,7 +345,11 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      fChain->SetBranchStatus("SF_trig1lep",1);
      fChain->SetBranchStatus("SF_trigmetnomu",1);
      fChain->SetBranchStatus("SF_LepTightLoose",1);
+     fChain->SetBranchStatus("SF_LepTightLooseUp",1);
+     fChain->SetBranchStatus("SF_LepTightLooseDown",1);
      fChain->SetBranchStatus("SF_LepTight",1);
+     fChain->SetBranchStatus("SF_LepTightUp",1);
+     fChain->SetBranchStatus("SF_LepTightDown",1);
      fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
