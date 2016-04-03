@@ -116,7 +116,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
       sampleName.push_back("ZJetsToNuNu");
       sampleName.push_back("DYJetsToLL");
-      sampleName.push_back("GJets");
+      //sampleName.push_back("GJets");
       sampleName.push_back("QCD");      
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");   
