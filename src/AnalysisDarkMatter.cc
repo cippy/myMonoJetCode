@@ -1,5 +1,5 @@
 #define AnalysisDarkMatter_cxx
-#include "edimarcoTree_v4.h"
+#include "edimarcoTree_v5.h"
 #include "AnalysisDarkMatter.h"
 //#include "functionsForAnalysis.h"
 //#include "myClasses.h"
@@ -43,7 +43,7 @@ using namespace std;
 
 //===============================================
 
-AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v4(tree) {
+AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v5(tree) {
   //cout <<"check in constructor "<<endl;
   suffix = "";
   uncertainty = "";
@@ -68,19 +68,19 @@ AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v4(tree) {
 //===============================================
 
 Int_t AnalysisDarkMatter::GetEntry(Long64_t entry) {
-  edimarcoTree_v4::GetEntry(entry);
+  edimarcoTree_v5::GetEntry(entry);
 }
 
 //===============================================
 
 Long64_t AnalysisDarkMatter::LoadTree(Long64_t entry) {
-  edimarcoTree_v4::LoadTree(entry);
+  edimarcoTree_v5::LoadTree(entry);
 }
 
 //===============================================
 
 void AnalysisDarkMatter::Init(TTree *tree) {
-  edimarcoTree_v4::Init(tree);
+  edimarcoTree_v5::Init(tree);
 } 
 
 //===============================================
