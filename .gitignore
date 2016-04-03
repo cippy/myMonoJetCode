@@ -6,14 +6,15 @@ std_output.txt
 # some directories#
 #*/
 .SCRAM/
-$CMSSW_BASE/src/myMonoJetCode/src/tmp/
+src/tmp/main
 #
 ###################
 # other files#
 *~
+*o
 *C.d
 *C.so
 ###################
 #executables
-$CMSSW_BASE/src/myMonoJetCode/macro/distribution
+macro/distribution
 ###################
