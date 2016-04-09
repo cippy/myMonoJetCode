@@ -68,6 +68,20 @@ void myRebinHisto(TH1D *h, const Int_t rebinFactor = 1) {
 
 }
 
+void myGetEnvVariable(const string envVar = "", string & input) {
+
+  // here we get environmental variable that we need to use the code, such as CMSSW_BASE                                                                               
+  char* pPath;
+  pPath = getenv (envVar.c_str());
+  if (pPath!=NULL) {
+    input = string(pPath);  // assign char* to string. Can also do --> string someString(char*);                  
+    //cout << "Environment variable is : "<< input << endl;                                                                                                    
+  }      
+
+
+}
+
+
 void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1_g2 = 0, const Int_t mumu0_ee1 = 0) {
 
   // for Control region, mumu0_ee1 says if we use muon (0) or electron (1)
@@ -319,7 +333,12 @@ void distribution(const string folderNameWithRootFiles = "",
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
   //string fileDirectoryPath = "/cmshome/ciprianim/CMSSW721/output/monojet/" + folderNameWithRootFiles + "/";
-  string fileDirectoryPath = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFiles + "/"; 
+
+  // here we get environmental variable that we need to use the code, such as CMSSW_BASE         
+  string working_cmssw_path = "";
+  myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
+  working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
+  string fileDirectoryPath = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -809,10 +828,15 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   gROOT->SetStyle("Plain");  // to have white legend (on my pc it's already white, but in tier2 it appears grey)
   gStyle->SetFillColor(10);
 
+  // here we get environmental variable that we need to use the code, such as CMSSW_BASE                              
+  string working_cmssw_path = "";
+  myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
+  working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
+
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = "$CMSSW_BASE/src/myMonoJetCode/output/monojet/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)

@@ -42,6 +42,20 @@ int main(int argc, char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // here we get environmental variable that we need to use the code, such as CMSSW_BASE
+  string envVar = "CMSSW_BASE";
+  char* pPath;
+  pPath = getenv (envVar.c_str());
+  string working_cmssw_path = "";
+  if (pPath!=NULL) {
+    working_cmssw_path = string(pPath);  // assign char* to string. Can also do --> string someString(char*);
+    //cout << "With cout"<<endl;
+    //cout << "The current path is: "<< working_cmssw_path << endl;
+  }
+  working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src 
+  // WARNING: in the config file the file path starts as /myMonoJetCode/... The initial "/" is important, since working_cmssw_path end with "src" w/o "/"
+  // you could reverse this behaviour, but be consistent with your choice
+
   char configFileName[200];
   std::strcpy(configFileName,argv[1]);
 
@@ -232,7 +246,7 @@ int main(int argc, char* argv[]) {
 	if (parameterName == "PATH_TO_SAMPLES_4SR") {  // path to file with signal region's samples and some options
 
 	  signalRegion_flag = 1;
-	  fileWithSamplesPath = name;
+	  fileWithSamplesPath = working_cmssw_path + name;
 	  std::cout << "Performing analysis on signal region." <<std::endl;
 	  std::cout << setw(20) << "File pointing to samples: " << fileWithSamplesPath<<std::endl;
 
@@ -241,7 +255,7 @@ int main(int argc, char* argv[]) {
 	if (parameterName == "PATH_TO_SAMPLES_4CR") {  // path to file with control region's samples and some options
 
 	  controlSample_flag = 1;
-	  fileWithSamplesPath = name;
+	  fileWithSamplesPath = working_cmssw_path + name;
 	  std::cout << "Performing analysis on control samples." <<std::endl;
 	  std::cout << setw(20) << "File pointing to samples: " << fileWithSamplesPath<<std::endl;
 
@@ -257,7 +271,7 @@ int main(int argc, char* argv[]) {
 	if (parameterName == "PATH_TO_SAMPLES_4MET_RESO_RESP") {  // path to file with CS samples and some options
 
 	  metResolutionAndResponse_flag = 1;
-	  fileWithSamplesPath = name;
+	  fileWithSamplesPath = working_cmssw_path + name;
 	  std::cout << "Performing MET resolution and response analysis." <<std::endl;
 	  std::cout << setw(20) << "File pointing to samples: " << fileWithSamplesPath<<std::endl;
 
@@ -265,8 +279,8 @@ int main(int argc, char* argv[]) {
 
 	if (parameterName == "DIRECTORY_PATH") {  // name of directory where files are saved
 
-	  directory_to_save_files = name;
-	  std::cout << "Files will be saved in '" << name << "' ." <<std::endl;
+	  directory_to_save_files = working_cmssw_path + name;
+	  std::cout << "Files will be saved in '" << directory_to_save_files << "' ." <<std::endl;
 
 	} 
 
