@@ -756,7 +756,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      }
 
-     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
+     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_prunedMass[0] > 65.) && (FatJet_prunedMass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
 
      // beginning of eventMask building
@@ -873,7 +873,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
        Hlep1etaDistribution_monoV->Fill(ptr_lepton_eta[0],newwgt);
        Hlep2ptDistribution_monoV->Fill(ptr_lepton_pt[1],newwgt);
        Hlep2etaDistribution_monoV->Fill(ptr_lepton_eta[1],newwgt);
-       HprunedMassDistribution_monoV->Fill(FatJet_mass[0],newwgt);
+       HprunedMassDistribution_monoV->Fill(FatJet_prunedMass[0],newwgt);
        Htau2OverTau1Distribution_monoV->Fill(FatJet_tau2[0]/FatJet_tau1[0],newwgt);
 
        if (hasScaledHistograms_flag) {

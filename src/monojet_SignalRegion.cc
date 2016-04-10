@@ -397,7 +397,7 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      nTotalWeightedEvents += newwgt;  // counting events with weights
 
      // beginning of eventMask building
-     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_mass[0] > 65.) && (FatJet_mass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
+     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_prunedMass[0] > 65.) && (FatJet_prunedMass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
      //if (Vtagged_flag == 1) cout << "jentry n: "<<jentry << " V TAGGED!"<<endl;
 
@@ -464,7 +464,7 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution_monoV->Fill(FatJet_eta[0],newwgt);
        Hjet1ptDistribution_monoV->Fill(FatJet_pt[0],newwgt);
-       HprunedMassDistribution_monoV->Fill(FatJet_mass[0],newwgt);
+       HprunedMassDistribution_monoV->Fill(FatJet_prunedMass[0],newwgt);
        Htau2OverTau1Distribution_monoV->Fill(FatJet_tau2[0]/FatJet_tau1[0],newwgt);
 
        if (hasScaledHistograms_flag) {

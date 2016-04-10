@@ -574,9 +574,13 @@ int main(int argc, char* argv[]) {
 
 	  for(Int_t i = 0; i < subSampleNameVector.size(); i++) {
 	   
-	    std::string treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root"; 
-	    std::string friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root"; 
-	    std::string sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root"; 
+	    //std::string treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root"; 
+	    //std::string friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root"; 
+	    //std::string sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root"; 
+
+	    std::string treeRootFile = treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root"; 
+	    std::string friend_treeRootFile = treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root"; 
+	    std::string sf_friend_treeRootFile = treePath + "sfFriend_" + subSampleNameVector[i]+ ".root"; 
 
 	    chain->Add(TString(treeRootFile.c_str()));
 	    chFriend->Add(TString(friend_treeRootFile.c_str()));
