@@ -200,7 +200,7 @@ void wlnujetsControlSample::setScaleFactorHistograms() {
   HYieldsMetBin_LepTightDown_monoV = new TH1D("HYieldsMetBin_LepTightDown_monoV","yields in bins of met; #slash{E}_{T};# of events",nMetBins_monoV,metBinEdgesVector_monoV.data());
 
   HSyst_LepTight_monoV = new TH1D("HSyst_LepTight_monoV","systematic uncertainty for lepton tight id",nMetBins_monoV,metBinEdgesVector_monoV.data());
- 
+
 }
 
 
@@ -388,7 +388,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
    fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
    fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (isolation included)
-   fChain->SetBranchStatus("nEle20T",1);  // # of electrons passing tight selection (isolation included)
+   //fChain->SetBranchStatus("nEle20T",1);  // # of electrons passing tight selection (isolation included)
    //fChain->SetBranchStatus("nTau18V",1);
    fChain->SetBranchStatus("nTauClean18V",1);
 
@@ -454,12 +454,12 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 
    //added on 23/01/2016
    fChain->SetBranchStatus("nEle40T",1);   
-   fChain->SetBranchStatus("nCalibEle",1);
-   fChain->SetBranchStatus("CalibEle_pt",1);
-   fChain->SetBranchStatus("CalibEle_energy",1);
-   fChain->SetBranchStatus("CalibEle_eta",1);
-   fChain->SetBranchStatus("CalibEle_phi",1);
-   fChain->SetBranchStatus("CalibEle_mass",1);
+   // fChain->SetBranchStatus("nCalibEle",1);
+   // fChain->SetBranchStatus("CalibEle_pt",1);
+   // fChain->SetBranchStatus("CalibEle_energy",1);
+   // fChain->SetBranchStatus("CalibEle_eta",1);
+   // fChain->SetBranchStatus("CalibEle_phi",1);
+   // fChain->SetBranchStatus("CalibEle_mass",1);
 
    if (!ISDATA_FLAG) {
      fChain->SetBranchStatus("nGenPart",1);
@@ -480,12 +480,12 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      fChain->SetBranchStatus("SF_trig1lep",1);
      fChain->SetBranchStatus("SF_trigmetnomu",1);
      fChain->SetBranchStatus("SF_LepTightLoose",1);
-     fChain->SetBranchStatus("SF_LepTightLooseUp",1);
-     fChain->SetBranchStatus("SF_LepTightLooseDown",1);
+     //fChain->SetBranchStatus("SF_LepTightLooseUp",1);
+     //fChain->SetBranchStatus("SF_LepTightLooseDown",1);
      fChain->SetBranchStatus("SF_LepTight",1);
      fChain->SetBranchStatus("SF_LepTightUp",1);
      fChain->SetBranchStatus("SF_LepTightDown",1);
-     fChain->SetBranchStatus("SF_NLO",1);
+     //fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleDown",1);
@@ -807,6 +807,8 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 	   HYieldsMetBin_qcdPdfDown->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
 	   HYieldsMetBin_ewkUp->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
 	   HYieldsMetBin_ewkDown->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	   HYieldsMetBin_LepTightUp->Fill(metNoLepPt,(newwgt * SF_LepTightUp / SF_LepTight));
+	   HYieldsMetBin_LepTightDown->Fill(metNoLepPt,(newwgt * SF_LepTightDown / SF_LepTight));
 
 	 }
 
@@ -836,6 +838,8 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
 	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
 	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_LepTightUp_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightUp / SF_LepTight));
+	 HYieldsMetBin_LepTightDown_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightDown / SF_LepTight));
 
        }
 

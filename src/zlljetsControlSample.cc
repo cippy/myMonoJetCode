@@ -399,7 +399,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
    fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
    fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (isolation included)
-   fChain->SetBranchStatus("nEle20T",1);  // # of electrons passing tight selection (isolation included)
+   // fChain->SetBranchStatus("nEle20T",1);  // # of electrons passing tight selection (isolation included)
    //fChain->SetBranchStatus("nTau18V",1);
    fChain->SetBranchStatus("nTauClean18V",1);
 
@@ -465,12 +465,12 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
    //added on 23/01/2016
    fChain->SetBranchStatus("nEle40T",1);   
-   fChain->SetBranchStatus("nCalibEle",1);
-   fChain->SetBranchStatus("CalibEle_pt",1);
-   fChain->SetBranchStatus("CalibEle_energy",1);
-   fChain->SetBranchStatus("CalibEle_eta",1);
-   fChain->SetBranchStatus("CalibEle_phi",1);
-   fChain->SetBranchStatus("CalibEle_mass",1);
+   // fChain->SetBranchStatus("nCalibEle",1);
+   // fChain->SetBranchStatus("CalibEle_pt",1);
+   // fChain->SetBranchStatus("CalibEle_energy",1);
+   // fChain->SetBranchStatus("CalibEle_eta",1);
+   // fChain->SetBranchStatus("CalibEle_phi",1);
+   // fChain->SetBranchStatus("CalibEle_mass",1);
 
    if (!ISDATA_FLAG) {
      fChain->SetBranchStatus("nGenPart",1);
@@ -496,7 +496,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      fChain->SetBranchStatus("SF_LepTight",1);
      fChain->SetBranchStatus("SF_LepTightUp",1);
      fChain->SetBranchStatus("SF_LepTightDown",1);
-     fChain->SetBranchStatus("SF_NLO",1);
+     //fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleDown",1);
@@ -855,6 +855,8 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 	 HYieldsMetBin_qcdPdfDown->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
 	 HYieldsMetBin_ewkUp->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
 	 HYieldsMetBin_ewkDown->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_LepTightLooseUp->Fill(metNoLepPt,(newwgt * SF_LepTightLooseUp / SF_LepTightLoose));
+	 HYieldsMetBin_LepTightLooseDown->Fill(metNoLepPt,(newwgt * SF_LepTightLooseDown / SF_LepTightLoose));
 
        }
 
@@ -886,6 +888,8 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
 	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
 	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_LepTightLooseUp_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightLooseUp / SF_LepTightLoose));
+	 HYieldsMetBin_LepTightLooseDown_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightLooseDown / SF_LepTightLoose));
 
        }
 
