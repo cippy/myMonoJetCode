@@ -68,7 +68,7 @@ void myRebinHisto(TH1D *h, const Int_t rebinFactor = 1) {
 
 }
 
-void myGetEnvVariable(const string envVar = "", string & input) {
+void myGetEnvVariable(const string envVar, string& input) {
 
   // here we get environmental variable that we need to use the code, such as CMSSW_BASE                                                                               
   char* pPath;
@@ -85,10 +85,11 @@ void myGetEnvVariable(const string envVar = "", string & input) {
 void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1_g2 = 0, const Int_t mumu0_ee1 = 0) {
 
   // for Control region, mumu0_ee1 says if we use muon (0) or electron (1)
+  // for trees with skim 1 lep Tight we don't have GJets samples in 76X
 
   if (signalRegion0_controlRegion1 == 0) {
 
-    //sampleName.push_back("GJets");
+    sampleName.push_back("GJets");
     sampleName.push_back("DYJetsToLL");
     sampleName.push_back("QCD");
     sampleName.push_back("Diboson");
@@ -96,7 +97,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     sampleName.push_back("WJetsToLNu");
     sampleName.push_back("ZJetsToNuNu");
        
-    //MC_TexLabel.push_back("#gamma + jets");
+    MC_TexLabel.push_back("#gamma + jets");
     MC_TexLabel.push_back("Z(ll)+jets");
     MC_TexLabel.push_back("QCD");
     MC_TexLabel.push_back("Diboson");
@@ -109,7 +110,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     if(z0_w1_g2 == 0) {
 
       sampleName.push_back("ZJetsToNuNu");
-      //sampleName.push_back("GJets");
+      if (mumu0_ee1 == 0) sampleName.push_back("GJets");
       sampleName.push_back("QCD");
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("Diboson");
@@ -117,7 +118,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
       sampleName.push_back("DYJetsToLL");
 
       MC_TexLabel.push_back("Z(#nu#nu)+jets");
-      //MC_TexLabel.push_back("#gamma + jets");
+      if (mumu0_ee1 == 0) MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("QCD");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("Diboson");
@@ -129,16 +130,16 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
     } else if(z0_w1_g2 == 1) {
 
       sampleName.push_back("ZJetsToNuNu");
+      if (mumu0_ee1 == 0) sampleName.push_back("GJets");
       sampleName.push_back("DYJetsToLL");
-      //sampleName.push_back("GJets");
       sampleName.push_back("QCD");      
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");   
       sampleName.push_back("WJetsToLNu");
 
       MC_TexLabel.push_back("Z(#nu#nu)+jets");
+      if (mumu0_ee1 == 0) MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("Z(ll)+jets");
-      //MC_TexLabel.push_back("#gamma + jets");
       MC_TexLabel.push_back("QCD");     
       MC_TexLabel.push_back("Diboson");
       MC_TexLabel.push_back("t#bar{t},single t");
@@ -338,7 +339,7 @@ void distribution(const string folderNameWithRootFiles = "",
   string working_cmssw_path = "";
   myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
   working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
-  string fileDirectoryPath = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFiles + "/"; 
+  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -365,31 +366,12 @@ void distribution(const string folderNameWithRootFiles = "",
     exit(EXIT_FAILURE);
   }
 
-
-  // if (mu0_e1 == 0) {
-  //   if (z0_w1_g2 == 0) suffix = "mumu";
-  //   if (z0_w1_g2 == 1) suffix = "munu";
-  // } else if (mu0_e1 == 1) {
-  //   if (z0_w1_g2 == 0) suffix = "ee";
-  //   if (z0_w1_g2 == 1) suffix = "enu";
-  // } else {
-  //   cout << "Error: mu0_e1 must be 0 or 1. End of programme." << endl;
-  //   exit(EXIT_FAILURE);
-  // }
-
   TH1D* hvar = NULL;   // to get histogram from file
   string hvarName;          // name of histogram to take from file
   string xAxisName;        // name of X axis when plotting distribution. It is a tex string (with ROOT standard), e.g. "#slash{E}_{T} [GeV]" for MET
 
-  // ===== TO BE MODIFIED =====
-
-  // hvarName = "HrecoilDistribution";
-  // xAxisName = "#slash{E}_{T} [GeV]";
-
   setDistribution(mu0_e1, var, hvarName, xAxisName);
   if (monoJ0_monoV1 == 1) hvarName += "_monoV";
-    
-  // =====================
 
   vector<TH1D*> hMC;
   TH1D* hdata = NULL;
@@ -418,25 +400,6 @@ void distribution(const string folderNameWithRootFiles = "",
     
     canvasName = var + "_" + suffix + "jetsCR";
     filenameBase = suffix + "jets_CR_";
-
-    // if(z0_w1_g2 == 0) {
-      
-    //   canvasName = var + "_" + suffix + "jetsCR";
-    //   if (mu0_e1 == 0) filenameBase = "zmumujets_CR_";
-    //   else if (mu0_e1 == 1) filenameBase = "zeejets_CR_";
-       
-    // } else if(z0_w1_g2 == 1) {
-
-    //   canvasName = var + "_" + suffix + "jetsCR";
-    //   if (mu0_e1 == 0) filenameBase = "wmunujets_CR_";
-    //   else if (mu0_e1 == 1) filenameBase = "wenujets_CR_";
-      
-    // } else if(z0_w1_g2 == 2) {
-
-    //   canvasName = var + "_" + suffix + "jetsCR";
-    //   filenameBase = "gammajets_CR_";
-      
-    // }
 
   }
 
@@ -470,37 +433,12 @@ void distribution(const string folderNameWithRootFiles = "",
 
   } 
 
-  // ==== FILE NAME WILL HAVE TO BE MODIFIED, NOW IT IS JUST A TEST =====
-
   string datafileName = fileDirectoryPath;
 
   if (data0_noData1 == 0) {
 
-    if (signalRegion0_controlRegion1 == 0) {
-
-      datafileName += "monojet_SR_DATA.root";
-
-    } else {
-
-      if(z0_w1_g2 == 0) {
-
-       if (mu0_e1 == 0) datafileName += "zmumujets_CR_DATA.root";
-       else if (mu0_e1 == 1) datafileName += "zeejets_CR_DATA.root";
-
-     } else if(z0_w1_g2 == 1) {
-
-       if (mu0_e1 == 0) datafileName += "wmunujets_CR_DATA.root";
-       else if (mu0_e1 == 1) datafileName += "wenujets_CR_DATA.root";
-
-     } else if(z0_w1_g2 == 2) {
-
-	datafileName += "gammajets_CR_DATA.root";
-
-     }
-
-      
-
-    }
+    if (signalRegion0_controlRegion1 == 0) datafileName += "monojet_SR_DATA.root";    
+    else datafileName += suffix + "jets_CR_DATA.root";
 
   }
 
@@ -550,16 +488,6 @@ void distribution(const string folderNameWithRootFiles = "",
 
   }
 
-  // if (data0_noData1 == 0) {
-
-  //   cout << "==================================================" << endl;
-  //   cout << "Before any scaling" << endl;
-  //   cout << "Events in data: " << hdata->Integral() << endl;
-  //   cout << "Events in MC   : " << stackNorm << endl;
-  //   cout << "==================================================" << endl;
-  
-  // }
-
   // loop again on MC histograms to scale them and then fill the thstack
 
   for (Int_t j = 0; j < nFiles; j++) {
@@ -582,21 +510,7 @@ void distribution(const string folderNameWithRootFiles = "",
   if (data0_noData1 == 0) {
 
     myRebinHisto(hdata, rebinFactor);
-
     if (binDensity_flag != 0) hdata->Scale(1.0,"width");
-
-    // if (MCnormalizedToData_flag != 0 || binDensity_flag != 0) {
-    //   cout << "==================================================" << endl;
-    //   cout << "After scaling" << endl;
-    //   if (binDensity_flag != 0) {
-    // 	cout << "Events in data: " << hdata->Integral("width") << endl;
-    // 	cout << "Events in MC   : " << ((TH1D*) hMCstack->GetStack()->Last())->Integral("width") << endl;
-    //   } else {
-    // 	cout << "Events in data: " << hdata->Integral() << endl;
-    // 	cout << "Events in MC   : " << ((TH1D*) hMCstack->GetStack()->Last())->Integral() << endl;
-    //   }
-    //   cout << "==================================================" << endl;
-    // }
 
   }
 
@@ -604,15 +518,12 @@ void distribution(const string folderNameWithRootFiles = "",
   // now here we go with the canvas
 
   TH1D * ratioplot = NULL; // will use it for the ratio plots
-  //TH1D *h1overMCstack = NULL; //will be used to create ratioplot
-
   TPad *subpad_1 = NULL;  // will use it to access specific subpad in canvas
   TPad *subpad_2 = NULL; 
-
-  TCanvas *c;
+  TLegend *leg = new TLegend(0.7,0.6,0.99,0.94);  
+  TCanvas *c = NULL;
   if (data0_noData1 == 0) c = new TCanvas(canvasName.c_str(), (var + " distribution").c_str(), 700, 700);
   else c = new TCanvas(canvasName.c_str(), (var + " distribution").c_str());
-  TLegend *leg = new TLegend(0.7,0.6,0.99,0.94);  
 
   // if there are data, split canvas to draw the dta/MC ratio plot
 
@@ -647,6 +558,7 @@ void distribution(const string folderNameWithRootFiles = "",
   Double_t minYvalue =  hMCstack->GetMinimum();
   if (data0_noData1 == 0 && (hMCstack->GetMinimum() > hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
   if (fabs(minYvalue) < 0.001) minYvalue = 0.05;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
+  if (!yAxisLog_flag) minYvalue = 0.0; // if using linear y axis, very likely the distribution will start from 0 (counting events)
 
   // ===> WARNING: seting the minimum to 0.01 could be bad if one has histograms normalized to 1
 
@@ -835,8 +747,8 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = "working_cmssw_path/myMonoJetCode/output/monojet/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)
@@ -849,7 +761,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   suffixCR.push_back("zmumu"); texSuffixCR.push_back("Z(#mu#mu)");
   suffixCR.push_back("zee");   texSuffixCR.push_back("Z(ee)");
   suffixCR.push_back("wmunu"); texSuffixCR.push_back("W(#mu#nu)");
-  suffixCR.push_back("wenu");  texSuffixCR.push_back("W(#e#nu)");
+  suffixCR.push_back("wenu");  texSuffixCR.push_back("W(e#nu)");
   suffixCR.push_back("gamma");  texSuffixCR.push_back("#gamma");
 
   Int_t indexRightSuffixSR = -1;
@@ -874,6 +786,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
     if (foundSuffix != string::npos) indexRightSuffixCR = i;
   }
 
+  // decide things about canvas name, title (in tex format) depending on zvv_wlv_flag: if 1 (set) then we do Z(vv)/W(lv), otherwise we do usual scale factor SR/CR
   if (zvv_wlv_flag) {
     plotDirName = "wlnu";
     texYTitle = "Z(#nu#nu) / W(l#nu)";
@@ -886,17 +799,20 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   if (monoJ0_monoV1 == 1) canvasName += "_monoV"; 
 
-  string calibEleSuffix = "_CalibEle";  // used to select proper directory where to save plot, depending on input file name
-  size_t useCalibEle = fileDirectoryPathCR.find(calibEleSuffix);
-  if (useCalibEle != string::npos) plotDirName += calibEleSuffix;
+  // won't use CalibEle variables, but keep that for now just in case
+  // string calibEleSuffix = "_CalibEle";  // used to select proper directory where to save plot, depending on input file name
+  // size_t useCalibEle = fileDirectoryPathCR.find(calibEleSuffix);
+  // if (useCalibEle != string::npos) plotDirName += calibEleSuffix;
   
+  // scale factors plot are saved in the same directory as SR plots. It's just a choice of convenience since they are applied to SR
   string plotDirectoryPath = fileDirectoryPathSR;
-  //  if (monoJ0_monoV1 == 1) plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/output/monojet/SR_CR_ratio/monoV/" + plotDirName + "/";
-  //else plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/output/monojet/SR_CR_ratio/monojet/" + plotDirName + "/";
   string plotFileExtension = ".pdf";
 
+  // create name for SR, e.g: <path_to_plots>/SignalRegion_25ns_2p32fb/monojet_SR_ZJetsToNuNu.root
+  // this is the SR file to be opened: similar thing done for CR
   string filenameSR = fileDirectoryPathSR + "monojet_SR_" + bkgSampleSR + filenameExtension;
 
+  // start CR root file name with the directory where it is (note, it might be the same as SR, in this case fileDirectoryPathCR == fileDirectoryPathSR)
   string filenameCR = fileDirectoryPathCR;
   if (zvv_wlv_flag) {
     filenameCR += "monojet_SR_WJetsToLNu" + filenameExtension;
@@ -907,6 +823,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
     else if (plotDirName.find("gamma") != string::npos) filenameCR += ("GJets" + filenameExtension); 
   }
 
+  // now open files and get histograms
   TH1D* hvar = NULL;   // to get histogram from file
   TH1D* hsyst = NULL;
   //string hvarName;          // name of histogram to take from file
@@ -976,19 +893,23 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   hTransferFactor = (TH1D*)hSR->Clone("hTransferFactor"); 
   hTransferFactor->Divide(hCR);  // now the uncertainty is only statistical
 
-  // now that hSR and hCR have been used with inly statistical uncertainty, compute their total uncertainty and use it in ratio
+  // now that hSR and hCR have been used with only statistical uncertainty, compute their total uncertainty and use it in ratio
 
   for (Int_t i = 1; i <= (hSR->GetNbinsX()+1); i++) {
 
     //computing total uncertainty summing stat and syst in quadrature (histogram with systematic has uncertainty as bin content)
+    // to stat. uncertainty (GetBinError) sum syst. one (given by the content of hsyst, and not the error of hsyst, since hsyst was devised as the syst unc of HYieldsMetBin histogram)
     Double_t totUnc = 0.0;
     // ---> handling correlation, to be revised  <----
     if (numDenCorrelation == 0) {
+      // add uncert. in quadrature for numerator
       totUnc = hSR->GetBinError(i) * hSR->GetBinError(i) + hSRsyst->GetBinContent(i) * hSRsyst->GetBinContent(i); 
+      // assign uncert. as square root of quadratic sum above
       hSR->SetBinError(i, sqrt(totUnc));
+      // and here we go again for the denominator
       totUnc = hCR->GetBinError(i) * hCR->GetBinError(i) + hCRsyst->GetBinContent(i) * hCRsyst->GetBinContent(i);
       hCR->SetBinError(i, sqrt(totUnc));
-    } // else if (numDenCorrelation == 1) {   // in this case just coonsider the statistical uncertainty (default)
+    } // else if (numDenCorrelation == 1) {   // in this case just consider the statistical uncertainty (default)
     //   // if total correlation holds, systematic will cancel out in ratio
     //   totUnc = hSR->GetBinError(i) * hSR->GetBinError(i); 
     //   hSR->SetBinError(i, sqrt(totUnc));
@@ -998,26 +919,30 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   }
 
-  // now there is a systematic uncertainty related to the (charged) lepton ID. Tis is 2% for each lepton, thus 2% for W ad 4% for Z in control regions only.
+
+  // now there is a systematic uncertainty related to the (charged) lepton ID. This is 2% for each lepton, thus 2% for W ad 4% for Z in control regions only.
   // this uncertainty can be summed in quadrature to the others
   // this is applied to the denominator only if it comes from a control region (for Zvv/Wlv both numerator and denominator are taken from the signal region)
   // this uncertainty is set after implementing all the other uncertainties deriving from change in QCD or EWK scale (done just above)
-  if (!zvv_wlv_flag) {
+  // ============================================================= 
+  // NOTE: commented, since now it is implemented as a scale factor
+  // =============================================================         
+  // if (!zvv_wlv_flag) {
 
-    Double_t lepIDuncertainty = 0.0; // 2% for 1 lep CR, 4% for 2 lep CR, which is 0.02 * binContent or 0.04 * binContent
-    if (plotDirName.find("z") != string::npos) lepIDuncertainty = 0.04 * 0.04;       // computing square of the factor to use it directly below
-    else if (plotDirName.find("w") != string::npos) lepIDuncertainty = 0.02 * 0.02;  // computing square of the factor to use it directly below
+  //   Double_t lepIDuncertainty = 0.0; // 2% for 1 lep CR, 4% for 2 lep CR, which is 0.02 * binContent or 0.04 * binContent
+  //   if (plotDirName.find("z") != string::npos) lepIDuncertainty = 0.04 * 0.04;       // computing square of the factor to use it directly below
+  //   else if (plotDirName.find("w") != string::npos) lepIDuncertainty = 0.02 * 0.02;  // computing square of the factor to use it directly below
 
-    for (Int_t i = 1; i <= (hCR->GetNbinsX()+1); i++) {
+  //   for (Int_t i = 1; i <= (hCR->GetNbinsX()+1); i++) {
 
-      //computing total uncertainty summing stat and syst in quadrature (histogram with systematic has uncertainty as bin content)
-      Double_t totUnc = hCR->GetBinError(i) * hCR->GetBinError(i) + lepIDuncertainty * hCR->GetBinContent(i) * hCR->GetBinContent(i); 
-      // note that here the bin error used in totUnc is the sum in quadrature of statistical and other systematic uncertainties   
-      hCR->SetBinError(i, sqrt(totUnc));
+  //     //computing total uncertainty summing stat and syst in quadrature (histogram with systematic has uncertainty as bin content)
+  //     Double_t totUnc = hCR->GetBinError(i) * hCR->GetBinError(i) + lepIDuncertainty * hCR->GetBinContent(i) * hCR->GetBinContent(i); 
+  //     // note that here the bin error used in totUnc is the sum in quadrature of statistical and other systematic uncertainties   
+  //     hCR->SetBinError(i, sqrt(totUnc));
 
-    }
+  //   }
 
-  }
+  // }
 
   hTransferFactor_totUnc = (TH1D*)hSR->Clone("hTransferFactor_totUnc"); 
   hTransferFactor_totUnc->Divide(hCR);  // now the uncertainty is the total one
@@ -1042,20 +967,48 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   
   //cout << "CHECK ZZZ" << endl;
 
+  // get maximum and minimum value of histogram including uncertainty, so to choose y axis range automatically 
+
+
+  //Double_t maxYvalue =  hTransferFactor_totUnc->GetMaximum();
+  //Double_t minYvalue =  hTransferFactor_totUnc->GetMinimum();
+  Double_t maxYvalue =  0.0;  
+  Double_t minYvalue =  10000.0;
+
+  for (Int_t i = 0; i <= (hTransferFactor_totUnc->GetNbinsX()+1); i++) {
+    Double_t tmp = hTransferFactor_totUnc->GetBinContent(i) + hTransferFactor_totUnc->GetBinError(i);
+    if ( tmp > maxYvalue) maxYvalue = tmp;
+    tmp = hTransferFactor_totUnc->GetBinContent(i) - hTransferFactor_totUnc->GetBinError(i);
+    if (tmp < minYvalue) minYvalue = (tmp < 0.0) ? 0.0 : tmp;
+
+  }
+
+  // now that we have max and min for scale factors including the uncertainty band, set them to a slightly wider range to have a nice plot
+  maxYvalue += 0.2 * maxYvalue;
+  minYvalue -= 0.2 * maxYvalue;
+  if (minYvalue < 0.0) minYvalue = 0.0;
+
   if (yAxisMin < yAxisMax) {  // default option [0,-1] implies default axis
 
     c->Update();  
-    hTransferFactor_totUnc->GetYaxis()->SetRangeUser(yAxisMin,yAxisMax);
+    // hTransferFactor_totUnc->GetYaxis()->SetRangeUser(yAxisMin,yAxisMax);
+    hTransferFactor_totUnc->SetMaximum(yAxisMax);
+    if (fabs(yAxisMin) > 0.00001) hTransferFactor_totUnc->SetMinimum(yAxisMin);  // if lower limit is set by user for Y axis, use it to set the minimum   
+    //else hTransferFactor_totUnc->SetMinimum(0.5 * minYvalue);  // if lower limit is left as default, use half of the lowest possible value
+    c->Update();  
 
-  } // else if (yAxisMin > yAxisMax && yAxisMax == -1) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
+  } else if ( yAxisMin > yAxisMax && (fabs(yAxisMax + 1.0) < 0.0001) ) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
 
-  //   cout << "CHECK CCC" << endl;
-  //   c->Update();  
-  //   hTransferFactor_totUnc->GetYaxis()->SetRangeUser(yAxisMin,c->GetY2());
-    
-  //   cout << "CHECK BBB" << endl;
+    //   cout << "CHECK CCC" << endl;
+    c->Update();  
+    //hTransferFactor_totUnc->GetYaxis()->SetRangeUser(yAxisMin,c->GetY2());
+    hTransferFactor_totUnc->SetMaximum(maxYvalue);  
+    if (fabs(yAxisMin) > 0.00001) hTransferFactor_totUnc->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum   
+    //else hTransferFactor_totUnc->SetMinimum(minYvalue);
+    //   cout << "CHECK BBB" << endl;
+    c->Update();  
 
-  // }
+  }
 
   //cout << "CHECK AAA" << endl;
 
@@ -1078,11 +1031,13 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
     c->Update();  
     hTransferFactor_totUnc->GetXaxis()->SetRangeUser(xAxisMin,xAxisMax);
+    c->Update();  
 
-  } else if (xAxisMin > xAxisMax && xAxisMax == -1) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
+  } else if ( xAxisMin > xAxisMax && (fabs(xAxisMax + 1.0) < 0.0001) ) {  //if only lower bound is given (and the upper is left as -1) use default upper bound
     
     c->Update();   
     hTransferFactor_totUnc->GetXaxis()->SetRangeUser(xAxisMin,hTransferFactor_totUnc->GetXaxis()->GetXmax());   // N.B. SetRangeUser cannot set axis ranges outside the original coordinates: if they are 5-10, I can set them 6-9, 5-8 ecc... but if I do 5-12, the range will be set to 5-10
+    c->Update();  
 
   }
 
@@ -1133,7 +1088,7 @@ Int_t main(int argc, char* argv[]) {
   // signal region
   distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
   distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
   distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
   distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
   distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
@@ -1147,12 +1102,12 @@ Int_t main(int argc, char* argv[]) {
   // Z->mumu control region
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
   distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
@@ -1162,50 +1117,33 @@ Int_t main(int argc, char* argv[]) {
     distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
-  // // Z->ee control region
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  // if (j0v1 != 1) distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  // else {
-  //   distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-  //   distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
-  // }
-
-  // // Z->ee control region (calibEle)
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  // distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  // if (j0v1 != 1) distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  // else {
-  //   distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-  //   distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF_CalibEle",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
-  // }
+  // Z->ee control region
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  else {
+    distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  }
 
   // W->munu control region
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"Mt",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
   distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
   if (j0v1 != 1) distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
@@ -1213,68 +1151,60 @@ Int_t main(int argc, char* argv[]) {
     distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
-  // // W->enu control region
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"Mt",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  // if (j0v1 != 1) distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  // else {
-  //   distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-  //   distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
-  // }
-
-  // // W->enu control region (calibEle)
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"Mt",1,0,0,-1,0,-1,0,0);
-  // distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  // if (j0v1 != 1) distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  // else {
-  //   distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-  //   distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF_CalibEle",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
-  // }
-
+  // W->enu control region
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  else {
+    distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  }
 
   // void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   // 			const string folderNameWithRootFilesCR = "",
   // 			const Int_t bkgToEstimate_z0_w1 = 0,
   // 			const Int_t monoJ0_monoV1 = 0,
-  // 			//const Int_t signalRegion0_controlRegion1 = 0, 
-  // 			//const Int_t z0_w1 = 0,
-  // 			//const Int_t mu0_e1 = 0,
-  // 			//const Int_t data0_noData1 = 0, 
-  // 			//const string var = "met", 
-  // 			//const Int_t yAxisLog_flag = 0, 
-  // 			//const Int_t MCpoissonUncertainty_flag = 0, 
   // 			const Double_t xAxisMin = 0, 
   // 			const Double_t xAxisMax = -1, 
   // 			const Double_t yAxisMin = 0, 
   // 			const Double_t yAxisMax = -1, 
-  // 			//const Int_t binDensity_flag = 0, 
-  // 			//const Int_t MCnormalizedToData_flag = 0,
   // 			const Int_t numDenCorrelation = 0,
   // 			const Int_t rebinFactor = 1)
   // {
 
+  // if (j0v1 == 1) {
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.8,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.8,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
+  // } else {
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,4,15,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,4,15,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
+  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
+  // }
+
   if (j0v1 == 1) {
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.8,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-  } else {
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,4,15,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+  } else {
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
   }
 
   return 0;
