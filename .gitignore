@@ -6,15 +6,19 @@ std_output.txt
 # some directories#
 #*/
 .SCRAM/
-src/tmp/main
+output/
+src/tmp/
 #
 ###################
 # other files#
 *~
-*o
+*.txt
+!config/*.txt
+*.o
 *C.d
 *C.so
 ###################
 #executables
 macro/distribution
+src/tmp/main
 ###################
