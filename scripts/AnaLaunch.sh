@@ -20,18 +20,12 @@ echo
 ./tmp/main $MY_CFG_PATH/wmunujets_ControlRegion_config_spring15_25ns.txt
 echo
 echo
-#./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt
-#echo
-#echo
-#./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt -calibEle
-#echo
-#echo
-#./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt
-#echo
-#echo
-#./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt -calibEle
-#echo
-#echo
+./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt
+echo
+echo
+./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt
+echo
+echo
 #echo "producing plots for monojet (exclusive)"
 ./../macro/distribution 0
 echo
