@@ -444,10 +444,10 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      if ( ((eventMask & analysisMask_monoJ.globalMask.back()) == analysisMask_monoJ.globalMask.back()) ) {
        
        // this histogram holds the final yields in bins of MET
-       HYieldsMetBin->Fill(metNoMu_pt,newwgt);
+       HYieldsMetBin->Fill(phmet_pt,newwgt);
 	 
        HhtDistribution->Fill(htJet25,newwgt);
-       HrecoilDistribution->Fill(metNoMu_pt,newwgt);
+       HrecoilDistribution->Fill(phmet_pt,newwgt);
        HvtxDistribution->Fill(nVert,newwgt);
        HnjetsDistribution->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution->Fill(JetClean_eta[0],newwgt);
@@ -463,24 +463,24 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
        if (hasScaledHistograms_flag) {
 
-	 HYieldsMetBin_qcdRenScaleUp->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdRenScaleDown->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleUp->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleDown->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfUp->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfDown->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
-	 HYieldsMetBin_ewkUp->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
-	 HYieldsMetBin_ewkDown->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_qcdRenScaleUp->Fill(phmet_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdRenScaleDown->Fill(phmet_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleUp->Fill(phmet_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleDown->Fill(phmet_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfUp->Fill(phmet_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfDown->Fill(phmet_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
+	 HYieldsMetBin_ewkUp->Fill(phmet_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
+	 HYieldsMetBin_ewkDown->Fill(phmet_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
 
        }
 
 
      } else if (((eventMask & analysisMask_monoV.globalMask.back()) == analysisMask_monoV.globalMask.back())) {
 
-       HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
+       HYieldsMetBin_monoV->Fill(phmet_pt,newwgt);
 	 
        HhtDistribution_monoV->Fill(htJet25,newwgt);
-       HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
+       HrecoilDistribution_monoV->Fill(phmet_pt,newwgt);
        HvtxDistribution_monoV->Fill(nVert,newwgt);
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
        Hjet1etaDistribution_monoV->Fill(FatJet_eta[0],newwgt);
@@ -492,14 +492,14 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
        if (hasScaledHistograms_flag) {
 
-	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
-	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
-	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfUp_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfDown_monoV->Fill(phmet_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
+	 HYieldsMetBin_ewkUp_monoV->Fill(phmet_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
+	 HYieldsMetBin_ewkDown_monoV->Fill(phmet_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
 
        }
 
