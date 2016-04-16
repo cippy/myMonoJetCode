@@ -338,7 +338,7 @@ void AnalysisDarkMatter::setHistograms() {
   // histograms for monojet (exclusive, but I don't rename them as *_monoJ)
 
   HYieldsMetBin = new TH1D("HYieldsMetBin","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
-  HhtDistribution = new TH1D("HhtDistribution","",150,0.0,1500.0);
+  HhtDistribution = new TH1D("HhtDistribution","",200,0.0,2000.0);
   HvtxDistribution = new TH1D("HvtxDistribution","",40,-0.5,39.5);   
   HnjetsDistribution = new TH1D("HnjetsDistribution","njets using nJetClean30",10,-0.5,9.5);   
   Hj1j2dphiDistribution = new TH1D("Hj1j2dphiDistribution","",30,0.0,3.0);
@@ -358,7 +358,7 @@ void AnalysisDarkMatter::setHistograms() {
   // histograms for monoV
 
   HYieldsMetBin_monoV = new TH1D("HYieldsMetBin_monoV","yields in bins of met; #slash{E}_{T};# of events",nMetBins_monoV,metBinEdgesVector_monoV.data());
-  HhtDistribution_monoV = new TH1D("HhtDistribution_monoV","",150,0.0,1500.0);
+  HhtDistribution_monoV = new TH1D("HhtDistribution_monoV","",200,0.0,2000.0);
   HvtxDistribution_monoV = new TH1D("HvtxDistribution_monoV","",40,-0.5,39.5);   
   HnjetsDistribution_monoV = new TH1D("HnjetsDistribution_monoV","njets using nJetClean30",10,-0.5,9.5);   
   Hjet1etaDistribution_monoV = new TH1D("Hjet1etaDistribution_monoV","leading ak8 jets",60,-3.0,3.0);
@@ -378,6 +378,8 @@ void AnalysisDarkMatter::setHistograms() {
 //===============================================
 
 void AnalysisDarkMatter::setScaleFactorHistograms() {
+
+  // all common scaled histograms are defined here. Some more specific to a CR region (e.g. for lepton ID) are defined in the proper .cc file
 
   HYieldsMetBin_qcdRenScaleUp = new TH1D("HYieldsMetBin_qcdRenScaleUp","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
   HYieldsMetBin_qcdRenScaleDown = new TH1D("HYieldsMetBin_qcdRenScaleDown","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
@@ -454,6 +456,8 @@ void AnalysisDarkMatter::setHistogramLastBinAsOverFlow(const Int_t hasScaledHist
 //===============================================
 
 void AnalysisDarkMatter::createSystematicsHistogram() {
+
+  // in this method we handle the scaled histogram to all regions. Some histograms specific to a given CR are treated in the same method for those region, which will first call this ,ethod and then add the additional scale factors if any
 
   //for monojet
 
@@ -550,42 +554,6 @@ void AnalysisDarkMatter::fillRowVector(const Double_t nTotalWeightedEvents, cons
 }
 
 //===============================================
-
-// void AnalysisDarkMatter::set_SF_NLO_name(const std::string s) {
-
-//   sf_nlo = s;
-
-// }
-
-//===============================================
-
-//void AnalysisDarkMatter::set_SF_NLO_pointers(const std::string sf_option, Float_t *ptrQCD, Float_t *ptrEWK) {
-
-  // ptrQCD = &SF_NLO_QCD;
-  // ptrEWK = &SF_NLO_EWK;
-  
-  // if (sf_option != "") {
-  //   if (sf_option == "SF_NLO_QCD_renScaleUp") ptrQCD = &SF_NLO_QCD_renScaleUp;
-  //   else if (sf_option == "SF_NLO_QCD_renScaleDown") ptrQCD = &SF_NLO_QCD_renScaleDown;
-  //   else if (sf_option == "SF_NLO_QCD_facScaleUp") ptrQCD = &SF_NLO_QCD_facScaleUp;
-  //   else if (sf_option == "SF_NLO_QCD_facScaleDown") ptrQCD = &SF_NLO_QCD_facScaleDown;
-  //   else if (sf_option == "SF_NLO_QCD_pdfUp") ptrQCD = &SF_NLO_QCD_pdfUp;
-  //   else if (sf_option == "SF_NLO_QCD_pdfDown") ptrQCD = &SF_NLO_QCD_pdfDown;
-  //   else if (sf_option == "SF_NLO_EWK_up") ptrEWK = &SF_NLO_EWK_up;
-  //   else if (sf_option == "SF_NLO_EWK_down") ptrEWK = &SF_NLO_EWK_down;
-  // }
- 
-//}
-
-
-//===============================================
-
-// Double_t AnalysisDarkMatter::computeEventWeight() const {
-
-//   if (ISDATA_FLAG || unweighted_event_flag) return 1.0;
-//   else return LUMI * vtxWeight * weight * SF_BTag; //SF_BTag is in evVarFriend, not sfFriend
-
-// }
 
 
 #endif

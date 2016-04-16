@@ -171,12 +171,12 @@ void zlljetsControlSample::setHistograms() {
   monojet_LeptonControlRegion::setHistograms();
   
   HinvMass = new TH1D("HinvMass","",NinvMassBins,DILEPMASS_LOW,DILEPMASS_UP);    // for MC it's done on Z->mumu or Z->ee at gen level
-  HzptDistribution = new TH1D("HzptDistribution","",200,0.0,1000.0); 
+  HzptDistribution = new TH1D("HzptDistribution","",240,0.0,1200.0); 
   Hlep2ptDistribution = new TH1D("Hlep2ptDistribution","",200,0.0,1000.0);
   Hlep2etaDistribution = new TH1D("Hlep2etaDistribution","",100,-5.0,5.0);
 
   HinvMass_monoV = new TH1D("HinvMass_monoV","",NinvMassBins,DILEPMASS_LOW,DILEPMASS_UP);    // for MC it's done on Z->mumu or Z->ee at gen level
-  HzptDistribution_monoV = new TH1D("HzptDistribution_monoV","",200,0.0,1000.0); 
+  HzptDistribution_monoV = new TH1D("HzptDistribution_monoV","",240,0.0,1200.0); 
   Hlep2ptDistribution_monoV = new TH1D("Hlep2ptDistribution_monoV","",200,0.0,1000.0);
   Hlep2etaDistribution_monoV = new TH1D("Hlep2etaDistribution_monoV","",100,-5.0,5.0);
 
@@ -589,19 +589,11 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      // or alternatively use the following methods
      //if (fChain->GetListOfBranches()->FindObject("nEle40T"))
 
-     //if (calibEle_flag == 0) {
        ptr_nRecoLepton = &nLepGood;
        ptr_lepton_pt = LepGood_pt;
        ptr_lepton_eta = LepGood_eta;
        ptr_lepton_phi = LepGood_phi;
        ptr_lepton_mass = LepGood_mass;
-       //} else {
-      //  ptr_nRecoLepton = &nCalibEle;
-     //   ptr_lepton_pt = CalibEle_pt;
-     //   ptr_lepton_eta = CalibEle_eta;
-     //   ptr_lepton_phi = CalibEle_phi;
-     //   ptr_lepton_mass = CalibEle_mass;
-     // }
 
    }
 
@@ -629,10 +621,6 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
    } 
 
-   // Double_t nTotalWeightedEvents = 0.0;     
-   // // deciding  what is the event weight
-   // Double_t newwgt; 
-
    Long64_t nentries = fChain->GetEntriesFast();
    cout<<"zlljetsControlSample::loop()"<<endl;
    cout<<"nentries = "<<nentries<<endl;   
@@ -649,21 +637,6 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      if (jentry%500000 == 0) cout << jentry << endl;
 
      UInt_t eventMask = 0; 
-
-     // if (ISDATA_FLAG || unweighted_event_flag) newwgt = 1.0;
-     // else {
-
-     //   //newwgt = LUMI * weight * vtxWeight/*/ events_ntot*/;  // starting from 17 November, "events_ntot" substitutes SUMWEIGHT and is already present in the trees. Same for weight, which is now defined as "1000 * xsec * genWeight" (1000*xsec is the cross section in fb, since xsec is in pb.)
-     //   // I found out that division by events_ntot was already included in weight definition
-
-     //   if (hasSFfriend_flag != 0) {
-
-     // 	 if (fabs(LEP_PDG_ID) == 13) newwgt = LUMI * weight * vtxWeight * SF_trigmetnomu * SF_LepTightLoose * SF_BTag * SF_NLO;
-     // 	 else if (fabs(LEP_PDG_ID) == 11) newwgt = LUMI * weight * vtxWeight * SF_trig1lep * SF_LepTightLoose * SF_BTag * SF_NLO;
-
-     //   } else newwgt = LUMI * weight * vtxWeight * SF_BTag; //SF_BTag is in evVarFriend, not sfFriend
-
-     // }
 
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
@@ -729,10 +702,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
        }  // end of   if ( HLT_FLAG )
 
        metNoLepPt = *ptr_metNoLepPt;       
-       //metNoLepEta = *ptr_metNoLepEta; 
        metNoLepPhi = *ptr_metNoLepPhi; 
-       //metNoLepTV3.SetPtEtaPhi(metNoLepPt,metNoLepEta,metNoLepPhi);   // will use this 3D vector below
-       //metNoLepTV.SetMagPhi(metNoLepPt,metNoLepPhi);
 
      } else if (fabs(LEP_PDG_ID) == 11) { 
 
@@ -862,10 +832,10 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      } else if (((eventMask & analysisMask_monoV.globalMask.back()) == analysisMask_monoV.globalMask.back())) {
 
-       HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
+       HYieldsMetBin_monoV->Fill(metNoLepPt,newwgt);
        HinvMass_monoV->Fill(mZ1,newwgt);
        HhtDistribution_monoV->Fill(htJet25,newwgt);
-       HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
+       HrecoilDistribution_monoV->Fill(metNoLepPt,newwgt);
        HzptDistribution_monoV->Fill(ZtoLLRecoPt,newwgt);
        HvtxDistribution_monoV->Fill(nVert,newwgt);
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
@@ -880,14 +850,14 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
        if (hasScaledHistograms_flag) {
 
-	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
-	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
-	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
+	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
+	 HYieldsMetBin_ewkUp_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
+	 HYieldsMetBin_ewkDown_monoV->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
 	 HYieldsMetBin_LepTightLooseUp_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightLooseUp / SF_LepTightLoose));
 	 HYieldsMetBin_LepTightLooseDown_monoV->Fill(metNoLepPt,(newwgt * SF_LepTightLooseDown / SF_LepTightLoose));
 

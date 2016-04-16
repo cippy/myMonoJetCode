@@ -317,13 +317,13 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("FatJet_tau2",1);
 
    //added on 23/01/2016
-   fChain->SetBranchStatus("nEle40T",1);
-   fChain->SetBranchStatus("nCalibEle",1);
-   fChain->SetBranchStatus("CalibEle_pt",1);
-   fChain->SetBranchStatus("CalibEle_energy",1);
-   fChain->SetBranchStatus("CalibEle_eta",1);
-   fChain->SetBranchStatus("CalibEle_phi",1);
-   fChain->SetBranchStatus("CalibEle_mass",1);
+   // fChain->SetBranchStatus("nEle40T",1);
+   // fChain->SetBranchStatus("nCalibEle",1);
+   // fChain->SetBranchStatus("CalibEle_pt",1);
+   // fChain->SetBranchStatus("CalibEle_energy",1);
+   // fChain->SetBranchStatus("CalibEle_eta",1);
+   // fChain->SetBranchStatus("CalibEle_phi",1);
+   // fChain->SetBranchStatus("CalibEle_mass",1);
 
    if (!ISDATA_FLAG) {
      // fChain->SetBranchStatus("nGenPart",1);
@@ -350,7 +350,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      fChain->SetBranchStatus("SF_LepTight",1);
      fChain->SetBranchStatus("SF_LepTightUp",1);
      fChain->SetBranchStatus("SF_LepTightDown",1);
-     fChain->SetBranchStatus("SF_NLO",1);
+     // fChain->SetBranchStatus("SF_NLO",1);
      fChain->SetBranchStatus("SF_NLO_QCD",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
      fChain->SetBranchStatus("SF_NLO_QCD_renScaleDown",1);
@@ -409,7 +409,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
      if ( HLT_FLAG != 0) {
 
-       if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <====
+       if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <==== but Emanuele should have already asked that when making trees
        else HLT_passed_flag = 0;
 	 
      }  // end of   if ( HLT_FLAG )
