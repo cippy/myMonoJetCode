@@ -502,7 +502,7 @@ int main(int argc, char* argv[]) {
 	  if (parameterName == "UNCERTAINTY") {
 
 	    uncertainty = name;
-	    std::cout << setw(20) << "sample uncetainty : " << name <<std::endl;
+	    std::cout << setw(20) << "sample uncertainty : " << name <<std::endl;
 
 	  }  
 
@@ -581,6 +581,16 @@ int main(int argc, char* argv[]) {
 	    std::string treeRootFile = treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root"; 
 	    std::string friend_treeRootFile = treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root"; 
 	    std::string sf_friend_treeRootFile = treePath + "sfFriend_" + subSampleNameVector[i]+ ".root"; 
+
+	    // FIXME: now gamma samples in 76X are different from those made by Emanuele (I made them). The following is a temporary solution to run on them for testing the code
+
+	    if (controlSample_boson == "GAMMA") {
+
+	      treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root";        
+	      friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";  
+	      sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+
+	    }
 
 	    chain->Add(TString(treeRootFile.c_str()));
 	    chFriend->Add(TString(friend_treeRootFile.c_str()));
