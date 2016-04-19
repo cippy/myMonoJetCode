@@ -407,13 +407,12 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
 
-     if ( HLT_FLAG != 0) {
+     // if ( HLT_FLAG != 0) {
 
-       if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <==== but Emanuele should have already asked that when making trees
-       else HLT_passed_flag = 0;
+     //   if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <==== but Emanuele should have already asked that when making trees
+     //   else HLT_passed_flag = 0;
 	 
-     }  // end of   if ( HLT_FLAG )
-
+     // }  // end of   if ( HLT_FLAG )
 
      // beginning of eventMask building
      if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_prunedMass[0] > 65.) && (FatJet_prunedMass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (phmet_pt > 250.)) Vtagged_flag = 1;
@@ -585,60 +584,13 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    setHistogramLastBinAsOverFlow(hasScaledHistograms_flag);
    if (hasScaledHistograms_flag) createSystematicsHistogram();
 
-   /*
-   if (suffix == "ZJetsToNuNu" || suffix == "WJetsToLNu") {
-
-   // following is in function above
-     
-   myAddOverflowInLastBin(HYieldsMetBin_qcdRenScaleUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdRenScaleDown);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdFacScaleUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdFacScaleDown);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdPdfUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdPdfDown);
-   myAddOverflowInLastBin(HYieldsMetBin_ewkUp);
-   myAddOverflowInLastBin(HYieldsMetBin_ewkDown);
-
-   // computing systematic uncertainties and saving them as histograms.
-   myBuildSystematicsHistogram(HSyst_qcdRenScale, HYieldsMetBin, HYieldsMetBin_qcdRenScaleUp, HYieldsMetBin_qcdRenScaleDown);
-   myBuildSystematicsHistogram(HSyst_qcdFacScale, HYieldsMetBin, HYieldsMetBin_qcdFacScaleUp, HYieldsMetBin_qcdFacScaleDown);
-   myBuildSystematicsHistogram(HSyst_qcdPdf, HYieldsMetBin, HYieldsMetBin_qcdPdfUp, HYieldsMetBin_qcdPdfDown);
-   myBuildSystematicsHistogram(HSyst_ewk, HYieldsMetBin, HYieldsMetBin_ewkUp, HYieldsMetBin_ewkDown);
-
-   // define an empty histogram to sum uncertainties in a clean way
-   TH1D *Htmp = new TH1D("Htmp","",nMetBins,metBinEdgesVector.data());
-   vector<TH1D*> hptr;
-   hptr.push_back(HSyst_qcdRenScale);
-   hptr.push_back(HSyst_qcdFacScale);
-   hptr.push_back(HSyst_qcdPdf);
-   hptr.push_back(HSyst_ewk);
-     
-   for (Int_t i = 0; i < hptr.size(); i++) {
-   Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
-   HSyst_total->Add(Htmp);             // adding the squares
-   }
-
-   for (Int_t i = 0; i <= (HSyst_total->GetNbinsX() + 1); i++) {  // computing square root of each bin's content (from underflow to overflow bin, but they should be empty)
-   HSyst_total->SetBinContent(i, sqrt(HSyst_total->GetBinContent(i)));
-   }
-
-   delete Htmp;
-     
-   }
-   */   
-
- 
-
    rootFile->Write();
 
    rootFile->Close();
    delete rootFile;
 
    //creating a .tex file to build tables with data
-
-   //myCreateTexTable(TEX_FNAME, outputFolder, LUMI,nTotalWeightedEvents, &analysisMask);
    myCreateTexTable(TEX_FNAME, outputFolder, LUMI,nTotalWeightedEvents, anaMasksPtrCollection);
-
    // end of tex file
 
    mySpaces(cout,2);
