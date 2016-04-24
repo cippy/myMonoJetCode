@@ -354,7 +354,7 @@ void distribution(const string folderNameWithRootFiles = "",
   string working_cmssw_path = "";
   myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
   working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
-  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFiles + "/"; 
+  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -773,8 +773,8 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)
@@ -1112,101 +1112,101 @@ Int_t main(int argc, char* argv[]) {
 
 
   // signal region
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  if (j0v1 != 1) distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("SignalRegion",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("SignalRegion",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("SignalRegion",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("SignalRegion",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("SignalRegion",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("SignalRegion",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("SignalRegion",0,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  if (j0v1 != 1) distribution("SignalRegion",0,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("SignalRegion_spring15_25ns_2p32fb_newSF",0,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("SignalRegion",0,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("SignalRegion",0,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
   // Z->mumu control region
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
   // Z->ee control region
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_zee",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee_spring15_25ns_2p32fb_newSF",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
   // W->munu control region
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
   // W->enu control region
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+  if (j0v1 != 1) distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
   // Gamma control region
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
-  if (j0v1 != 1) distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
+  if (j0v1 != 1) distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
   else {
-    distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
 
@@ -1222,34 +1222,20 @@ Int_t main(int argc, char* argv[]) {
   // 			const Int_t rebinFactor = 1)
   // {
 
-  // if (j0v1 == 1) {
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.8,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.8,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-  // } else {
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,4,15,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,4,15,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-  //   makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,10,1,1);
-  // }
-
   if (j0v1 == 1) {
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_gamma_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,0.-1,0,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
+    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
   } else {
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_gamma_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,0,1);
-    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,-1,0,1);
+    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
   }
 
   return 0;
