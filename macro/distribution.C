@@ -81,6 +81,21 @@ void myGetEnvVariable(const string envVar, string& input) {
 
 }
 
+Int_t mySetMaxBinWidth(const TH1D *stackCopy, Double_t width) {
+
+  Double_t maxBinWidth = 0.0;
+
+  for (Int_t i = 1; i <= stackCopy->GetNbinsX(); i++) {
+    if (stackCopy->GetBinWidth(i) > maxBinWidth) maxBinWidth = stackCopy->GetBinWidth(i);
+  }
+  width = maxBinWidth;
+  if (fabs(width) < 0.00001) {
+    cout << "WARNING: maximum bin width is 0. Returning 0 and setting width to 1." << endl;
+    width = 1.0;
+    return 0;
+  } else return 1;
+
+}
 
 void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1_g2 = 0, const Int_t mumu0_ee1 = 0) {
 
@@ -557,7 +572,18 @@ void distribution(const string folderNameWithRootFiles = "",
   if (data0_noData1 == 0 && (hMCstack->GetMaximum() < hdata->GetMaximum())) maxYvalue = hdata->GetMaximum();
   Double_t minYvalue =  hMCstack->GetMinimum();
   if (data0_noData1 == 0 && (hMCstack->GetMinimum() > hdata->GetMinimum())) minYvalue = hdata->GetMinimum();
-  if (fabs(minYvalue) < 0.001) minYvalue = 0.05;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
+  if (fabs(minYvalue) < 0.001) {
+    minYvalue = 0.05;  // 0 can occur with data. Since data can be 1 or more (if not 0), then set minimum scale to 0.01 (arbitrary choice, might be not ideal if you have only MC and want to show lower values)
+    if (binDensity_flag != 0) {
+      // Double_t maxWidth = 1.0;
+      // if (mySetMaxBinWidth(stackCopy, maxWidth)) minYvalue = 0.8 / maxWidth;  // not working as expected
+      minYvalue = 0.001; 
+      // in case bin density is shown, I saw that setting minYvalue to 0.05 is not ideal
+      // This is because if I have empty bins (likely this happens when you have data and not just MC, although empty bins in MC might be present as well), then the minimum value is set to 0.05, but then I might not see bins which are not empty because their content (for data it would be >= 1) is also divided by bin width. In that case I set the minimum to be 20% lower than 1/MaxBinWidth, that is 0.8 * MaxBinWidth.
+      // Note for future users/developers: I am aware this can all be made better and more generic, but I am forced to do things as fast as I can, so consider this to be a working temporary solution ;)
+    }
+  }
+
   if (!yAxisLog_flag) minYvalue = 0.0; // if using linear y axis, very likely the distribution will start from 0 (counting events)
 
   // ===> WARNING: seting the minimum to 0.01 could be bad if one has histograms normalized to 1
@@ -597,7 +623,7 @@ void distribution(const string folderNameWithRootFiles = "",
     if (yAxisLog_flag == 0) hMCstack->SetMaximum(1.2 * maxYvalue);  // for linear scale set upper Yaxis bound as 20% bigger than maximum histogram                  
     else hMCstack->SetMaximum(10 * maxYvalue);  // for log scale use 10 times bigger value for max Y                                                                
     if (fabs(yAxisMin) > 0.00001) hMCstack->SetMinimum(yAxisMin);  // if only lower limit is set by user for Y axis, use it to set the minimum                      
-    else hMCstack->SetMinimum(minYvalue);  // in any other case, use lowest possible value (for log scale, use 0.01 if it would be 0)
+    else hMCstack->SetMinimum(minYvalue);  // in any other case, use lowest possible value
 
     //hMCstack->GetYaxis()->SetRangeUser(yAxisMin,stackYmax);
     if (data0_noData1 == 0) subpad_1->Update();  // to be done after Draw() to access pad parameters such as default axis range
@@ -1061,7 +1087,7 @@ Int_t main(int argc, char* argv[]) {
   // distribution() function template
   /*distribution(const string folderNameWithRootFiles = "", 
 	       const Int_t signalRegion0_controlRegion1 = 0, 
-	       const Int_t z0_w1_g1 = 0,
+	       const Int_t z0_w1_g2 = 0,
 	       const Int_t mu0_e1 = 0,
 	       const Int_t data0_noData1 = 0, 
 	       const Int_t monoJ0_monoV1 = 0,
@@ -1167,6 +1193,23 @@ Int_t main(int argc, char* argv[]) {
     distribution("ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
   }
 
+  // Gamma control region
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
+  distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
+  if (j0v1 != 1) distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+  else {
+    distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma_spring15_25ns_2p32fb_newSF",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  }
+
+
   // void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   // 			const string folderNameWithRootFilesCR = "",
   // 			const Int_t bkgToEstimate_z0_w1 = 0,
@@ -1198,12 +1241,14 @@ Int_t main(int argc, char* argv[]) {
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,0.-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_gamma_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,0.-1,0,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
   } else {
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zmumu_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_zee_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wmunu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_wenu_spring15_25ns_2p32fb_newSF",1,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","ControlRegion_gamma_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,0,1);
     makeTransferFactor("SignalRegion_spring15_25ns_2p32fb_newSF","SignalRegion_spring15_25ns_2p32fb_newSF",0,j0v1,0,-1,0,-1,1,1);
   }
 
