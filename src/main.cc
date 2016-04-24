@@ -66,6 +66,8 @@ int main(int argc, char* argv[]) {
   Int_t met_filters_flag;
   Int_t HLT_flag;
   string uncertainty; // say which uncertainty is to be used for yields in a sample. Can be "poisson", "MC", "X%"
+  string whereAreTrees = ""; // can be afs, eos, Rome tier2: the path to them will be set accordingly
+  string treeLocation = ""; // if whereAreTree == eos, path to tree will be read adding root://eoscms//eos/cms to treeLocation/treePath
   string treePath;
   string friendTreePath;
   string sf_friendTreePath = ""; // friend with scale factor
@@ -214,6 +216,16 @@ int main(int argc, char* argv[]) {
       } else if (parameterType == "STRING") {
 
 	inputFile >> parameterName >> name;
+
+	if (parameterName == "WHERE_ARE_TREES") {
+
+	  whereAreTrees = name;
+	  if (whereAreTrees == "eos") treeLocation = "/store/cmst3/group/susy/emanuele/monox/trees";
+	  else if (whereAreTrees == "afs") treeLocation = "/afs/cern.ch/work/e/emanuele/TREES";
+	  else if (whereAreTrees == "tier2") treeLocation = "/pnfs/roma1.infn.it/data/cms/store/user/emanuele/monox_trees";
+	  std::cout << setw(20) << "Tree location: " << treeLocation <<std::endl;
+
+	}  
 
 	if (parameterName == "TREE_PATH") {
 
@@ -573,24 +585,44 @@ int main(int argc, char* argv[]) {
 	  std::cout << "Creating chain ..." << std::endl;
 
 	  for(Int_t i = 0; i < subSampleNameVector.size(); i++) {
-	   
+	  
+	    std::string treeRootFile = "";
+	    std::string friend_treeRootFile = "";
+	    std::string sf_friend_treeRootFile = "";
+ 
+
 	    //std::string treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root"; 
 	    //std::string friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root"; 
 	    //std::string sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root"; 
 
-	    std::string treeRootFile = treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root"; 
-	    std::string friend_treeRootFile = treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root"; 
-	    std::string sf_friend_treeRootFile = treePath + "sfFriend_" + subSampleNameVector[i]+ ".root"; 
+	    if (whereAreTrees == "eos") {
 
-	    // FIXME: now gamma samples in 76X are different from those made by Emanuele (I made them). The following is a temporary solution to run on them for testing the code
+	      treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root";
+	      friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root";
+	      sf_friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
 
-	    if (controlSample_boson == "GAMMA") {
+	    } else if (whereAreTrees == "afs") {
 
-	      treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root";        
-	      friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";  
-	      sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+	      treeRootFile = treeLocation + treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root";
+	      friend_treeRootFile = treeLocation + treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
+	      sf_friend_treeRootFile = treeLocation + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+
+	    } else if (whereAreTrees == "tier2") {
+	     
+	      treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root";
+	      friend_treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root";
+	      sf_friend_treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
 
 	    }
+
+	    // FIXME: now gamma samples in 76X are different from those made by Emanuele (I made them). The following is a temporary solution to run on them for testing the code
+	    // if (controlSample_boson == "GAMMA") {
+
+	    //   treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root";        
+	    //   friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";  
+	    //   sf_friend_treeRootFile = treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+
+	    // }
 
 	    chain->Add(TString(treeRootFile.c_str()));
 	    chFriend->Add(TString(friend_treeRootFile.c_str()));
