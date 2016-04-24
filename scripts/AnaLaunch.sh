@@ -11,19 +11,19 @@ MY_MACRO_PATH=$MY_PATH/macro
 cd $MY_PATH/src
 echo
 echo
-./tmp/main $MY_CFG_PATH/monojet_signalRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/monojet_signalRegion_config.txt
 echo
 echo
-./tmp/main $MY_CFG_PATH/zmumujets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/zmumujets_ControlRegion_config.txt
 echo
 echo
-./tmp/main $MY_CFG_PATH/wmunujets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/wmunujets_ControlRegion_config.txt
 echo
 echo
-./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/zeejets_ControlRegion_config.txt
 echo
 echo
-./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config_spring15_25ns.txt
+./tmp/main $MY_CFG_PATH/wenujets_ControlRegion_config.txt
 echo
 echo
 #echo "producing plots for monojet (exclusive)"
