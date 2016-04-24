@@ -52,6 +52,12 @@ public :
    Float_t         JetClean_btagCSV[10];   //[nJetClean]
    Float_t         JetClean_rawPt[10];   //[nJetClean]
    Float_t         JetClean_leadClean[10];   //[nJetClean]
+   Float_t         FatJetClean_pt[2];   //[nFatJetClean]
+   Float_t         FatJetClean_eta[2];   //[nFatJetClean]
+   Float_t         FatJetClean_phi[2];   //[nFatJetClean]
+   Float_t         FatJetClean_prunedMass[2];   //[nFatJetClean]
+   Float_t         FatJetClean_tau2[2];   //[nFatJetClean]
+   Float_t         FatJetClean_tau1[2];   //[nFatJetClean]
    Float_t         TauClean_pt[3];   //[nTauClean]
    Float_t         TauClean_eta[3];   //[nTauClean]
    Float_t         TauClean_phi[3];   //[nTauClean]
@@ -631,6 +637,12 @@ public :
    TBranch        *b_JetClean_btagCSV;   //!
    TBranch        *b_JetClean_rawPt;   //!
    TBranch        *b_JetClean_leadClean;   //!
+   TBranch        *b_FatJetClean_pt;   //!
+   TBranch        *b_FatJetClean_eta;   //!
+   TBranch        *b_FatJetClean_phi;   //!
+   TBranch        *b_FatJetClean_prunedMass;   //!
+   TBranch        *b_FatJetClean_tau2;   //!
+   TBranch        *b_FatJetClean_tau1;   //!
    TBranch        *b_TauClean_pt;   //!
    TBranch        *b_TauClean_eta;   //!
    TBranch        *b_TauClean_phi;   //!
@@ -1281,6 +1293,12 @@ void edimarcoTree_v5::Init(TTree *tree)
    fChain->SetBranchAddress("JetClean_btagCSV", JetClean_btagCSV, &b_JetClean_btagCSV);
    fChain->SetBranchAddress("JetClean_rawPt", JetClean_rawPt, &b_JetClean_rawPt);
    fChain->SetBranchAddress("JetClean_leadClean", JetClean_leadClean, &b_JetClean_leadClean);
+   fChain->SetBranchAddress("FatJetClean_pt", FatJetClean_pt, &b_FatJetClean_pt);
+   fChain->SetBranchAddress("FatJetClean_eta", FatJetClean_eta, &b_FatJetClean_eta);
+   fChain->SetBranchAddress("FatJetClean_phi", FatJetClean_phi, &b_FatJetClean_phi);
+   fChain->SetBranchAddress("FatJetClean_prunedMass", FatJetClean_prunedMass, &b_FatJetClean_prunedMass);
+   fChain->SetBranchAddress("FatJetClean_tau2", FatJetClean_tau2, &b_FatJetClean_tau2);
+   fChain->SetBranchAddress("FatJetClean_tau1", FatJetClean_tau1, &b_FatJetClean_tau1);
    fChain->SetBranchAddress("TauClean_pt", TauClean_pt, &b_TauClean_pt);
    fChain->SetBranchAddress("TauClean_eta", TauClean_eta, &b_TauClean_eta);
    fChain->SetBranchAddress("TauClean_phi", TauClean_phi, &b_TauClean_phi);
