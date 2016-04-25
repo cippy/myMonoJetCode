@@ -22,7 +22,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // adding evVarFriend variables
-   Float_t         nMu10V;
+      Float_t         nMu10V;
    Float_t         nMu20T;
    Float_t         nEle10V;
    Float_t         nEle40T;
@@ -38,29 +38,31 @@ public :
    Float_t         phmet_phi;
    Float_t         SF_BTag;
    Int_t           nJetClean;
+   Int_t           nFatJetClean;
    Int_t           nTauClean;
    Int_t           nLepSel;
-   Int_t           iL[4];   //[nLepSel]
-   Int_t           iJ[10];   //[nJetClean]
-   Int_t           iT[3];   //[nTauClean]
+   Int_t           iL[3];   //[nLepSel]
+   Int_t           iJ[9];   //[nJetClean]
+   Int_t           iT[2];   //[nTauClean]
+   Int_t           iFJ[2];   //[nFatJetClean]
    Int_t           nJetClean30;
    Int_t           nTauClean18V;
-   Float_t         JetClean_pt[10];   //[nJetClean]
-   Float_t         JetClean_eta[10];   //[nJetClean]
-   Float_t         JetClean_phi[10];   //[nJetClean]
-   Float_t         JetClean_mass[10];   //[nJetClean]
-   Float_t         JetClean_btagCSV[10];   //[nJetClean]
-   Float_t         JetClean_rawPt[10];   //[nJetClean]
-   Float_t         JetClean_leadClean[10];   //[nJetClean]
+   Float_t         JetClean_pt[9];   //[nJetClean]
+   Float_t         JetClean_eta[9];   //[nJetClean]
+   Float_t         JetClean_phi[9];   //[nJetClean]
+   Float_t         JetClean_mass[9];   //[nJetClean]
+   Float_t         JetClean_btagCSV[9];   //[nJetClean]
+   Float_t         JetClean_rawPt[9];   //[nJetClean]
+   Float_t         JetClean_leadClean[9];   //[nJetClean]
    Float_t         FatJetClean_pt[2];   //[nFatJetClean]
    Float_t         FatJetClean_eta[2];   //[nFatJetClean]
    Float_t         FatJetClean_phi[2];   //[nFatJetClean]
    Float_t         FatJetClean_prunedMass[2];   //[nFatJetClean]
    Float_t         FatJetClean_tau2[2];   //[nFatJetClean]
    Float_t         FatJetClean_tau1[2];   //[nFatJetClean]
-   Float_t         TauClean_pt[3];   //[nTauClean]
-   Float_t         TauClean_eta[3];   //[nTauClean]
-   Float_t         TauClean_phi[3];   //[nTauClean]
+   Float_t         TauClean_pt[2];   //[nTauClean]
+   Float_t         TauClean_eta[2];   //[nTauClean]
+   Float_t         TauClean_phi[2];   //[nTauClean]
    Float_t         vtxWeight;
    Int_t           cscfilter;
    Int_t           ecalfilter;
@@ -623,11 +625,13 @@ public :
    TBranch        *b_phmet_phi;   //!
    TBranch        *b_SF_BTag;   //!
    TBranch        *b_nJetClean;   //!
+   TBranch        *b_nFatJetClean;   //!
    TBranch        *b_nTauClean;   //!
    TBranch        *b_nLepSel;   //!
    TBranch        *b_iL;   //!
    TBranch        *b_iJ;   //!
    TBranch        *b_iT;   //!
+   TBranch        *b_iFJ;   //!
    TBranch        *b_nJetClean30;   //!
    TBranch        *b_nTauClean18V;   //!
    TBranch        *b_JetClean_pt;   //!
@@ -669,7 +673,6 @@ public :
    TBranch        *b_SF_NLO_EWK;   //!
    TBranch        *b_SF_NLO_EWK_up;   //!
    TBranch        *b_SF_NLO_EWK_down;   //!
-
 
    // List of branches
    TBranch        *b_run;   //!
@@ -1279,11 +1282,13 @@ void edimarcoTree_v5::Init(TTree *tree)
    fChain->SetBranchAddress("phmet_phi", &phmet_phi, &b_phmet_phi);
    fChain->SetBranchAddress("SF_BTag", &SF_BTag, &b_SF_BTag);
    fChain->SetBranchAddress("nJetClean", &nJetClean, &b_nJetClean);
+   fChain->SetBranchAddress("nFatJetClean", &nFatJetClean, &b_nFatJetClean);
    fChain->SetBranchAddress("nTauClean", &nTauClean, &b_nTauClean);
    fChain->SetBranchAddress("nLepSel", &nLepSel, &b_nLepSel);
    fChain->SetBranchAddress("iL", iL, &b_iL);
    fChain->SetBranchAddress("iJ", iJ, &b_iJ);
    fChain->SetBranchAddress("iT", iT, &b_iT);
+   fChain->SetBranchAddress("iFJ", iFJ, &b_iFJ);
    fChain->SetBranchAddress("nJetClean30", &nJetClean30, &b_nJetClean30);
    fChain->SetBranchAddress("nTauClean18V", &nTauClean18V, &b_nTauClean18V);
    fChain->SetBranchAddress("JetClean_pt", JetClean_pt, &b_JetClean_pt);
