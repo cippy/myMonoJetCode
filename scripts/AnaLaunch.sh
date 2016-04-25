@@ -37,6 +37,6 @@ echo
 echo "========================"
 echo "===  End of Analysis ==="
 echo "========================"
-echo "Checking for running jobs"
-bjobs
+#echo "Checking for running jobs"
+#bjobs
 echo
