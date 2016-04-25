@@ -124,16 +124,20 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     if(z0_w1_g2 == 0) {
 
-      sampleName.push_back("ZJetsToNuNu");
-      if (mumu0_ee1 == 0) sampleName.push_back("GJets");
+      if (mumu0_ee1 == 0) {
+	sampleName.push_back("ZJetsToNuNu");
+	sampleName.push_back("GJets");
+      }
       sampleName.push_back("QCD");
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");
       sampleName.push_back("DYJetsToLL");
 
-      MC_TexLabel.push_back("Z(#nu#nu)+jets");
-      if (mumu0_ee1 == 0) MC_TexLabel.push_back("#gamma + jets");
+      if (mumu0_ee1 == 0) {
+	MC_TexLabel.push_back("Z(#nu#nu)+jets");
+	MC_TexLabel.push_back("#gamma + jets");
+      }
       MC_TexLabel.push_back("QCD");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("Diboson");
@@ -144,16 +148,20 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     } else if(z0_w1_g2 == 1) {
 
-      sampleName.push_back("ZJetsToNuNu");
-      if (mumu0_ee1 == 0) sampleName.push_back("GJets");
+      if (mumu0_ee1 == 0) {
+	sampleName.push_back("ZJetsToNuNu");
+	sampleName.push_back("GJets");
+      }     
       sampleName.push_back("DYJetsToLL");
       sampleName.push_back("QCD");      
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");   
       sampleName.push_back("WJetsToLNu");
 
-      MC_TexLabel.push_back("Z(#nu#nu)+jets");
-      if (mumu0_ee1 == 0) MC_TexLabel.push_back("#gamma + jets");
+      if (mumu0_ee1 == 0) {	
+	MC_TexLabel.push_back("Z(#nu#nu)+jets");
+	MC_TexLabel.push_back("#gamma + jets");
+      }
       MC_TexLabel.push_back("Z(ll)+jets");
       MC_TexLabel.push_back("QCD");     
       MC_TexLabel.push_back("Diboson");
