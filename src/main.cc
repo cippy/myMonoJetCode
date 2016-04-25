@@ -363,7 +363,7 @@ int main(int argc, char* argv[]) {
 
       if (inputFile.is_open()) {
      
-	cout << "Saving content of " << configFileName << " file in "<< reportFileName << " located in " << outputFolder << endl;
+	cout << "Saving content of " << configFileName << " file in "<< reportFileName << " located in \n -->" << outputFolder << endl;
 	reportFile << "Content of " << configFileName << endl;
 	reportFile << endl;
 
@@ -391,7 +391,7 @@ int main(int argc, char* argv[]) {
 
       if (inputFile.is_open()) {
 
-	cout << "Saving content of " << fileWithSamplesPath << " file in "<< reportFileName << " located in " << outputFolder << endl;
+	cout << "Saving content of " << fileWithSamplesPath << " file in "<< reportFileName << " located in \n -->" << outputFolder << endl;
 	reportFile << "Content of " << fileWithSamplesPath << endl;
 	reportFile << endl;
 
@@ -604,8 +604,12 @@ int main(int argc, char* argv[]) {
 	    } else if (whereAreTrees == "afs") {
 
 	      treeRootFile = treeLocation + treePath + subSampleNameVector[i] + "/treeProducerDarkMatterMonoJet/tree.root";
-	      friend_treeRootFile = treeLocation + treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
-	      sf_friend_treeRootFile = treeLocation + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+	      // friend_treeRootFile = treeLocation + treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
+	      // sf_friend_treeRootFile = treeLocation + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+	      string tmpFriendPath = "/afs/cern.ch/work/m/mciprian/allFriendsTree76X_Fall15";
+	      friend_treeRootFile = tmpFriendPath + treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
+	      sf_friend_treeRootFile = tmpFriendPath + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+
 
 	    } else if (whereAreTrees == "tier2") {
 	     

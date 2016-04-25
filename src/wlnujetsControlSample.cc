@@ -444,13 +444,12 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    fChain->SetBranchStatus("JetClean_leadClean",1); // has new cleaning on energy fractions (added on 17 November 2015) 
 
    // For mon-V categhory the following variables are needed.  -- > WARNING: this collection was made with |eta| < 2.4, not 2.5
-   fChain->SetBranchStatus("nFatJet",1);             // at least one for mono-V
-   fChain->SetBranchStatus("FatJet_pt",1);           // leading jet is required to be > 250
-   fChain->SetBranchStatus("FatJet_eta",1);          // just for the histogram
-   fChain->SetBranchStatus("FatJet_mass",1);
-   fChain->SetBranchStatus("FatJet_prunedMass",1);   // in 65-105 for leading jet in V-tag
-   fChain->SetBranchStatus("FatJet_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
-   fChain->SetBranchStatus("FatJet_tau2",1);
+   fChain->SetBranchStatus("nFatJetClean",1);             // at least one for mono-V
+   fChain->SetBranchStatus("FatJetClean_pt",1);           // leading jet is required to be > 250
+   fChain->SetBranchStatus("FatJetClean_eta",1);          // just for the histogram
+   fChain->SetBranchStatus("FatJetClean_prunedMass",1);   // in 65-105 for leading jet in V-tag
+   fChain->SetBranchStatus("FatJetClean_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
+   fChain->SetBranchStatus("FatJetClean_tau2",1);
 
    //added on 23/01/2016
    fChain->SetBranchStatus("nEle40T",1);   
@@ -688,7 +687,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      }
 
 
-     if ((nFatJet > 0.5) && (FatJet_pt[0] > 250.) && (fabs(FatJet_eta[0]) < 2.4) && (FatJet_prunedMass[0] > 65.) && (FatJet_prunedMass[0] < 105.) && ((FatJet_tau2[0]/FatJet_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
+     if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
 
      // beginning of eventMask building
@@ -790,12 +789,12 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
        HrecoilDistribution_monoV->Fill(metNoLepPt,newwgt);
        HvtxDistribution_monoV->Fill(nVert,newwgt);
        HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
-       Hjet1etaDistribution_monoV->Fill(FatJet_eta[0],newwgt);
-       Hjet1ptDistribution_monoV->Fill(FatJet_pt[0],newwgt);
+       Hjet1etaDistribution_monoV->Fill(FatJetClean_eta[0],newwgt);
+       Hjet1ptDistribution_monoV->Fill(FatJetClean_pt[0],newwgt);
        Hlep1ptDistribution_monoV->Fill(ptr_lepton_pt[0],newwgt);
        Hlep1etaDistribution_monoV->Fill(ptr_lepton_eta[0],newwgt);
-       HprunedMassDistribution_monoV->Fill(FatJet_prunedMass[0],newwgt);
-       Htau2OverTau1Distribution_monoV->Fill(FatJet_tau2[0]/FatJet_tau1[0],newwgt);
+       HprunedMassDistribution_monoV->Fill(FatJetClean_prunedMass[0],newwgt);
+       Htau2OverTau1Distribution_monoV->Fill(FatJetClean_tau2[0]/FatJetClean_tau1[0],newwgt);
 
        if (hasScaledHistograms_flag) {
 	 
