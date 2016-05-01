@@ -242,7 +242,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
 
    fChain->SetBranchStatus("nMu10V",1);  // # of muons passing loose selection
    fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
-   //fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
+   fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
    fChain->SetBranchStatus("nGamma175T",1);   // tight id for photon + pt > 175 and eta < 2.5 (but you should check that the eta cut is really 2.5 or it was changed to 1.442
    //fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (pt > 20 + everything else)
    //fChain->SetBranchStatus("nTau18V",1);
@@ -288,7 +288,8 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    fChain->SetBranchStatus("HLT_SinglePho",1);
 
    //photon variables for this sample
-   fChain->SetBranchStatus("nGammaGood;",1);
+   //fChain->SetBranchStatus("nGammaGood;",1);  // not used (it seems that this variable is not found in trees, but actually I checked and indeed it is present)
+   // for now I require nGamma15V == 1 to be sure that I have at leat one photon)
    fChain->SetBranchStatus("GammaGood_pdgId",1);
    fChain->SetBranchStatus("GammaGood_pt",1);
    fChain->SetBranchStatus("GammaGood_eta",1);
@@ -367,8 +368,6 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
    setSelections();
    setMask();
 
-   Int_t HLT_passed_flag = 1;  
-
    cout << "Opening file " <<ROOT_FNAME<< " in folder " << outputFolder << endl;
 
    TFile *rootFile = new TFile((outputFolder + ROOT_FNAME).c_str(),"RECREATE");
@@ -406,13 +405,6 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
 
-     // if ( HLT_FLAG != 0) {
-
-     //   if (  1 ) HLT_passed_flag = 1; 	 // ====> TO EDIT WITH TRIGGER FLAG <==== but Emanuele should have already asked that when making trees
-     //   else HLT_passed_flag = 0;
-	 
-     // }  // end of   if ( HLT_FLAG )
-
      // beginning of eventMask building
      if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (phmet_pt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
@@ -426,10 +418,10 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
      eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
      eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += tightPhotonC.addToMask(nGamma175T > 0.5 && nGammaGood > 0 && GammaGood_eta[0] < PH1ETA);  // PH1ETA = 1.442
+     eventMask += tightPhotonC.addToMask(nGamma15V  > 0.5 && nGamma175T > 0.5 && GammaGood_eta[0] < PH1ETA);  // PH1ETA = 1.442
      eventMask += recoilC.addToMask(phmet_pt > METNOLEP_START);
      eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
-     eventMask += HLTC.addToMask(HLT_passed_flag);  
+     if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SinglePho == 1);  
      eventMask += VtagC.addToMask(Vtagged_flag);
      eventMask += noVtagC.addToMask(!Vtagged_flag);
      
