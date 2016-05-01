@@ -1118,105 +1118,152 @@ Int_t main(int argc, char* argv[]) {
     j0v1 = atoi(argv[1]);
   }
 
+  string whichRegion = "ALL";
+  // default is all regions, but if -sr or -cr option is given, do some specific regions
+  // sig for signal region
+  // zmm for Z(mumu) control region
+  // zee for Z(ee) ...
+  // gam for gamma ...
+  // wmn for W(munu) ...
+  // wen for W(enu) ...
+  // all (with -cr) all control regions
+
+  Bool_t makeTransferFactor_flag = false;  // enable making of tranfer factors between SR and CR. By default it is false, but it will be set to true if all regions are analyzed. However, one might want them even though only SR or CR have been analyzed.
+  // If whichRegion == "ALL" after considering all options, then it is set to true.
+  // If whichRegion != "ALL" after considering all options and a CR is analyzed, TF are not made, unless -tf option is passed. In this case, do only TF related to CR specified after -cr option.
+  // If whichRegion != "ALL" after considering all options and SR is analyzed, TF between Z and W in SR is automatically enabled (need just sr for that).
+
+  if (argc > 2 ) {
+
+    for (Int_t i = 2; i < argc; i++) {   // look at all possible options passed                                                                                         
+
+      string thisArgument(argv[i]);
+
+      if (thisArgument  == "-sr" ) whichRegion = "sig";
+      else if (thisArgument  == "-cr") whichRegion = argv[i+1];
+      else if (thisArgument  == "-tf") makeTransferFactor_flag = true; 
+
+    }
+
+  }
+
+  if (whichRegion == "ALL") makeTransferFactor_flag = true;
 
   // signal region
-  distribution("SignalRegion",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("SignalRegion",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("SignalRegion",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("SignalRegion",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("SignalRegion",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("SignalRegion",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("SignalRegion",0,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  if (j0v1 != 1) distribution("SignalRegion",0,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("SignalRegion",0,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("SignalRegion",0,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "sig") {
+    distribution("SignalRegion",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("SignalRegion",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("SignalRegion",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution("SignalRegion",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("SignalRegion",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("SignalRegion",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("SignalRegion",0,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution("SignalRegion",0,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("SignalRegion",0,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("SignalRegion",0,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
   }
 
   // Z->mumu control region
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "zmm") {
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+    if (j0v1 != 1) distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
   }
 
   // Z->ee control region
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_zee",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "zee") {
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+    if (j0v1 != 1) distribution("ControlRegion_zee",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("ControlRegion_zee",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("ControlRegion_zee",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
   }
 
   // W->munu control region
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "wmn") {
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    if (j0v1 != 1) distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
   }
 
   // W->enu control region
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_wenu",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-  if (j0v1 != 1) distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "wen") {
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    if (j0v1 != 1) distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("ControlRegion_wenu",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("ControlRegion_wenu",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
   }
 
   // Gamma control region
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-  distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
-  distribution("ControlRegion_gamma",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
-  if (j0v1 != 1) distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
-  else {
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+  if (whichRegion == "ALL" || whichRegion == "gam") {  
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
+    distribution("ControlRegion_gamma",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    else {
+      distribution("ControlRegion_gamma",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution("ControlRegion_gamma",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+    }
+    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
   }
-
 
   // void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   // 			const string folderNameWithRootFilesCR = "",
@@ -1230,21 +1277,12 @@ Int_t main(int argc, char* argv[]) {
   // 			const Int_t rebinFactor = 1)
   // {
 
-  if (j0v1 == 1) {
-    makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
-    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
-  } else {
-    makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,-1,1,1);
-    makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,-1,0,1);
-    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
-  }
+  // makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
+  // makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
+  // makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);  
 
   return 0;
 
