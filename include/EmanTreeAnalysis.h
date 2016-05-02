@@ -74,7 +74,8 @@ namespace myAnalyzerTEman {
     Double_t computeEventWeight();
     //void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
     void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
-    
+
+    selection oneGammaLooseC;
     selection tightPhotonC;
     
     Double_t PH1PT;
@@ -255,6 +256,7 @@ namespace myAnalyzerTEman {
         
     // monoJet histograms
     TH1D *HtransverseMass = NULL;
+    TH1D *HptW_mT0to75 = NULL;
     //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
     TH1D *HYieldsMetBin_LepTightUp = NULL;
     TH1D *HYieldsMetBin_LepTightDown = NULL;
