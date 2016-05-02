@@ -65,7 +65,8 @@ void monojet_PhotonControlRegion::setSelections() {
   recoilC.set(Form("recoil > %2.0lf",METNOLEP_START),Form("metNoPhoton > %4.0lf",METNOLEP_START),"first cut on met");
   muonLooseVetoC.set("muon veto","muons veto");
   electronLooseVetoC.set("ele veto","electrons veto");
-  tightPhotonC.set("tight photon","tight photon",Form("tight photon: pT > %3.0lf, pT < %2.0lf",PH1PT,PH1ETA));
+  oneGammaLooseC.set("loose photon","loose photon");
+  tightPhotonC.set("tight photon","tight photon",Form("tight photon: pT > %3.0lf, |eta| < %1.4lf",PH1PT,PH1ETA));
 
   selection::checkMaskLength();
   selection::printActiveSelections(cout); 
@@ -80,10 +81,11 @@ void monojet_PhotonControlRegion::setMask() {
 
   if (HLT_FLAG != 0) analysisMask.append(HLTC.get2ToId());
   if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+  analysisMask.append(oneGammaLooseC.get2ToId());
+  analysisMask.append(tightPhotonC.get2ToId());
   analysisMask.append(muonLooseVetoC.get2ToId());
   analysisMask.append(electronLooseVetoC.get2ToId());
   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
-  analysisMask.append(tightPhotonC.get2ToId());
   analysisMask.append(bjetVetoC.get2ToId());
   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());  
   analysisMask.append(jet1C.get2ToId());
@@ -95,10 +97,11 @@ void monojet_PhotonControlRegion::setMask() {
 
   if (HLT_FLAG != 0) analysisSelectionManager.append(&HLTC);
   if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
+  analysisSelectionManager.append(&oneGammaLooseC);
+  analysisSelectionManager.append(&tightPhotonC);
   analysisSelectionManager.append(&muonLooseVetoC);
   analysisSelectionManager.append(&electronLooseVetoC);
   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
-  analysisSelectionManager.append(&tightPhotonC);
   analysisSelectionManager.append(&bjetVetoC);
   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC); 
   analysisSelectionManager.append(&jet1C);
@@ -418,7 +421,8 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
      eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
      eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += tightPhotonC.addToMask(nGamma15V  > 0.5 && nGamma175T > 0.5 && GammaGood_eta[0] < PH1ETA);  // PH1ETA = 1.442
+     eventMask += oneGammaLooseC.addToMask(nGamma15V > 0.5 && nGamma15V < 1.5);
+     eventMask += tightPhotonC.addToMask(nGamma175T > 0.5 && nGamma175T < 1.5 && fabs(GammaGood_eta[0]) < PH1ETA);  // PH1ETA = 1.442
      eventMask += recoilC.addToMask(phmet_pt > METNOLEP_START);
      eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
      if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SinglePho == 1);  
