@@ -174,6 +174,7 @@ void wlnujetsControlSample::setHistograms() {
   monojet_LeptonControlRegion::setHistograms();
     
   HtransverseMass = new TH1D("HtransverseMass","",40,0.0,200.0);
+  HptW_mT0to75 = new TH1D("HptW_mT0to75","",100,0.0,1000.0);
   HtransverseMass_monoV = new TH1D("HtransverseMass_monoV","",40,0.0,200.0);
   
   if (suffix == "WJetsToLNu") {
@@ -212,6 +213,7 @@ void wlnujetsControlSample::setHistogramLastBinAsOverFlow(const Int_t hasScaledH
   monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
   myAddOverflowInLastBin(HtransverseMass);
+  myAddOverflowInLastBin(HptW_mT0to75);
 
   myAddOverflowInLastBin(HtransverseMass_monoV);
 
@@ -748,6 +750,8 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
        
        // this histogram holds the final yields in bins of MET
 	 HYieldsMetBin->Fill(metNoLepPt,newwgt);
+
+	 HptW_mT0to75->Fill((lep+met).Mod(),newwgt);
 
 	 HhtDistribution->Fill(htJet25,newwgt);
 	 HtransverseMass->Fill(mT,newwgt);
