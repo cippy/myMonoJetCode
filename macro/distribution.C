@@ -303,9 +303,9 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
     if (mumu0_ee1 == 0) xAxisName = "second muon p_{T} [GeV]";
     else if (mumu0_ee1 == 1) xAxisName = "second electron p_{T} [GeV]";
 
-  } else if ( !(strcmp("ptW_mT0to75",var.c_str())) ) {
+  } else if ( !(strcmp("ptW_mT0to50",var.c_str())) ) {
 
-    hvarName = "HptW_mT0to75"; 
+    hvarName = "HptW_mT0to50"; 
     xAxisName = " p_{T} (W) [GeV]";
 
   } else {
