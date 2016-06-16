@@ -40,6 +40,11 @@ class AnalysisDarkMatter : public edimarcoTree_v5 {
   selection gammaLooseVetoC;
   selection VtagC;
   selection noVtagC; // opposite of VtagC: monojet and monoV are now exclusive cathegories
+  //adding VTag selections separately
+  selection ak8jet1C;
+  selection ak8Tau2OverTau1C;
+  selection ak8prunedMassC;
+  selection harderRecoilC; // met > 250 instead of 200
 
   mask analysisMask;
   selectionManager analysisSelectionManager;
@@ -61,6 +66,7 @@ class AnalysisDarkMatter : public edimarcoTree_v5 {
   virtual void setHistogramLastBinAsOverFlow(const Int_t);
   virtual void createSystematicsHistogram(); //build histograms with systematic uncertainties
   virtual void fillRowVector(const Double_t, const selectionManager &, const mask &, std::vector<Double_t> &, std::vector<Double_t> &, std::vector<Double_t> &, const Int_t);
+  virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
   /* virtual void set_SF_NLO_name(const std::string); */
   /* virtual void set_SF_NLO_pointers(const std::string sf_option, Float_t *ptrQCD, Float_t *ptrEWK); */
   //virtual Double_t computeEventWeight() const;   // return weight for the event
@@ -81,6 +87,7 @@ class AnalysisDarkMatter : public edimarcoTree_v5 {
   Double_t METNOLEP_START;
   Int_t MET_FILTERS_FLAG;
   Double_t JMET_DPHI_MIN;
+  Int_t ENABLE_HISTOGRAM_FOR_TESTS_FLAG;
   std::string FILENAME_BASE;
   std::string DIRECTORY_TO_SAVE_FILES;
   std::string DIRECTORY_NAME;
@@ -176,6 +183,9 @@ class AnalysisDarkMatter : public edimarcoTree_v5 {
   TH1D *HSyst_qcdPdf_monoV = NULL;
   TH1D *HSyst_ewk_monoV = NULL;
   TH1D *HSyst_total_monoV = NULL;
+
+  TFile *file_HistogramForTests = NULL;
+  std::vector<TH1D*> testHistogramVector;  // for bookkeping, this vector will hold the pointers to histograms used for tests
 
 };
 
