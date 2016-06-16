@@ -599,7 +599,7 @@ int main(int argc, char* argv[]) {
 
 	      treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root";
 	      friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root";
-	      sf_friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
+	      if (sf_friend_flag != 0) sf_friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
 
 	    } else if (whereAreTrees == "afs") {
 
@@ -608,14 +608,14 @@ int main(int argc, char* argv[]) {
 	      // sf_friend_treeRootFile = treeLocation + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
 	      string tmpFriendPath = "/afs/cern.ch/work/m/mciprian/allFriendsTree76X_Fall15";
 	      friend_treeRootFile = tmpFriendPath + treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
-	      sf_friend_treeRootFile = tmpFriendPath + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
+	      if (sf_friend_flag != 0) sf_friend_treeRootFile = tmpFriendPath + treePath + "friends/sfFriend_" + subSampleNameVector[i]+ ".root";
 
 
 	    } else if (whereAreTrees == "tier2") {
 	     
 	      treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + subSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root";
 	      friend_treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + "evVarFriend_" + subSampleNameVector[i]+ ".root";
-	      sf_friend_treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
+	      if (sf_friend_flag != 0) sf_friend_treeRootFile = "dcap://cmsrm-se01.roma1.infn.it" + treeLocation + treePath + "sfFriend_" + subSampleNameVector[i]+ ".root";
 
 	    }
 
@@ -654,7 +654,7 @@ int main(int argc, char* argv[]) {
 	  std::cout << "Adding friend to chain ..." << std::endl;
 	  chain->AddFriend("mjvars/t",TString(friendTreePath.c_str()));
 
-	  if (sf_friendTreePath != "") {
+	  if ( (sf_friend_flag != 0) && (sf_friendTreePath != "")) {
 	    std::cout << "Adding friend with scale factors to chain ..." << std::endl;	  
 	    chain->AddFriend("sf/t",TString(sf_friendTreePath.c_str()));
 	  }
@@ -679,7 +679,7 @@ int main(int argc, char* argv[]) {
 	  // tree.set_SF_NLO_name(sf_nlo_option);
 	  //tree.loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
 	  tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
-	  if (nSample == 0) {
+	  if (nSample == 0) {  // export definition only once (the first time in the current implementation)
 	    tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
 	    tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
 	    tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);

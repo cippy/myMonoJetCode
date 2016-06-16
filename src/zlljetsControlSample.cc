@@ -92,6 +92,47 @@ void zlljetsControlSample::setSelections() {
 
 void zlljetsControlSample::setMask() {
 
+  // analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
+
+  //  if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
+  //    if (using_zlljets_MCsample_flag ) {
+  //      analysisMask.append(genLepC.get2ToId());
+  //      analysisMask.append(recoGenLepMatchC.get2ToId());
+  //    }
+  //    else if (using_ztautaujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());    
+  //  }
+  //  if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
+  //  if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+  //  analysisMask.append(twoLepLooseC.get2ToId());
+  //  analysisMask.append(tightLepC.get2ToId());
+  //  analysisMask.append(oppChargeLeptonsC.get2ToId());     
+  //  analysisMask.append(invMassC.get2ToId());
+  //  analysisMask.append(lepLooseVetoC.get2ToId());
+  //  if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
+  //  analysisMask.append(gammaLooseVetoC.get2ToId());
+  //  analysisMask.append(bjetVetoC.get2ToId());
+  //  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+  //  analysisMask.append(jet1C.get2ToId());
+  //  analysisMask.append(jetNoiseCleaningC.get2ToId());
+  //  analysisMask.append(jetMetDphiMinC.get2ToId());
+
+  //  analysisSelectionManager.SetMaskPointer(&analysisMask);
+
+  //  if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
+  //  if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
+  //  analysisSelectionManager.append(&twoLepLooseC);
+  //  analysisSelectionManager.append(&tightLepC);
+  //  analysisSelectionManager.append(&oppChargeLeptonsC);  
+  //  analysisSelectionManager.append(&invMassC);
+  //  analysisSelectionManager.append(&lepLooseVetoC);
+  //  if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
+  //  analysisSelectionManager.append(&gammaLooseVetoC);
+  //  analysisSelectionManager.append(&bjetVetoC);
+  //  if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
+  //  analysisSelectionManager.append(&jet1C);
+  //  analysisSelectionManager.append(&jetNoiseCleaningC);
+  //  analysisSelectionManager.append(&jetMetDphiMinC);
+
   analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
 
    if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
@@ -108,14 +149,14 @@ void zlljetsControlSample::setMask() {
    analysisMask.append(oppChargeLeptonsC.get2ToId());     
    analysisMask.append(invMassC.get2ToId());
    analysisMask.append(lepLooseVetoC.get2ToId());
-   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
    analysisMask.append(gammaLooseVetoC.get2ToId());
+   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
    analysisMask.append(bjetVetoC.get2ToId());
-   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
    analysisMask.append(jet1C.get2ToId());
    analysisMask.append(jetNoiseCleaningC.get2ToId());
    analysisMask.append(jetMetDphiMinC.get2ToId());
-
+   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+   
    analysisSelectionManager.SetMaskPointer(&analysisMask);
 
    if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
@@ -125,17 +166,17 @@ void zlljetsControlSample::setMask() {
    analysisSelectionManager.append(&oppChargeLeptonsC);  
    analysisSelectionManager.append(&invMassC);
    analysisSelectionManager.append(&lepLooseVetoC);
-   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
    analysisSelectionManager.append(&gammaLooseVetoC);
+   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
    analysisSelectionManager.append(&bjetVetoC);
-   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
    analysisSelectionManager.append(&jet1C);
    analysisSelectionManager.append(&jetNoiseCleaningC);
    analysisSelectionManager.append(&jetMetDphiMinC);
+   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
    
   // ========== Mono-J ==============
 
-   analysisMask_monoJ.setName(Form("%s control sample",CONTROL_SAMPLE));
+   analysisMask_monoJ.setName(Form("monojet %s control sample",CONTROL_SAMPLE));
    
    analysisMask_monoJ.append(analysisMask.globalMask.back()); // all the common selections
    analysisMask_monoJ.append(noVtagC.get2ToId());
@@ -145,22 +186,31 @@ void zlljetsControlSample::setMask() {
    analysisSelectionManager_monoJ.append("all cuts");
    analysisSelectionManager_monoJ.append(&noVtagC);
 
-   // ========== Mono-V ==============
+  // ========== Mono-V ==============                                                                                                                                  
 
-  analysisMask_monoV.setName("monoV signal selection");
-  
-  analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections
-  analysisMask_monoV.append(VtagC.get2ToId());
+   analysisMask_monoV.setName(Form("monoV %s control sample",CONTROL_SAMPLE));
+
+  analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections                                                                              
+  // analysisMask_monoV.append(VtagC.get2ToId());                                                                                                                      
+  analysisMask_monoV.append(ak8jet1C.get2ToId());
+  analysisMask_monoV.append(ak8Tau2OverTau1C.get2ToId());
+  analysisMask_monoV.append(ak8prunedMassC.get2ToId());
+  analysisMask_monoV.append(harderRecoilC.get2ToId());
 
   analysisSelectionManager_monoV.SetMaskPointer(&analysisMask_monoV);
 
   analysisSelectionManager_monoV.append("all cuts");
-  analysisSelectionManager_monoV.append(&VtagC);
-  
-  // creating collection of pointers to mask used in the analysis
+  // analysisSelectionManager_monoV.append(&VtagC);                                                                                                                    
+  analysisSelectionManager_monoV.append(&ak8jet1C);
+  analysisSelectionManager_monoV.append(&ak8Tau2OverTau1C);
+  analysisSelectionManager_monoV.append(&ak8prunedMassC);
+  analysisSelectionManager_monoV.append(&harderRecoilC);
+
+  // creating collection of pointers to mask used in the analysis                                                                                                      
   anaMasksPtrCollection.push_back(&analysisMask);
   anaMasksPtrCollection.push_back(&analysisMask_monoJ);
   anaMasksPtrCollection.push_back(&analysisMask_monoV);
+
 
 }
 
@@ -749,6 +799,10 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      eventMask += twoLepLooseC.addToMask(nLepLoose > 1.5 && nLepLoose < 2.5);
      if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
      else eventMask += tightLepC.addToMask(nLepTight > 0.5 );
+     eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
+     eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
+     eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
+     eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
  
      // end of eventMask building
 

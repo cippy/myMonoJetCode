@@ -1,0 +1,748 @@
+
+=========================================================
+lepton_pdgID = 13
+Analysis of Z/W->muons
+Applying tau veto
+Applying HLT cut
+Cutting on recoil > 200 GeV
+Applying met filters
+     filename_base: wmunujets_CR
+     Tree location: /store/cmst3/group/susy/emanuele/monox/trees
+             tree : /TREES_25ns_MET200SKIM_76X/
+Performing analysis on control samples.
+File pointing to samples: /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/config/test_wmunujets_CR_samplePaths_metNoMuSkim200.txt
+Performing analysis on W control samples.
+Files will be saved in '/afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/' .
+Files will be saved in directory named 'test_ControlRegion_wmunu' .
+=========================================================
+Creating new directory /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/ ... 
+Warning: maybe directory already exists
+Saving content of ../config/test_wmunu.txt file in report.txt located in 
+ -->/afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/
+Saving content of /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/config/test_wmunujets_CR_samplePaths_metNoMuSkim200.txt file in report.txt located in 
+ -->/afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/
+=========================================================
+=========================================================
+Running on data
+Not using scale factor friend trees (sf_friend)
+      sample name : data
+sample uncertainty : poisson
+    SUB_SAMPLE_NAMES  MET_Run2015C_16Dec_runs_254227_254914 
+using_EmanTreesWithSubSamples_flag : 1
+Creating chain ...
+Adding friend to chain ...
+analysing sample n 1 : data
+7534
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_trig1lep
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_trigmetnomu
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLoose
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTight
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLooseUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLooseDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_renScaleUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_renScaleDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_facScaleUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_facScaleDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_pdfUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_pdfDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK_up
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK_down
+Error in <TChain::SetBranchAddress>: unknown branch -> xsec
+Error in <TChain::SetBranchAddress>: unknown branch -> puWeight
+Error in <TChain::SetBranchAddress>: unknown branch -> nTrueInt
+Error in <TChain::SetBranchAddress>: unknown branch -> genWeight
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genPt
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genPhi
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genEta
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genPt
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genPhi
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genEta
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> nGenPart
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_motherId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_grandmotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_sourceId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_status
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_motherIndex
+Error in <TChain::SetBranchAddress>: unknown branch -> isoTrack_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchAny
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchTau
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchPdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_svMCMatchFraction
+Error in <TChain::SetBranchAddress>: unknown branch -> ngenJet
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_status
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcMatchFlav
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonMotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumPartons
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumLeptons
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumTaus
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcAnyPartonMass
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_genIso04
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_genIso03
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_drMinParton
+Error in <TChain::SetBranchAddress>: unknown branch -> TauGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcMatchFlav
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonMotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumPartons
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumLeptons
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumTaus
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcAnyPartonMass
+Error in <TChain::SetBranchAddress>: unknown branch -> ngenLep
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_motherId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_grandmotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_sourceId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_status
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_motherIndex
+Error in <TChain::SetBranchAddress>: unknown branch -> nLHEweight
+Error in <TChain::SetBranchAddress>: unknown branch -> LHEweight_id
+Error in <TChain::SetBranchAddress>: unknown branch -> LHEweight_wgt
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_trig1lep
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_trigmetnomu
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLoose
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTight
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLooseUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightLooseDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_LepTightDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_renScaleUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_renScaleDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_facScaleUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_facScaleDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_pdfUp
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_QCD_pdfDown
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK_up
+Error in <TChain::SetBranchAddress>: unknown branch -> SF_NLO_EWK_down
+Error in <TChain::SetBranchAddress>: unknown branch -> xsec
+Error in <TChain::SetBranchAddress>: unknown branch -> puWeight
+Error in <TChain::SetBranchAddress>: unknown branch -> nTrueInt
+Error in <TChain::SetBranchAddress>: unknown branch -> genWeight
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genPt
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genPhi
+Error in <TChain::SetBranchAddress>: unknown branch -> met_genEta
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genPt
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genPhi
+Error in <TChain::SetBranchAddress>: unknown branch -> metNoMu_genEta
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> FatJet_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> nGenPart
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_motherId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_grandmotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_sourceId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_status
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> GenPart_motherIndex
+Error in <TChain::SetBranchAddress>: unknown branch -> isoTrack_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchAny
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchTau
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_mcMatchPdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> LepGood_svMCMatchFraction
+Error in <TChain::SetBranchAddress>: unknown branch -> ngenJet
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> genJet_status
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcMatchFlav
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonMotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumPartons
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumLeptons
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcNumTaus
+Error in <TChain::SetBranchAddress>: unknown branch -> JetFwd_mcAnyPartonMass
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_genIso04
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_genIso03
+Error in <TChain::SetBranchAddress>: unknown branch -> GammaGood_drMinParton
+Error in <TChain::SetBranchAddress>: unknown branch -> TauGood_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcMatchFlav
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonMotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcPt
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_partonFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_hadronFlavour
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcMatchId
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JERUp
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JERDown
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_corr_JER
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumPartons
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumLeptons
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcNumTaus
+Error in <TChain::SetBranchAddress>: unknown branch -> Jet_mcAnyPartonMass
+Error in <TChain::SetBranchAddress>: unknown branch -> ngenLep
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_motherId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_grandmotherId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_sourceId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_charge
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_status
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_pdgId
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_pt
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_eta
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_phi
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_mass
+Error in <TChain::SetBranchAddress>: unknown branch -> genLep_motherIndex
+Error in <TChain::SetBranchAddress>: unknown branch -> nLHEweight
+Error in <TChain::SetBranchAddress>: unknown branch -> LHEweight_id
+Error in <TChain::SetBranchAddress>: unknown branch -> LHEweight_wgt
+
+
+Printing content of ../config/test_wmunu.txt file
+
+                LUMI  2.32
+               NJETS  2
+                J1PT  100
+               J1ETA  2.5
+                J2PT  30
+               J2ETA  2.5
+            J1J2DPHI  2.5
+       JMET_DPHI_MIN  0.5
+          LEP_PDG_ID  13
+              LEP1PT  20
+             LEP1ETA  2.4
+          LEP_ISO_04  0.12
+          GENLEP_TAG  0
+           GENLEP1PT  20
+          GENLEP1ETA  2.4
+       TAU_VETO_FLAG  1
+            HLT_FLAG  1
+          HLT_LEP1PT  20
+         HLT_LEP1ETA  2.4
+      METNOLEP_START  200
+    MET_FILTERS_FLAG  1
+ENABLE_HISTOGRAM_FOR_TESTS_FLAG  1
+       FILENAME_BASE  wmunujets_CR
+     WHERE_ARE_TREES  eos
+           TREE_PATH  /TREES_25ns_MET200SKIM_76X/
+ PATH_TO_SAMPLES_4CR  /myMonoJetCode/config/test_wmunujets_CR_samplePaths_metNoMuSkim200.txt
+CONTROL_SAMPLE_BOSON  W
+      DIRECTORY_PATH  /myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/
+      DIRECTORY_NAME  test_ControlRegion_wmunu
+       MET_BIN_EDGES  200 230 260 290 320 350 390 430 470 510 550 590 640 690 740 790 840 900 960 1020 1090 1160 1250 
+ MET_BIN_EDGES_MONOV  250 300 350 400 500 600 750 1000 
+
+
+MetBinEdges: [ 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160, 1250]
+MetBinEdges_monoV: [ 250, 300, 350, 400, 500, 600, 750, 1000]
+
+------------------------------------------------------------------------------------------
+Printing list of activated selections
+------------------------------------------------------------------------------------------
+trigger             : id =  0 |                   trigger   
+met filters         : id =  1 |               met filters   cscfilter, ecalfilter, hbheFilterNeww25ns, hbheFilterIso, Flag_eeBadScFilter
+recoil > 200        : id =  2 |             metNoMu > 200   
+jet1                : id =  3 |              jet1pt > 100   nJetClean >= 1 && JetClean1_pt >  100
+dphiMin(j,MET)      : id =  4 |    min[dphi(j,MET)] > 0.5   minimum dphi between jets and MET (using only the first 4 jets)
+jet1 cleaning       : id =  5 |            noise cleaning   energy fractions (only for jet1): CH > 0.1; NH < 0.8
+bjet veto           : id =  6 |               b-jets veto   
+tau veto            : id =  9 |                  tau veto   
+photon veto         : id = 10 |              photons veto   
+V tag               : id = 11 |                  V-tagged   nFatJet>0 and leading FatJet(ak8) with: pT>250, |eta|<2.4, pruned mass in [65,105], tau2/tau1 < 0.6, recoil > 250
+no V tag            : id = 12 |               V-notTagged   if any of V-tagged conditions fails (see VtagC for details)
+ele veto            : id = 13 |            electrons veto   
+1 loose mu          : id = 17 |              1 loose muon   
+1 tight mu          : id = 18 |              1 tight muon   
+------------------------------------------------------------------------------------------
+Opening file wmunujets_CR_DATA.root in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/
+wlnujetsControlSample::loop()
+nentries = 7534
+0
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> W-->munu control sample (inclusive)
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 7534
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.32 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                                 2548      0.3382  0.3382
+                       trigger
+-----------------------------------------------------------------------------------
+    2                            2479.0000      0.3290  0.9729
+                   met filters
+-----------------------------------------------------------------------------------
+    3                             642.0000      0.0852  0.2590
+                  1 loose muon
+-----------------------------------------------------------------------------------
+    4                             556.0000      0.0738  0.8660
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    5                             544.0000      0.0722  0.9784
+                electrons veto
+-----------------------------------------------------------------------------------
+    6                             515.0000      0.0684  0.9467
+                      tau veto
+-----------------------------------------------------------------------------------
+    7                             508.0000      0.0674  0.9864
+                  photons veto
+-----------------------------------------------------------------------------------
+    8                             419.0000      0.0556  0.8248
+                   b-jets veto
+-----------------------------------------------------------------------------------
+    9                             419.0000      0.0556  1.0000
+                 metNoMu > 200
+-----------------------------------------------------------------------------------
+   10                             391.0000      0.0519  0.9332
+                  jet1pt > 100
+-----------------------------------------------------------------------------------
+   11                             387.0000      0.0514  0.9898
+                noise cleaning
+-----------------------------------------------------------------------------------
+   12                             349.0000      0.0463  0.9018
+        min[dphi(j,MET)] > 0.5
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> W-->munu control sample
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 7534.0000
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.3200 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                             349.0000      0.0463  0.0463
+                       trigger
+                   met filters
+                 metNoMu > 200
+                  jet1pt > 100
+        min[dphi(j,MET)] > 0.5
+                noise cleaning
+                   b-jets veto
+                      tau veto
+                  photons veto
+                electrons veto
+                  1 loose muon
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    2                             338.0000      0.0449  0.9685
+                   V-notTagged
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> monoV signal selection
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 7534.0000
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.3200 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                             349.0000      0.0463  0.0463
+                       trigger
+                   met filters
+                 metNoMu > 200
+                  jet1pt > 100
+        min[dphi(j,MET)] > 0.5
+                noise cleaning
+                   b-jets veto
+                      tau veto
+                  photons veto
+                electrons veto
+                  1 loose muon
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    2                              11.0000      0.0015  0.0315
+                      V-tagged
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+HYieldsMetBin : yields in met bin
+#bin   yield   MC uncertainty     sqrt(yield)
+<200 0.0000 0.0000 0.0000
+200-230 147.0000 12.1244 12.1244
+230-260 86.0000 9.2736 9.2736
+260-290 46.0000 6.7823 6.7823
+290-320 16.0000 4.0000 4.0000
+320-350 18.0000 4.2426 4.2426
+350-390 8.0000 2.8284 2.8284
+390-430 7.0000 2.6458 2.6458
+430-470 1.0000 1.0000 1.0000
+470-510 4.0000 2.0000 2.0000
+510-550 2.0000 1.4142 1.4142
+550-590 1.0000 1.0000 1.0000
+590-640 1.0000 1.0000 1.0000
+640-690 0.0000 0.0000 0.0000
+690-740 1.0000 1.0000 1.0000
+740-790 0.0000 0.0000 0.0000
+790-840 0.0000 0.0000 0.0000
+840-900 0.0000 0.0000 0.0000
+900-960 0.0000 0.0000 0.0000
+960-1020 0.0000 0.0000 0.0000
+1020-1090 0.0000 0.0000 0.0000
+1090-1160 0.0000 0.0000 0.0000
+1160-1250 0.0000 0.0000 0.0000
+>1250 0.0000 0.0000 0.0000
+
+
+creating file 'wmunujets_CR_DATA.txt' in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/ ...
+Opening file tests_wmunujets_CR_DATA.root in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/ to store histograms used for tests
+creating file 'wmunujets_CR_DATA.tex in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/' ...
+
+
+~wlnujetsControlSample() called
+~monojet_LeptonControlRegion() called
+~AnalysisDarkMatter() called
+
+
+=========================================================
+=========================================================
+Running on MonteCarlo
+Using scale factor friend trees (sf_friend)
+      sample name : WJetsToLNu
+sample uncertainty : poisson
+    SUB_SAMPLE_NAMES  WJetsToLNu_HT100to200 
+using_EmanTreesWithSubSamples_flag : 1
+Creating chain ...
+Adding friend to chain ...
+Adding friend with scale factors to chain ...
+analysing sample n 2 : WJetsToLNu
+25131
+
+
+Printing content of ../config/test_wmunu.txt file
+
+                LUMI  2.3200
+               NJETS  2.0000
+                J1PT  100.0000
+               J1ETA  2.5000
+                J2PT  30.0000
+               J2ETA  2.5000
+            J1J2DPHI  2.5000
+       JMET_DPHI_MIN  0.5000
+          LEP_PDG_ID  13.0000
+              LEP1PT  20.0000
+             LEP1ETA  2.4000
+          LEP_ISO_04  0.1200
+          GENLEP_TAG  0.0000
+           GENLEP1PT  20.0000
+          GENLEP1ETA  2.4000
+       TAU_VETO_FLAG  1.0000
+            HLT_FLAG  1.0000
+          HLT_LEP1PT  20.0000
+         HLT_LEP1ETA  2.4000
+      METNOLEP_START  200.0000
+    MET_FILTERS_FLAG  1.0000
+ENABLE_HISTOGRAM_FOR_TESTS_FLAG  1.0000
+       FILENAME_BASE  wmunujets_CR
+     WHERE_ARE_TREES  eos
+           TREE_PATH  /TREES_25ns_MET200SKIM_76X/
+ PATH_TO_SAMPLES_4CR  /myMonoJetCode/config/test_wmunujets_CR_samplePaths_metNoMuSkim200.txt
+CONTROL_SAMPLE_BOSON  W
+      DIRECTORY_PATH  /myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/
+      DIRECTORY_NAME  test_ControlRegion_wmunu
+       MET_BIN_EDGES  200.0000 230.0000 260.0000 290.0000 320.0000 350.0000 390.0000 430.0000 470.0000 510.0000 550.0000 590.0000 640.0000 690.0000 740.0000 790.0000 840.0000 900.0000 960.0000 1020.0000 1090.0000 1160.0000 1250.0000 
+ MET_BIN_EDGES_MONOV  250.0000 300.0000 350.0000 400.0000 500.0000 600.0000 750.0000 1000.0000 
+
+
+MetBinEdges: [ 200.0000, 230.0000, 260.0000, 290.0000, 320.0000, 350.0000, 390.0000, 430.0000, 470.0000, 510.0000, 550.0000, 590.0000, 640.0000, 690.0000, 740.0000, 790.0000, 840.0000, 900.0000, 960.0000, 1020.0000, 1090.0000, 1160.0000, 1250.0000]
+MetBinEdges_monoV: [ 250.0000, 300.0000, 350.0000, 400.0000, 500.0000, 600.0000, 750.0000, 1000.0000]
+
+------------------------------------------------------------------------------------------
+Printing list of activated selections
+------------------------------------------------------------------------------------------
+trigger             : id =  0 |                   trigger   
+met filters         : id =  1 |               met filters   cscfilter, ecalfilter, hbheFilterNeww25ns, hbheFilterIso, Flag_eeBadScFilter
+recoil > 200        : id =  2 |             metNoMu > 200   
+jet1                : id =  3 |              jet1pt > 100   nJetClean >= 1 && JetClean1_pt >  100
+dphiMin(j,MET)      : id =  4 |    min[dphi(j,MET)] > 0.5   minimum dphi between jets and MET (using only the first 4 jets)
+jet1 cleaning       : id =  5 |            noise cleaning   energy fractions (only for jet1): CH > 0.1; NH < 0.8
+bjet veto           : id =  6 |               b-jets veto   
+tau veto            : id =  9 |                  tau veto   
+photon veto         : id = 10 |              photons veto   
+V tag               : id = 11 |                  V-tagged   nFatJet>0 and leading FatJet(ak8) with: pT>250, |eta|<2.4, pruned mass in [65,105], tau2/tau1 < 0.6, recoil > 250
+no V tag            : id = 12 |               V-notTagged   if any of V-tagged conditions fails (see VtagC for details)
+ele veto            : id = 13 |            electrons veto   
+1 loose mu          : id = 17 |              1 loose muon   
+1 tight mu          : id = 18 |              1 tight muon   
+------------------------------------------------------------------------------------------
+Opening file wmunujets_CR_WJetsToLNu.root in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/
+wlnujetsControlSample::loop()
+nentries = 25131
+0
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> W-->munu control sample (inclusive)
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 10700.5351
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.3200 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                           10164.1660      0.9499  0.9499
+                       trigger
+-----------------------------------------------------------------------------------
+    2                           10141.6302      0.9478  0.9978
+                   met filters
+-----------------------------------------------------------------------------------
+    3                            5590.0984      0.5224  0.5512
+                  1 loose muon
+-----------------------------------------------------------------------------------
+    4                            4930.1138      0.4607  0.8819
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    5                            4921.7359      0.4600  0.9983
+                electrons veto
+-----------------------------------------------------------------------------------
+    6                            4847.5620      0.4530  0.9849
+                      tau veto
+-----------------------------------------------------------------------------------
+    7                            4827.3625      0.4511  0.9958
+                  photons veto
+-----------------------------------------------------------------------------------
+    8                            4724.1181      0.4415  0.9786
+                   b-jets veto
+-----------------------------------------------------------------------------------
+    9                            4724.1181      0.4415  1.0000
+                 metNoMu > 200
+-----------------------------------------------------------------------------------
+   10                            4280.3874      0.4000  0.9061
+                  jet1pt > 100
+-----------------------------------------------------------------------------------
+   11                            4249.1640      0.3971  0.9927
+                noise cleaning
+-----------------------------------------------------------------------------------
+   12                            4238.0262      0.3961  0.9974
+        min[dphi(j,MET)] > 0.5
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> W-->munu control sample
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 10700.5351
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.3200 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                            4238.0262      0.3961  0.3961
+                       trigger
+                   met filters
+                 metNoMu > 200
+                  jet1pt > 100
+        min[dphi(j,MET)] > 0.5
+                noise cleaning
+                   b-jets veto
+                      tau veto
+                  photons veto
+                electrons veto
+                  1 loose muon
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    2                            4238.0262      0.3961  1.0000
+                   V-notTagged
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+**************************
+*        SELECTIONS FLOW & YIELDS        *
+**************************
+Mask's name --> monoV signal selection
+-----------------------------------------------------------------------------------
+nwentries:  weighted total number of entries = 10700.5351
+n:               number of events after i-th selection
+aR:            absolute ratio = n(i)/nwentries
+rR:             relative ratio = n(i)/n(i-1)
+**************************
+data normalised to 2.3200 fb^-1
+===========================================================
+ step               definition           n          aR      rR
+===========================================================
+    1                            4238.0262      0.3961  0.3961
+                       trigger
+                   met filters
+                 metNoMu > 200
+                  jet1pt > 100
+        min[dphi(j,MET)] > 0.5
+                noise cleaning
+                   b-jets veto
+                      tau veto
+                  photons veto
+                electrons veto
+                  1 loose muon
+                  1 tight muon
+-----------------------------------------------------------------------------------
+    2                               0.0000      0.0000  0.0000
+                      V-tagged
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+
+
+HYieldsMetBin : yields in met bin
+#bin   yield   MC uncertainty     sqrt(yield)
+<200 0.0000 0.0000 0.0000
+200-230 3778.1298 41.2111 61.4665
+230-260 435.0481 13.8630 20.8578
+260-290 20.9645 3.0063 4.5787
+290-320 3.8836 1.2598 1.9707
+320-350 0.0000 0.0000 0.0000
+350-390 0.0000 0.0000 0.0000
+390-430 0.0000 0.0000 0.0000
+430-470 0.0000 0.0000 0.0000
+470-510 0.0000 0.0000 0.0000
+510-550 0.0000 0.0000 0.0000
+550-590 0.0000 0.0000 0.0000
+590-640 0.0000 0.0000 0.0000
+640-690 0.0000 0.0000 0.0000
+690-740 0.0000 0.0000 0.0000
+740-790 0.0000 0.0000 0.0000
+790-840 0.0000 0.0000 0.0000
+840-900 0.0000 0.0000 0.0000
+900-960 0.0000 0.0000 0.0000
+960-1020 0.0000 0.0000 0.0000
+1020-1090 0.0000 0.0000 0.0000
+1090-1160 0.0000 0.0000 0.0000
+1160-1250 0.0000 0.0000 0.0000
+>1250 0.0000 0.0000 0.0000
+
+
+creating file 'wmunujets_CR_WJetsToLNu.txt' in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/ ...
+Opening file tests_wmunujets_CR_WJetsToLNu.root in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/ to store histograms used for tests
+creating file 'wmunujets_CR_WJetsToLNu.tex in folder /afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/' ...
+
+
+~wlnujetsControlSample() called
+~monojet_LeptonControlRegion() called
+~AnalysisDarkMatter() called
+
+
+=========================================================
+=========================================================
+=========================================================
+
+yieldsRow.size() = 26
+yieldsRow_monoJ.size() = 6
+yieldsRow_monoV.size() = 6
+
+yieldsRow.size() = 39		selectionDefinition.size() = 13
+yieldsRow_monoJ.size() = 9		selectionDefinition_monoJ.size() = 3
+yieldsRow_monoV.size() = 9		selectionDefinition_monoV.size() = 3
+
+-----------------
+creating file 
+'wmunujets_CR_yieldsTable.dat'
+to save table with yields in folder 
+/afs/cern.ch/work/m/mciprian/myCode/CMSSW_7_2_1/src/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/test_ControlRegion_wmunu/
+-----------------
+
+

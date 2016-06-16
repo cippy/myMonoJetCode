@@ -55,10 +55,20 @@ AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v5(tree) {
   calibEle_flag = 0;
   hasScaledHistograms_flag = 0;
   dirName_suffix = ""; //user can add a suffix to directory name from main instead of changing string in config file
-
-  //sf_nlo = "";
   nTotalWeightedEvents = 0.0;
   newwgt = 0.0;
+
+  // initialize some variables with sensible values. They will be set later depending on config file
+  LUMI = 1.0;
+  J1PT = 100.0;
+  J1ETA = 2.5;
+  TAU_VETO_FLAG = 1;
+  HLT_FLAG = 0;                  // usage depends on specific analysis
+  METNOLEP_START = 0.0;
+  MET_FILTERS_FLAG = 1;
+  JMET_DPHI_MIN = 0.5;
+  ENABLE_HISTOGRAM_FOR_TESTS_FLAG = 0;
+  
 
   Init(tree);
   
@@ -88,7 +98,7 @@ void AnalysisDarkMatter::Init(TTree *tree) {
 void AnalysisDarkMatter::setBasicConf(const char* inputSuffix, const string inputUncertainty, const char* inputConfigFileName, const Int_t inputIsDataFlag, const Int_t inputUnweightedEeventFlag, const Int_t inputHasSFfriendFlag) {
 
   suffix = inputSuffix;  // it is the sample name (e.g. QCD, ZJetsToNuNu ecc...)
-  uncertainty = inputUncertainty; //sample uncertainty (poisson, MC, X%),
+  uncertainty = inputUncertainty; //sample uncertainty (poisson, MC, X%), for now it is just used when creating the table to assign uncertainties to the sum of MC yields, which depends on the uncertainty on the yields for each MC
   configFileName = (char*) inputConfigFileName;
   ISDATA_FLAG = inputIsDataFlag;
   unweighted_event_flag = inputUnweightedEeventFlag;
@@ -135,6 +145,7 @@ void AnalysisDarkMatter::setNumberParameterValue(const string parameterName, con
   else if (parameterName == "METNOLEP_START") METNOLEP_START = value;
   else if (parameterName == "MET_FILTERS_FLAG") MET_FILTERS_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "JMET_DPHI_MIN") JMET_DPHI_MIN = value;
+  else if (parameterName == "ENABLE_HISTOGRAM_FOR_TESTS_FLAG") ENABLE_HISTOGRAM_FOR_TESTS_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value); // here our convention is broken, since the flag is written with lower case. This is because at first I wanted to set in as an option passed to main as I do for unweighted_event_flag.
 
 }
 
@@ -317,7 +328,7 @@ void AnalysisDarkMatter::setVarFromConfigFile() {
 
 void AnalysisDarkMatter::setSelections() {
 
-  metFiltersC.set("met filters","met filters","cscfilter, ecalfilter, hbheFilterNeww25ns, hbheFilterIso, Flag_eeBadScFilter");
+  if (MET_FILTERS_FLAG != 0) metFiltersC.set("met filters","met filters","cscfilter, ecalfilter, hbheFilterNeww25ns, hbheFilterIso, Flag_eeBadScFilter");
   jet1C.set("jet1",Form("jet1pt > %3.0lf",J1PT),Form("nJetClean >= 1 && JetClean1_pt > %4.0lf",(Double_t)J1PT));
   jetMetDphiMinC.set("dphiMin(j,MET)",Form("min[dphi(j,MET)] > %1.1lf",JMET_DPHI_MIN),"minimum dphi between jets and MET (using only the first 4 jets)");
   jetNoiseCleaningC.set("jet1 cleaning","noise cleaning","energy fractions (only for jet1): CH > 0.1; NH < 0.8");
@@ -326,7 +337,11 @@ void AnalysisDarkMatter::setSelections() {
   if (TAU_VETO_FLAG) tauLooseVetoC.set("tau veto","tau veto");
   VtagC.set("V tag","V-tagged","nFatJet>0 and leading FatJet(ak8) with: pT>250, |eta|<2.4, pruned mass in [65,105], tau2/tau1 < 0.6, recoil > 250");
   noVtagC.set("no V tag","V-notTagged","if any of V-tagged conditions fails (see VtagC for details)");
-
+  ak8jet1C.set("ak8 jet1","ak8 jet1pt > 250","nFatJetClean > 0.5 && FatJetClean_pt[0] > 250. && fabs(FatJetClean_eta[0]) < 2.4");
+  ak8Tau2OverTau1C.set("tau2/tau1","tau2/tau1 < 0.6","FatJetClean_tau2[0]/FatJetClean_tau1[0] < 0.6");
+  ak8prunedMassC.set("pruned mass","pruned mass in [65,105]","FatJetClean_prunedMass[0] > 65. && FatJetClean_prunedMass[0] < 105.");
+  harderRecoilC.set("hard met cut","recoil > 250");
+  
   selection::checkMaskLength();
 
 }
@@ -552,6 +567,24 @@ void AnalysisDarkMatter::fillRowVector(const Double_t nTotalWeightedEvents, cons
    
   }
 
+}
+
+//===============================================
+
+
+void AnalysisDarkMatter::fillEventMask(UInt_t & eventMask) {
+
+  eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
+  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
+  eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
+  eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
+  if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
+  if (MET_FILTERS_FLAG != 0) eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
+  eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
+  eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
+  eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
+  
+  
 }
 
 //===============================================

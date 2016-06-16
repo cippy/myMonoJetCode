@@ -54,6 +54,20 @@ wlnujetsControlSample::wlnujetsControlSample(TTree *tree) : monojet_LeptonContro
   // hasSFfriend_flag = 0;
   //AnalysisDarkMatter::Init(tree);  // could also be just Init(tree)
 
+  // test: now these variables are defined in .h
+  mT = 0.0;  
+  HLT_passed_flag = 1; // some computations (for e) require a trigger preselection, while others don't. The former will be done if the flag is set     
+  // it's set to 1 because if the trigger selection is not applied every event must be considered to be a "good" event having passed all preselections
+  // Actually in this code the trigger is not always necessary, but I keep it like this nonetheless.
+  nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such       
+  nLep10V = 0.0;
+  nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such       
+  metNoLepPt = 0.0;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a h \and-defined variable for e                                                                                                                                            
+  //Double_t metNoLepEta = 0.0;                                                                                                                                        
+  metNoLepPhi = 0.0;   // same story as above                                                                                                                 
+  nRecoLepton = 0;
+
+
 }
 
 #endif
@@ -84,7 +98,7 @@ void wlnujetsControlSample::setSelections() {
 
     oneLepLooseC.set("1 loose ele",Form("1 loose %s",FLAVOUR));
     tightLepC.set("1 tight ele",Form("1 tight %s",FLAVOUR));
-    metC.set("met","met > 50");
+    //metC.set("met","met > 50");
   
   }
 
@@ -97,48 +111,88 @@ void wlnujetsControlSample::setSelections() {
 
 void wlnujetsControlSample::setMask() {
 
+   // analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
+
+   // if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {
+   //   if (using_wlnujets_MCsample_flag) {
+   //     analysisMask.append(genLepC.get2ToId());
+   //     analysisMask.append(recoGenLepMatchC.get2ToId());
+   //   }
+   //   if (using_wtaunujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());
+   // }
+   // if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
+   // if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+   // analysisMask.append(oneLepLooseC.get2ToId());
+   // analysisMask.append(tightLepC.get2ToId());
+   // analysisMask.append(lepLooseVetoC.get2ToId());
+   // if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
+   // analysisMask.append(gammaLooseVetoC.get2ToId());
+   // analysisMask.append(bjetVetoC.get2ToId());
+   // if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
+   // if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+   // analysisMask.append(jet1C.get2ToId());
+   // analysisMask.append(jetNoiseCleaningC.get2ToId());
+   // analysisMask.append(jetMetDphiMinC.get2ToId());
+
+   // analysisSelectionManager.SetMaskPointer(&analysisMask);
+
+   // if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
+   // if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
+   // analysisSelectionManager.append(&oneLepLooseC);
+   // analysisSelectionManager.append(&tightLepC);
+   // analysisSelectionManager.append(&lepLooseVetoC);
+   // if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
+   // analysisSelectionManager.append(&gammaLooseVetoC);
+   // analysisSelectionManager.append(&bjetVetoC);
+   // if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
+   // if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
+   // analysisSelectionManager.append(&jet1C);
+   // analysisSelectionManager.append(&jetNoiseCleaningC);
+   // analysisSelectionManager.append(&jetMetDphiMinC);
+
+
   analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
 
-   if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {
-     if (using_wlnujets_MCsample_flag) {
-       analysisMask.append(genLepC.get2ToId());
-       analysisMask.append(recoGenLepMatchC.get2ToId());
-     }
-     if (using_wtaunujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());
-   }
-   if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
-   if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
-   analysisMask.append(oneLepLooseC.get2ToId());
-   analysisMask.append(tightLepC.get2ToId());
-   analysisMask.append(lepLooseVetoC.get2ToId());
-   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
-   analysisMask.append(gammaLooseVetoC.get2ToId());
-   analysisMask.append(bjetVetoC.get2ToId());
-   if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
-   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
-   analysisMask.append(jet1C.get2ToId());
-   analysisMask.append(jetNoiseCleaningC.get2ToId());
-   analysisMask.append(jetMetDphiMinC.get2ToId());
-
-   analysisSelectionManager.SetMaskPointer(&analysisMask);
+  if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {
+    if (using_wlnujets_MCsample_flag) {
+      analysisMask.append(genLepC.get2ToId());
+      analysisMask.append(recoGenLepMatchC.get2ToId());
+    }
+    if (using_wtaunujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());
+  }
+  if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
+  if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+  analysisMask.append(oneLepLooseC.get2ToId());
+  analysisMask.append(tightLepC.get2ToId());
+  analysisMask.append(lepLooseVetoC.get2ToId());
+  analysisMask.append(gammaLooseVetoC.get2ToId());
+  if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
+  analysisMask.append(bjetVetoC.get2ToId());
+  //if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
+  analysisMask.append(jet1C.get2ToId());
+  analysisMask.append(jetNoiseCleaningC.get2ToId());
+  analysisMask.append(jetMetDphiMinC.get2ToId());
+  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+  
+  analysisSelectionManager.SetMaskPointer(&analysisMask);
 
    if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
    if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
    analysisSelectionManager.append(&oneLepLooseC);
    analysisSelectionManager.append(&tightLepC);
    analysisSelectionManager.append(&lepLooseVetoC);
-   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
    analysisSelectionManager.append(&gammaLooseVetoC);
+   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
    analysisSelectionManager.append(&bjetVetoC);
-   if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
-   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
+   //if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
    analysisSelectionManager.append(&jet1C);
    analysisSelectionManager.append(&jetNoiseCleaningC);
    analysisSelectionManager.append(&jetMetDphiMinC);
+   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
 
    // ========== Mono-J ==============
 
-   analysisMask_monoJ.setName(Form("%s control sample",CONTROL_SAMPLE));
+   analysisMask_monoJ.setName(Form("monojet %s control sample",CONTROL_SAMPLE));
    
    analysisMask_monoJ.append(analysisMask.globalMask.back()); // all the common selections
    analysisMask_monoJ.append(noVtagC.get2ToId());
@@ -150,16 +204,24 @@ void wlnujetsControlSample::setMask() {
 
    // ========== Mono-V ==============
 
-  analysisMask_monoV.setName("monoV signal selection");
+   analysisMask_monoV.setName(Form("monoV %s control sample",CONTROL_SAMPLE));
   
   analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections
-  analysisMask_monoV.append(VtagC.get2ToId());
+  // analysisMask_monoV.append(VtagC.get2ToId());
+  analysisMask_monoV.append(ak8jet1C.get2ToId()); 
+  analysisMask_monoV.append(ak8Tau2OverTau1C.get2ToId()); 
+  analysisMask_monoV.append(ak8prunedMassC.get2ToId()); 
+  analysisMask_monoV.append(harderRecoilC.get2ToId()); 
 
   analysisSelectionManager_monoV.SetMaskPointer(&analysisMask_monoV);
 
   analysisSelectionManager_monoV.append("all cuts");
-  analysisSelectionManager_monoV.append(&VtagC);
-  
+  // analysisSelectionManager_monoV.append(&VtagC);
+  analysisSelectionManager_monoV.append(&ak8jet1C);
+  analysisSelectionManager_monoV.append(&ak8Tau2OverTau1C);
+  analysisSelectionManager_monoV.append(&ak8prunedMassC);
+  analysisSelectionManager_monoV.append(&harderRecoilC);  
+
   // creating collection of pointers to mask used in the analysis
   anaMasksPtrCollection.push_back(&analysisMask);
   anaMasksPtrCollection.push_back(&analysisMask_monoJ);
@@ -174,12 +236,16 @@ void wlnujetsControlSample::setHistograms() {
   monojet_LeptonControlRegion::setHistograms();
     
   HtransverseMass = new TH1D("HtransverseMass","",40,0.0,200.0);
-  HptW_mT0to75 = new TH1D("HptW_mT0to75","",100,0.0,1000.0);
+  HptW_mT0to50 = new TH1D("HptW_mT0to50","",100,0.0,1000.0);
   HtransverseMass_monoV = new TH1D("HtransverseMass_monoV","",40,0.0,200.0);
   
   if (suffix == "WJetsToLNu") {
     hasScaledHistograms_flag = 1;
     setScaleFactorHistograms();
+  }
+
+  if (ENABLE_HISTOGRAM_FOR_TESTS_FLAG != 0) {
+    setHistogramsForTests();
   }
 
 }
@@ -207,13 +273,41 @@ void wlnujetsControlSample::setScaleFactorHistograms() {
 
 //===============================================
 
+void wlnujetsControlSample::setHistogramsForTests() {
+
+
+  // here we istantiate histograms used for tests. We keep them separate from others because we do not always want to fill them (they are also stored in a separate file  
+  // this method will be called if a flag for tests is set to True, otherwise we skip this part
+
+  // also, to fill the file in a somewhat automatic way, the pointers are store in a vector so that we can write them by using the vector and not one by one (with the risk of forgetting some of them
+
+  if (suffix == "WJetsToLNu") {
+
+    HgenDphiLepMet = new TH1D("HgenDphiLepMet","",32,0.0,3.2);
+    HgenTransverseMass = new TH1D("HgenTransverseMass","",40,0.0,200.0);
+
+    testHistogramVector.push_back(HgenDphiLepMet);
+    testHistogramVector.push_back(HgenTransverseMass);
+
+  }
+
+  HtransverseMass_EB = new TH1D("HtransverseMass_EB","",40,0.0,200.0);
+  HtransverseMass_EE = new TH1D("HtransverseMass_EE","",40,0.0,200.0);
+
+  testHistogramVector.push_back(HtransverseMass_EB);
+  testHistogramVector.push_back(HtransverseMass_EE);
+
+}
+
+//===============================================
+
 
 void wlnujetsControlSample::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
   monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
   myAddOverflowInLastBin(HtransverseMass);
-  myAddOverflowInLastBin(HptW_mT0to75);
+  myAddOverflowInLastBin(HptW_mT0to50);
 
   myAddOverflowInLastBin(HtransverseMass_monoV);
 
@@ -372,6 +466,28 @@ void wlnujetsControlSample::createSystematicsHistogram() {
 
 //===============================================
 
+void wlnujetsControlSample::fillEventMask(UInt_t & eventMask) {
+
+  AnalysisDarkMatter::fillEventMask(eventMask);
+
+  if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);
+  eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
+  eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);     
+  if (fabs(LEP_PDG_ID) == 11)  eventMask += metC.addToMask(met_pt > 50);    
+  eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
+  eventMask += VtagC.addToMask(Vtagged_flag);
+  eventMask += noVtagC.addToMask(!Vtagged_flag);
+  eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
+  if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+  else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
+  eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
+
+
+}
+
+//===============================================
+
+
 void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eRow, vector< Double_t > &uncRow, 
 				vector< Double_t > &yRow_monoJ, vector< Double_t > &eRow_monoJ, vector< Double_t > &uncRow_monoJ,
 				vector< Double_t > &yRow_monoV, vector< Double_t > &eRow_monoV, vector< Double_t > &uncRow_monoV)
@@ -509,7 +625,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    TLorentzVector l1gen;     // gen level W and l1,l2  (W->(l1 l2)
    TLorentzVector l1reco;
 
-   Double_t mT = 0.0; // transverse mass, computed in loop
+   //Double_t mT = 0.0; // transverse mass, computed in loop
 
    // following indices refer to the leading pair of OS/SF in the list of LepGood. They are initialized with 0 and 1 by default, but can be set with function
    // myGetPairIndexInArray (see functionsForAnalysis.cc for reference). 
@@ -526,39 +642,40 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    Int_t genTauFound_flag = 0;
    //Int_t W_index = 0; 
 
-   Int_t HLT_passed_flag = 1;          // some computations (for e) require a trigger preselection, while others don't. The former will be done if the flag is set to 1
-                                                       // it's set to 1 because if the trigger selection is not applied every event must be considered to be a "good" event having passed all preselections
-                                                       // Actually in this code the trigger is not always necessary, but I keep it like this nonetheless.
+   //Int_t HLT_passed_flag = 1;      
+   // some computations (for e) require a trigger preselection, while others don't. The former will be done if the flag is set to 1        
+   // it's set to 1 because if the trigger selection is not applied every event must be considered to be a "good" event having passed all preselections 
+   // Actually in this code the trigger is not always necessary, but I keep it like this nonetheless.
 
 
-   Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches
-   Float_t *ptr_nLep10V = NULL;   
+   // Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches
+   // Float_t *ptr_nLep10V = NULL;   
 
-   Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches 
+   // Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches 
 
-   Float_t *ptr_metNoLepPt = NULL;       // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)
-   //Float_t *ptr_metNoLepEta = NULL; 
-   Float_t *ptr_metNoLepPhi = NULL;  
+   // Float_t *ptr_metNoLepPt = NULL;       // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)
+   // //Float_t *ptr_metNoLepEta = NULL; 
+   // Float_t *ptr_metNoLepPhi = NULL;  
 
-   Int_t *ptr_nRecoLepton = NULL;
-   Float_t *ptr_lepton_pt = NULL;
-   Float_t *ptr_lepton_eta = NULL;
-   Float_t *ptr_lepton_phi = NULL;
-   Float_t *ptr_lepton_mass = NULL;
+   // Int_t *ptr_nRecoLepton = NULL;
+   // Float_t *ptr_lepton_pt = NULL;
+   // Float_t *ptr_lepton_eta = NULL;
+   // Float_t *ptr_lepton_phi = NULL;
+   // Float_t *ptr_lepton_mass = NULL;
 
-   Float_t nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
-   Float_t nLep10V = 0.0;
+   // Float_t nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
+   // Float_t nLep10V = 0.0;
 
-   Float_t nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
+   // Float_t nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
 
-   Double_t metNoLepPt = 0.0;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e
-   //Double_t metNoLepEta = 0.0;
-   Double_t metNoLepPhi = 0.0;   // same story as above
+   // Double_t metNoLepPt = 0.0;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e
+   // //Double_t metNoLepEta = 0.0;
+   // Double_t metNoLepPhi = 0.0;   // same story as above
 
-   Int_t nRecoLepton = 0;
+   // Int_t nRecoLepton = 0;
 
    if (fabs(LEP_PDG_ID) == 13) {  // if we have Z -> mumu do stuff...
-  
+
      ptr_nLepLoose = &nMu10V;                      // ask 2 muons
      ptr_nLep10V = &nEle10V;                         // veto on electrons
      ptr_nLepTight = &nMu20T;                                            
@@ -594,7 +711,6 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      cout<<"Error: file \""<<outputFolder + ROOT_FNAME<<"\" was not opened."<<endl;
      exit(EXIT_FAILURE);
    }
- 
 
    TH1::SetDefaultSumw2();            //all the following histograms will automatically call TH1::Sumw2() 
    //TH1::StatOverflows();                 //enable use of underflows and overflows for statistics computation 
@@ -688,30 +804,36 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 
      }
 
-
      if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
 
      // beginning of eventMask building
 
      // genLepC added to mask above if ISDATA_FLAG == false (in order not to repeat here the check) 
+
+     fillEventMask(eventMask); // manage all line below (some cuts are managed independently outside
      
-     eventMask += HLTC.addToMask(HLT_passed_flag); 
-     eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
-     eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
-     eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
-     eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
-     eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
-     eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);     
-     eventMask += metC.addToMask(met_pt > 50);    
-     eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
-     eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);  
-     eventMask += VtagC.addToMask(Vtagged_flag);
-     eventMask += noVtagC.addToMask(!Vtagged_flag);
-     eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
-     if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
-     else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
+     // eventMask += HLTC.addToMask(HLT_passed_flag); 
+     // eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
+     // eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
+     // eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
+     // eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
+     // eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
+     // eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
+     // eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);     
+     // eventMask += metC.addToMask(met_pt > 50);    
+     // eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
+     // eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);  
+     // eventMask += VtagC.addToMask(Vtagged_flag);
+     // eventMask += noVtagC.addToMask(!Vtagged_flag);
+     // eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
+     // if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+     // else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
+     // eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
+     // eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
+     // eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
+     // eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
+
 
      // end of eventMask building
 
@@ -751,7 +873,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
        // this histogram holds the final yields in bins of MET
 	 HYieldsMetBin->Fill(metNoLepPt,newwgt);
 
-	 HptW_mT0to75->Fill((lep+met).Mod(),newwgt);
+	 if (mT < 50) HptW_mT0to50->Fill((lep+met).Mod(),newwgt);
 
 	 HhtDistribution->Fill(htJet25,newwgt);
 	 HtransverseMass->Fill(mT,newwgt);
@@ -781,6 +903,19 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 	   HYieldsMetBin_ewkDown->Fill(metNoLepPt,(newwgt * SF_NLO_EWK_down / SF_NLO_EWK));
 	   HYieldsMetBin_LepTightUp->Fill(metNoLepPt,(newwgt * SF_LepTightUp / SF_LepTight));
 	   HYieldsMetBin_LepTightDown->Fill(metNoLepPt,(newwgt * SF_LepTightDown / SF_LepTight));
+
+	 }
+
+	 if (ENABLE_HISTOGRAM_FOR_TESTS_FLAG != 0) {
+
+	   //if (jentry%1000 == 0) cout << "check: Nevent = " <<  jentry << endl;
+
+	   if (suffix == "WJetsToLNu") {
+	     HgenDphiLepMet->Fill(1.0,newwgt);
+	     HgenTransverseMass->Fill(mT,newwgt);
+	   }
+	   HtransverseMass_EB->Fill(mT,newwgt);
+	   HtransverseMass_EE->Fill(mT,newwgt);	       
 
 	 }
 
@@ -870,6 +1005,35 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    // fill last bin with overflow 
    setHistogramLastBinAsOverFlow(hasScaledHistograms_flag);
    if (hasScaledHistograms_flag) createSystematicsHistogram();
+
+   if (ENABLE_HISTOGRAM_FOR_TESTS_FLAG != 0) {
+
+     cout << "Opening file tests_" << ROOT_FNAME << " in folder " << outputFolder << " to store histograms used for tests" << endl;
+
+     file_HistogramForTests = new TFile((outputFolder + "tests_" + ROOT_FNAME).c_str(),"RECREATE");
+     if (!file_HistogramForTests || !file_HistogramForTests->IsOpen()) {
+       cout<<"Error: file \""<<outputFolder << "tests_" << ROOT_FNAME << "\" was not opened."<<endl;
+       exit(EXIT_FAILURE);
+     }
+
+     file_HistogramForTests->cd();
+
+     // fill file using histogram method
+
+     for (Int_t i = 0; i < testHistogramVector.size(); i++) {
+       testHistogramVector[i]->Write();
+       // HgenDphiLepMet->Write();
+       // HgenTransverseMass->Write();
+       // HtransverseMass_EB->Write();
+       // HtransverseMass_EE->Write();
+     }
+
+     file_HistogramForTests->Close();
+     delete file_HistogramForTests;
+     //switch back to main file
+     rootFile->cd();
+     
+   }
 
    rootFile->Write();
 

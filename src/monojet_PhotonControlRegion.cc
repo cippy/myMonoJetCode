@@ -87,10 +87,11 @@ void monojet_PhotonControlRegion::setMask() {
   analysisMask.append(electronLooseVetoC.get2ToId());
   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
   analysisMask.append(bjetVetoC.get2ToId());
-  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());  
   analysisMask.append(jet1C.get2ToId());
   analysisMask.append(jetNoiseCleaningC.get2ToId());
   analysisMask.append(jetMetDphiMinC.get2ToId());
+  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());  
+
   //analysisMask.append(noVtagC.get2ToId());
 
   analysisSelectionManager.SetMaskPointer(&analysisMask);
@@ -103,10 +104,10 @@ void monojet_PhotonControlRegion::setMask() {
   analysisSelectionManager.append(&electronLooseVetoC);
   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
   analysisSelectionManager.append(&bjetVetoC);
-  if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC); 
   analysisSelectionManager.append(&jet1C);
   analysisSelectionManager.append(&jetNoiseCleaningC);
   analysisSelectionManager.append(&jetMetDphiMinC);
+  if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC); 
   //analysisSelectionManager.append(&noVtagC);
 
   // ========== Mono-J ==============
@@ -126,13 +127,23 @@ void monojet_PhotonControlRegion::setMask() {
   analysisMask_monoV.setName("monoV photon control region selection");
   
   analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections
-  analysisMask_monoV.append(VtagC.get2ToId());
+  // analysisMask_monoV.append(VtagC.get2ToId());
+  analysisMask_monoV.append(ak8jet1C.get2ToId());
+  analysisMask_monoV.append(ak8Tau2OverTau1C.get2ToId());
+  analysisMask_monoV.append(ak8prunedMassC.get2ToId());
+  analysisMask_monoV.append(harderRecoilC.get2ToId());
+
 
   analysisSelectionManager_monoV.SetMaskPointer(&analysisMask_monoV);
 
   analysisSelectionManager_monoV.append("all cuts");
-  analysisSelectionManager_monoV.append(&VtagC);
+  // analysisSelectionManager_monoV.append(&VtagC);
+  analysisSelectionManager_monoV.append(&ak8jet1C);
+  analysisSelectionManager_monoV.append(&ak8Tau2OverTau1C);
+  analysisSelectionManager_monoV.append(&ak8prunedMassC);
+  analysisSelectionManager_monoV.append(&harderRecoilC);
   
+
   // creating collection of pointers to mask used in the analysis
   anaMasksPtrCollection.push_back(&analysisMask);
   anaMasksPtrCollection.push_back(&analysisMask_monoJ);
@@ -428,6 +439,11 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SinglePho == 1);  
      eventMask += VtagC.addToMask(Vtagged_flag);
      eventMask += noVtagC.addToMask(!Vtagged_flag);
+     eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
+     eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
+     eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
+     eventMask += harderRecoilC.addToMask(phmet_pt > 250.);
+
      
      // end of eventMask building
 
