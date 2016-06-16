@@ -1,0 +1,9 @@
+NUMBER ISDATA_FLAG 0
+NUMBER SF_FRIEND_FLAG 0
+STRING SAMPLE_NAME TTbarDM
+STRING UNCERTAINTY MC
+STRING TREE_PATH /afs/cern.ch/work/e/emanuele/TREES/SYNCH_80X/TTbarDM/treeProducerDarkMatterMonoJet/tree.root
+STRING FRIEND_TREE_PATH /afs/cern.ch/work/e/emanuele/TREES/SYNCH_80X/friends/evVarFriend_TTbarDM.root
+STRING SF_FRIEND_TREE_PATH /afs/cern.ch/work/e/emanuele/TREES/SYNCH_80X/friends/sfFriend_TTbarDM.root
+#
+#STOP
