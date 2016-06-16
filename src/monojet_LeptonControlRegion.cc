@@ -55,6 +55,26 @@ monojet_LeptonControlRegion::monojet_LeptonControlRegion(TTree *tree) : Analysis
   //AnalysisDarkMatter::Init(tree);  // could also be just Init(tree)
   // maybe this is useless because the constructor already calls Init
 
+  recoLepFound_flag = 0;
+  genLepFound_flag = 0;
+
+  HLT_passed_flag = 1; // set to 1 because when it is not needed, trigger is considered to be automatically passed
+  
+  // Float_t variables
+  nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such       
+  nLep10V = 0.0;
+  nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such       
+
+  //Double_t variables
+  // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for electrons
+  metNoLepPt = 0.0;                                                                                                                                  
+  //Double_t metNoLepEta = 0.0;                                                                                                                                        
+  metNoLepPhi = 0.0;   // same story as above                                                                                                     
+
+  // Int_t variables
+  nRecoLepton = 0;
+
+
 }
 
 #endif
@@ -169,6 +189,24 @@ void monojet_LeptonControlRegion::createSystematicsHistogram() {
   AnalysisDarkMatter::createSystematicsHistogram();
 
 }
+
+//===============================================                                                                                                                       
+
+void monojet_LeptonControlRegion::fillEventMask(UInt_t & eventMask) {
+
+  AnalysisDarkMatter::fillEventMask(eventMask);
+
+  if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);
+  eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);     // veto on electrons (if V->mu X) or on electrons (if V->e X)
+  eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
+  eventMask += VtagC.addToMask(Vtagged_flag);
+  eventMask += noVtagC.addToMask(!Vtagged_flag);
+  eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
+  eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
+
+
+}
+
 
 //===============================================
 

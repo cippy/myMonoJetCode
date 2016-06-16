@@ -429,6 +429,22 @@ void zlljetsControlSample::createSystematicsHistogram() {
 
 }
 
+//===============================================                                                                                                                       
+
+void zlljetsControlSample::fillEventMask(UInt_t & eventMask) {
+
+  monojet_LeptonControlRegion::fillEventMask(eventMask);
+
+  eventMask += invMassC.addToMask((mZ1 > DILEPMASS_LOW) && (mZ1 < DILEPMASS_UP));  
+  eventMask += oppChargeLeptonsC.addToMask(LepGood_pdgId[0] == - LepGood_pdgId[1]); 
+  eventMask += twoLepLooseC.addToMask(nLepLoose > 1.5 && nLepLoose < 2.5);
+  // Warning: tightLep cut is slightly different between W and Z (1 or 2 leptons), so we keep this here        
+  if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+  else eventMask += tightLepC.addToMask(nLepTight > 0.5 );
+
+}
+
+
 //===============================================
 
 void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eRow, vector< Double_t > &uncRow, 
@@ -564,8 +580,8 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    setMask();
    //set_SF_NLO_pointers(sf_nlo, ptr_sf_nlo_QCD, ptr_sf_nlo_EWK);
 
-   TVector2 metNoLepTV, ele;
-
+   //  TVector2 metNoLepTV, ele;
+ 
    TLorentzVector l1gen, l2gen, Zgen;     // gen level Z and l1,l2  (Z->(l1 l2)
    TLorentzVector l1reco, l2reco, Zreco;
 
@@ -584,36 +600,36 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    Int_t genTauFound_flag = 0;
    Int_t Z_index = 0; 
 
-   Int_t HLT_passed_flag = 1;          // some computations (for e) require a trigger preselection, while others don't. The former will be done if the flag is set to 1
+   //Int_t HLT_passed_flag = 1;          // some computations (for e) require a trigger preselection, while others don't. The former will be done if the flag is set to 1
                                                        // it's set to 1 because if the trigger selection is not applied every event must be considered to be a "good" event having passed all preselections
                                                        // Actually in this code the trigger is not always necessary, but I keep it like this nonetheless.
 
 
-   Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches
-   Float_t *ptr_nLep10V = NULL;   
+   // Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches
+   // Float_t *ptr_nLep10V = NULL;   
 
-   Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches 
+   // Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches 
 
-   Float_t *ptr_metNoLepPt = NULL;       // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)
-   //Float_t *ptr_metNoLepEta = NULL; 
-   Float_t *ptr_metNoLepPhi = NULL;  
+   // Float_t *ptr_metNoLepPt = NULL;       // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)
+   // //Float_t *ptr_metNoLepEta = NULL; 
+   // Float_t *ptr_metNoLepPhi = NULL;  
 
-   Int_t *ptr_nRecoLepton = NULL;
-   Float_t *ptr_lepton_pt = NULL;
-   Float_t *ptr_lepton_eta = NULL;
-   Float_t *ptr_lepton_phi = NULL;
-   Float_t *ptr_lepton_mass = NULL;
+   // Int_t *ptr_nRecoLepton = NULL;
+   // Float_t *ptr_lepton_pt = NULL;
+   // Float_t *ptr_lepton_eta = NULL;
+   // Float_t *ptr_lepton_phi = NULL;
+   // Float_t *ptr_lepton_mass = NULL;
 
-   Float_t nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
-   Float_t nLep10V = 0.0;
+   // Float_t nLepLoose = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
+   // Float_t nLep10V = 0.0;
 
-   Float_t nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
+   // Float_t nLepTight = 0.0;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such
 
-   Double_t metNoLepPt = 0.0;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e
-   //Double_t metNoLepEta = 0.0;
-   Double_t metNoLepPhi = 0.0;   // same story as above
+   // Double_t metNoLepPt = 0.0;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e
+   // //Double_t metNoLepEta = 0.0;
+   // Double_t metNoLepPhi = 0.0;   // same story as above
 
-   Int_t nRecoLepton = 0;
+   // Int_t nRecoLepton = 0;
 
    if (fabs(LEP_PDG_ID) == 13) {  // if we have Z -> mumu do stuff...
   
@@ -782,27 +798,29 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      
      // genLepC added to mask above if ISDATA_FLAG == false (in order not to repeat here the check) 
      
-     eventMask += HLTC.addToMask(HLT_passed_flag);  
-     eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
-     eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
-     eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
-     eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
-     eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
-     eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
-     eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
-     eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);  
-     eventMask += VtagC.addToMask(Vtagged_flag);
-     eventMask += noVtagC.addToMask(!Vtagged_flag);
-     eventMask += invMassC.addToMask((mZ1 > DILEPMASS_LOW) && (mZ1 < DILEPMASS_UP));  
-     eventMask += oppChargeLeptonsC.addToMask(LepGood_pdgId[0] == - LepGood_pdgId[1]); 
-     eventMask += twoLepLooseC.addToMask(nLepLoose > 1.5 && nLepLoose < 2.5);
-     if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
-     else eventMask += tightLepC.addToMask(nLepTight > 0.5 );
-     eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
-     eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
-     eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
-     eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
+     fillEventMask(eventMask); 
+
+     // eventMask += HLTC.addToMask(HLT_passed_flag);  
+     // eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
+     // eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
+     // eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
+     // eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
+     // eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
+     // eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
+     // eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
+     // eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
+     // eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);  
+     // eventMask += VtagC.addToMask(Vtagged_flag);
+     // eventMask += noVtagC.addToMask(!Vtagged_flag);
+     // eventMask += invMassC.addToMask((mZ1 > DILEPMASS_LOW) && (mZ1 < DILEPMASS_UP));  
+     // eventMask += oppChargeLeptonsC.addToMask(LepGood_pdgId[0] == - LepGood_pdgId[1]); 
+     // eventMask += twoLepLooseC.addToMask(nLepLoose > 1.5 && nLepLoose < 2.5);
+     // if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+     // else eventMask += tightLepC.addToMask(nLepTight > 0.5 );
+     // eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
+     // eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
+     // eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
+     // eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
  
      // end of eventMask building
 

@@ -468,19 +468,13 @@ void wlnujetsControlSample::createSystematicsHistogram() {
 
 void wlnujetsControlSample::fillEventMask(UInt_t & eventMask) {
 
-  AnalysisDarkMatter::fillEventMask(eventMask);
+  monojet_LeptonControlRegion::fillEventMask(eventMask);
 
-  if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);
-  eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
-  eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);     
   if (fabs(LEP_PDG_ID) == 11)  eventMask += metC.addToMask(met_pt > 50);    
-  eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
-  eventMask += VtagC.addToMask(Vtagged_flag);
-  eventMask += noVtagC.addToMask(!Vtagged_flag);
   eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
+  // Warning: tightLep cut is slightly different between W and Z (1 or 2 leptons), so we keep this here
   if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
   else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
-  eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
 
 
 }
@@ -620,7 +614,8 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    setSelections();
    setMask();
 
-   TVector2 metNoLepTV, ele, lep, met; //lep and met are used to compute transverse mass
+   //   TVector2 metNoLepTV, ele, 
+   TVector2 lep, met; //lep and met are used to compute transverse mass
 
    TLorentzVector l1gen;     // gen level W and l1,l2  (W->(l1 l2)
    TLorentzVector l1reco;
@@ -811,7 +806,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 
      // genLepC added to mask above if ISDATA_FLAG == false (in order not to repeat here the check) 
 
-     fillEventMask(eventMask); // manage all line below (some cuts are managed independently outside
+     fillEventMask(eventMask); 
      
      // eventMask += HLTC.addToMask(HLT_passed_flag); 
      // eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);

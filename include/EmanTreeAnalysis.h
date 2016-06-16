@@ -5,6 +5,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TVector2.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -114,6 +115,8 @@ namespace myAnalyzerTEman {
     virtual void setControlSampleSpecificParameter();
     virtual void setVarFromConfigFile();
     virtual void setSelections();
+    virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
 
     selection lepLooseVetoC;  //if Z->mumu, veto on electrons and viceversa  // could use muon or electron veto selection in AnalysisDarkMatter, but then I should define a selection* pointing to the correct one to be used (for now I define a new selection)
    // selection lep1tightIdIso04C;
@@ -147,6 +150,35 @@ namespace myAnalyzerTEman {
    TH1D *Hlep1ptDistribution_monoV = NULL;
    TH1D *Hlep1etaDistribution_monoV = NULL;
 
+   // some variables used in the code for the lepton control regions (both Z and W)
+
+   Int_t recoLepFound_flag;
+   Int_t genLepFound_flag;
+
+   TVector2 metNoLepTV, ele; // to compute metNoEle
+
+   Int_t HLT_passed_flag; // initialize to 1, because sometimes it is not needed, meaning trigger automatically passed   
+
+   Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches                                                    
+   Float_t *ptr_nLep10V = NULL;
+   Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches                                 
+   Float_t *ptr_metNoLepPt = NULL;  // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)                                                                                                                                                             
+   //Float_t *ptr_metNoLepEta = NULL;                                                                                                                                 
+   Float_t *ptr_metNoLepPhi = NULL;
+   Int_t *ptr_nRecoLepton = NULL;
+   Float_t *ptr_lepton_pt = NULL;
+   Float_t *ptr_lepton_eta = NULL;
+   Float_t *ptr_lepton_phi = NULL;
+   Float_t *ptr_lepton_mass = NULL;
+   Float_t nLepLoose;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such     
+   Float_t nLep10V;
+   Float_t nLepTight;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such   
+   Double_t metNoLepPt;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e                                                                                                                                            
+   //Double_t metNoLepEta;                                                                                                                                        
+   Double_t metNoLepPhi;   // same story as above                                                                                                               
+   Int_t nRecoLepton;
+
+
   };
 
 
@@ -172,6 +204,7 @@ namespace myAnalyzerTEman {
     Double_t computeEventWeight();
     //void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
     void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
 
     selection oppChargeLeptonsC;
     selection invMassC;
@@ -254,25 +287,6 @@ namespace myAnalyzerTEman {
       
     // variables used in loop() or other methods. Some of them will be put in monojet_LeptonControlRegion class, now it is just a test
     Double_t mT; // transverse mass, computed in loop 
-    Int_t HLT_passed_flag;
-    Float_t *ptr_nLepLoose = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches                                                    
-    Float_t *ptr_nLep10V = NULL;
-    Float_t *ptr_nLepTight = NULL;    // depending on lepton flavour in Z-->ll, it will point to different branches                                 
-    Float_t *ptr_metNoLepPt = NULL;  // only needed for muons, it will point to the branches with the metNoMu_pt, then metNoLepPt = *ptr_metNoLepPt (metNoLepPt defined below)                                                                                                                                                             
-    //Float_t *ptr_metNoLepEta = NULL;                                                                                                                                 
-    Float_t *ptr_metNoLepPhi = NULL;
-    Int_t *ptr_nRecoLepton = NULL;
-    Float_t *ptr_lepton_pt = NULL;
-    Float_t *ptr_lepton_eta = NULL;
-    Float_t *ptr_lepton_phi = NULL;
-    Float_t *ptr_lepton_mass = NULL;
-    Float_t nLepLoose;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such     
-    Float_t nLep10V;
-    Float_t nLepTight;               // this variable and the following should be an integer, but in Emanuele's trees they are float, so I keep them as such   
-    Double_t metNoLepPt;        // this variable will be assigned with *ptr_metNoLepPt, where the pointer will point to the branch metNoMu_pt for mu, and with a hand-defined variable for e                                                                                                                                            
-  //Double_t metNoLepEta;                                                                                                                                        
-    Double_t metNoLepPhi;   // same story as above                                                                                                               
-    Int_t nRecoLepton;
 
     // the following flag is needed to enable search for W->lnu at generator level. For MC samples different from WJetsToLNu I must not require 2 gen leptons from Z
     // unless it is Z->tautau, in which case I start from generated taus and apply selection (tau can produce muon or electron)
