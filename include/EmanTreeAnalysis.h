@@ -54,6 +54,8 @@ namespace myAnalyzerTEman {
     Double_t computeEventWeight();
     //void loop(std::vector< std::vector<Double_t>* > &, std::vector< std::vector<Double_t>* > &, std::vector< std::vector<Double_t>* > &);
     void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
 
   };
 
@@ -75,6 +77,8 @@ namespace myAnalyzerTEman {
     Double_t computeEventWeight();
     //void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
     void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
 
     selection oneGammaLooseC;
     selection tightPhotonC;
