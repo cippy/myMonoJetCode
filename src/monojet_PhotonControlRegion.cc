@@ -236,6 +236,26 @@ Double_t monojet_PhotonControlRegion::computeEventWeight() {
 
 }
 
+//===============================================                                                                                                                       
+
+
+void monojet_PhotonControlRegion::fillEventMask(UInt_t & eventMask) {
+
+  AnalysisDarkMatter::fillEventMask(eventMask);
+
+  eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
+  eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
+  eventMask += oneGammaLooseC.addToMask(nGamma15V > 0.5 && nGamma15V < 1.5);
+  eventMask += tightPhotonC.addToMask(nGamma175T > 0.5 && nGamma175T < 1.5 && fabs(GammaGood_eta[0]) < PH1ETA);  // PH1ETA = 1.442
+  if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SinglePho == 1);  
+  eventMask += VtagC.addToMask(Vtagged_flag);
+  eventMask += noVtagC.addToMask(!Vtagged_flag);
+  eventMask += recoilC.addToMask(phmet_pt > METNOLEP_START);
+  eventMask += harderRecoilC.addToMask(phmet_pt > 250.);
+
+}
+
+
 //===============================================
 
 // void monojet_PhotonControlRegion::loop(vector< vector<Double_t> *> &yieldsVectorList, vector< vector<Double_t> *> &uncertaintyVectorList, vector< vector<Double_t> *> &efficiencyVectorList)
@@ -424,26 +444,7 @@ void monojet_PhotonControlRegion::loop(vector< Double_t > &yRow, vector< Double_
      else Vtagged_flag = 0;
      //if (Vtagged_flag == 1) cout << "jentry n: "<<jentry << " V TAGGED!"<<endl;
 
-     //eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT && fabs(JetClean_eta[0] < J1ETA && jetclean1 > 0.5));  //could skip cut on eta 
-     eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /* && fabs(JetClean_eta[0]) < J1ETA*/);
-     eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
-     eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
-     eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
-     eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
-     eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
-     eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     eventMask += oneGammaLooseC.addToMask(nGamma15V > 0.5 && nGamma15V < 1.5);
-     eventMask += tightPhotonC.addToMask(nGamma175T > 0.5 && nGamma175T < 1.5 && fabs(GammaGood_eta[0]) < PH1ETA);  // PH1ETA = 1.442
-     eventMask += recoilC.addToMask(phmet_pt > METNOLEP_START);
-     eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
-     if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SinglePho == 1);  
-     eventMask += VtagC.addToMask(Vtagged_flag);
-     eventMask += noVtagC.addToMask(!Vtagged_flag);
-     eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
-     eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
-     eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
-     eventMask += harderRecoilC.addToMask(phmet_pt > 250.);
-
+     fillEventMask(eventMask);
      
      // end of eventMask building
 
