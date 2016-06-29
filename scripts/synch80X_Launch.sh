@@ -5,7 +5,7 @@ cfg_path="${base_path}/config"
 src_path="${base_path}/src"
 
 cd $src_path
-options="-nw"
+options="-nw -dns finalTest"
 
 ./tmp/main ${cfg_path}/synch_80X_signal.txt $options
 ./tmp/main ${cfg_path}/synch_80X_zmumu.txt $options
