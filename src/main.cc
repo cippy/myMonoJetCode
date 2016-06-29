@@ -59,12 +59,12 @@ int main(int argc, char* argv[]) {
   char configFileName[200];
   std::strcpy(configFileName,argv[1]);
 
-  Int_t lepton_PDGID;
-  Int_t isdata_flag;
-  Int_t tau_veto_flag;
-  Double_t metnolep_start;
-  Int_t met_filters_flag;
-  Int_t HLT_flag;
+  Int_t lepton_PDGID = -0;
+  Int_t isdata_flag = -0;
+  Int_t tau_veto_flag = 0;
+  Double_t metnolep_start = 0;
+  Int_t met_filters_flag = 0;
+  Int_t HLT_flag = 0;
   string uncertainty; // say which uncertainty is to be used for yields in a sample. Can be "poisson", "MC", "X%"
   string whereAreTrees = ""; // can be afs, eos, Rome tier2: the path to them will be set accordingly
   string treeLocation = ""; // if whereAreTree == eos, path to tree will be read adding root://eoscms//eos/cms to treeLocation/treePath
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
   Int_t sf_friend_flag = 0; // set to 1 if using sf_friend when reading trees from Emanuele's area
   Int_t calibEle_flag = 0;
 
-  Int_t adishTree_flag = 0;
+  //  Int_t adishTree_flag = 0;
 
   Int_t signalRegion_flag = 0;
   Int_t controlSample_flag = 0;
@@ -105,10 +105,10 @@ int main(int argc, char* argv[]) {
 	unweighted_event_flag = 1;    //-nw option stands for "no weight"
 	cout << "Option " << thisArgument << " passed: using no event weight (w =1) if allowed" << std::endl;
 
-      } else if (thisArgument  == "-at" ) {   // "at" means Adish's tree
+	//} else if (thisArgument  == "-at" ) {   // "at" means Adish's tree
 	     
-	adishTree_flag = 1;
-	cout << "Option " << thisArgument << " passed: using Adish's trees" << std::endl;
+	//adishTree_flag = 1;
+	//cout << "Option " << thisArgument << " passed: using Adish's trees" << std::endl;
 
       } else if (thisArgument  == "-calibEle" ) {   // use electron calibrated properties (pT, energy ecc...) instead of traditional ones
 	     
@@ -584,7 +584,7 @@ int main(int argc, char* argv[]) {
 
 	  std::cout << "Creating chain ..." << std::endl;
 
-	  for(Int_t i = 0; i < subSampleNameVector.size(); i++) {
+	  for(UInt_t i = 0; i < subSampleNameVector.size(); i++) {
 	  
 	    std::string treeRootFile = "";
 	    std::string friend_treeRootFile = "";
@@ -928,11 +928,11 @@ int main(int argc, char* argv[]) {
 
 	  } else { 
 
-	    if (yieldsRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf ",yieldsRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
-	    else fprintf(fp,"%7.0lf ",yieldsRow.at( i + j * selectionSize));
+	    if (yieldsRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f ",yieldsRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
+	    else fprintf(fp,"%7.0f ",yieldsRow.at( i + j * selectionSize));
 
-	    if (uncertaintyRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf   ",uncertaintyRow.at( i + j * selectionSize));
-	    else fprintf(fp,"%7.0lf   ",uncertaintyRow.at( i + j * selectionSize));
+	    if (uncertaintyRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f   ",uncertaintyRow.at( i + j * selectionSize));
+	    else fprintf(fp,"%7.0f   ",uncertaintyRow.at( i + j * selectionSize));
 
 	  }
 
@@ -946,9 +946,9 @@ int main(int argc, char* argv[]) {
 
 	  } else { 
 
-	    if (yieldsRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf ",yieldsRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
-	    else fprintf(fp,"%7.0lf ",yieldsRow.at( i + j * selectionSize));
-	    fprintf(fp,"%5.1lf%%   ",(100 * efficiencyRow.at( i + j * selectionSize)));
+	    if (yieldsRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f ",yieldsRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
+	    else fprintf(fp,"%7.0f ",yieldsRow.at( i + j * selectionSize));
+	    fprintf(fp,"%5.1f%%   ",(100 * efficiencyRow.at( i + j * selectionSize)));
 
 	  }
 
@@ -1091,11 +1091,11 @@ void buildFinalTable(FILE* fp,
 
 	} else { 
 
-	  if (yRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf ",yRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
-	  else fprintf(fp,"%7.0lf ",yRow.at( i + j * selectionSize));
+	  if (yRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f ",yRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
+	  else fprintf(fp,"%7.0f ",yRow.at( i + j * selectionSize));
 
-	  if (uncRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf   ",uncRow.at( i + j * selectionSize));
-	  else fprintf(fp,"%7.0lf   ",uncRow.at( i + j * selectionSize));
+	  if (uncRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f   ",uncRow.at( i + j * selectionSize));
+	  else fprintf(fp,"%7.0f   ",uncRow.at( i + j * selectionSize));
 
 	}
 
@@ -1109,9 +1109,9 @@ void buildFinalTable(FILE* fp,
 
 	} else { 
 
-	  if (yRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1lf ",yRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
-	  else fprintf(fp,"%7.0lf ",yRow.at( i + j * selectionSize));
-	  fprintf(fp,"%5.1lf%%   ",(100 * eRow.at( i + j * selectionSize)));
+	  if (yRow.at( i + j * selectionSize) < 10) fprintf(fp,"%7.1f ",yRow.at( i + j * selectionSize));  //	j * selectionSize refers to number for a sample, i refers to the selection step   
+	  else fprintf(fp,"%7.0f ",yRow.at( i + j * selectionSize));
+	  fprintf(fp,"%5.1f%%   ",(100 * eRow.at( i + j * selectionSize)));
 
 	}
 
