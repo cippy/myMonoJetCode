@@ -10,6 +10,8 @@ PROGRAMS = $(patsubst %.cc,%,$(BINFILES))
 
 # --- External configuration ---------------------------------
 CC         = g++ -Wno-deprecated
+#CC         = g++ -Wall -pedantic
+#CC         = g++ -Wno-deprecated -pedantic
 CCFLAGS    =  -g -O3
 MFLAGS     = -MM
 INCLUDES   =
