@@ -773,7 +773,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   // the following flag is used to manage Z(vv)/W(lv) scale factor computation where both sample are taken from signal region (folderNameWithRootFilesCR == folderNameWithRootFilesSR)
   Int_t zvv_wlv_flag = 0;
   if (folderNameWithRootFilesCR == folderNameWithRootFilesSR) zvv_wlv_flag = 1;
-
+ 
   TH1::SetDefaultSumw2();            //all the following histograms will automatically call TH1::Sumw2() 
 
   gROOT->SetStyle("Plain");  // to have white legend (on my pc it's already white, but in tier2 it appears grey)
@@ -864,14 +864,30 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   // now open files and get histograms
   TH1D* hvar = NULL;   // to get histogram from file
-  TH1D* hsyst = NULL;
+  TH1D* hsyst = NULL; 
+  TH1D* hsystLepID = NULL;
   //string hvarName;          // name of histogram to take from file
   //string xAxisName;        // name of X axis when plotting distribution. It is a tex string (with ROOT standard), e.g. "#slash{E}_{T} [GeV]" for MET
   string hvarName = "HYieldsMetBin";
   string hsystName = "HSyst_total";
+  string hsystLepIDName = "";
+ 
+  // if using SR/CR and CR is Z or W, get name of the proper systematic histogram for lep ID
+  if (!zvv_wlv_flag) {
+    if (folderNameWithRootFilesCR.find("z") != string::npos) hsystLepIDName = "HSyst_LepTightLoose";
+    else if (folderNameWithRootFilesCR.find("w") != string::npos) hsystLepIDName = "HSyst_LepTight";
+  }  
+
+  Int_t useSystLepID_flag = 0;
+  if (hsystLepIDName != "") {
+    useSystLepID_flag = 1;
+    cout << "Applying lepton ID systematic uncertainty to denominator " << endl;
+  }
+
   if (monoJ0_monoV1 == 1) {
     hvarName += "_monoV";
     hsystName += "_monoV";
+    if (useSystLepID_flag) hsystLepIDName += "_monoV";
   }
   string xAxisName = "recoil [GeV]";
 
@@ -879,6 +895,7 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   TH1D* hCR = NULL;
   TH1D* hSRsyst = NULL;
   TH1D* hCRsyst = NULL;
+  TH1D* hCRsystLepID = NULL; // will use that if a lepton CR is used to get systematics due to lepton ID
 
   TFile* f = TFile::Open(filenameSR.c_str(),"READ");
   if (!f || !f->IsOpen()) {
@@ -914,14 +931,15 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
     cout << "Opening -> " << filenameCR << endl;
     hvar = (TH1D*)f2->Get(hvarName.c_str());
     hsyst = (TH1D*)f2->Get(hsystName.c_str());
+    if (useSystLepID_flag) hsystLepID = (TH1D*)f2->Get(hsystLepIDName.c_str());
     //cout << hvar->GetName() << endl;
-    if (!hvar || !hsyst) {
+    if (!hvar || !hsyst || (useSystLepID_flag && !hsystLepID)) {
       cout << "Error: histogram not found in file ' " << filenameCR << "'. End of programme." << endl;
       exit(EXIT_FAILURE);
     }
     hCR = (TH1D*)hvar->Clone();
     hCRsyst = (TH1D*)hsyst->Clone();
-
+    if (useSystLepID_flag) hCRsystLepID = (TH1D*)hsystLepID->Clone();
     //f2->Close();  //if I close the file I lose the histogram and the clone (but cannot understand why the clone should be gone)
     
   }
@@ -938,6 +956,12 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
     //computing total uncertainty summing stat and syst in quadrature (histogram with systematic has uncertainty as bin content)
     // to stat. uncertainty (GetBinError) sum syst. one (given by the content of hsyst, and not the error of hsyst, since hsyst was devised as the syst unc of HYieldsMetBin histogram)
+
+    // N.B: syst uncertainties from qcd or ewk scale factors are common in Z(vv) and Z(mumu) so they are always totally correlated between numerator and denominator:
+    // the only systematic uncertainty that remains is that from lepton ID
+    // If I want to use HSyst_total from the file, that I should subtract the proper lepton ID syst uncertainty (which was added in quadrature) and assign it back 
+    // to denominator only, OR, I could build systematic uncertainties from the single components stored in the files
+
     Double_t totUnc = 0.0;
     // ---> handling correlation, to be revised  <----
     if (numDenCorrelation == 0) {
@@ -948,13 +972,14 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
       // and here we go again for the denominator
       totUnc = hCR->GetBinError(i) * hCR->GetBinError(i) + hCRsyst->GetBinContent(i) * hCRsyst->GetBinContent(i);
       hCR->SetBinError(i, sqrt(totUnc));
-    } // else if (numDenCorrelation == 1) {   // in this case just consider the statistical uncertainty (default)
-    //   // if total correlation holds, systematic will cancel out in ratio
-    //   totUnc = hSR->GetBinError(i) * hSR->GetBinError(i); 
-    //   hSR->SetBinError(i, sqrt(totUnc));
-    //   totUnc = hCR->GetBinError(i) * hCR->GetBinError(i);
-    //   hCR->SetBinError(i, sqrt(totUnc));
-    // }
+    } else if (numDenCorrelation == 1) {   // in this case just consider the statistical uncertainty (default) AND, if needed, lep ID syst to denominator
+      // if total correlation holds, systematic will cancel out in ratio
+      totUnc = hSR->GetBinError(i) * hSR->GetBinError(i); 
+      hSR->SetBinError(i, sqrt(totUnc));
+      totUnc = hCR->GetBinError(i) * hCR->GetBinError(i);
+      if (useSystLepID_flag) totUnc += (hCRsystLepID->GetBinContent(i) * hCRsystLepID->GetBinContent(i)); // sum lep ID syst to denominator in quadrature to stat
+      hCR->SetBinError(i, sqrt(totUnc));
+    }
 
   }
 
