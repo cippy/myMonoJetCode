@@ -43,26 +43,28 @@ int main(int argc, char* argv[]) {
   }
 
   // here we get environmental variable that we need to use the code, such as CMSSW_BASE
-  string envVar = "CMSSW_BASE";
-  char* pPath;
-  pPath = getenv (envVar.c_str());
   string working_cmssw_path = "";
-  if (pPath!=NULL) {
-    working_cmssw_path = string(pPath);  // assign char* to string. Can also do --> string someString(char*);
-    //cout << "With cout"<<endl;
-    //cout << "The current path is: "<< working_cmssw_path << endl;
-  }
-  working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src 
-  // WARNING: in the config file the file path starts as /myMonoJetCode/... The initial "/" is important, since working_cmssw_path end with "src" w/o "/"
-  // you could reverse this behaviour, but be consistent with your choice
+  mySetCMSSW_BasePath(working_cmssw_path);
+
+  // string envVar = "CMSSW_BASE";
+  // char* pPath;
+  // pPath = getenv (envVar.c_str());
+  // if (pPath!=NULL) {
+  //   working_cmssw_path = string(pPath);  // assign char* to string. Can also do --> string someString(char*);
+  //   //cout << "With cout"<<endl;
+  //   //cout << "The current path is: "<< working_cmssw_path << endl;
+  // }
+  // working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src 
+  // // WARNING: in the config file the file path starts as /myMonoJetCode/... The initial "/" is important, since working_cmssw_path end with "src" w/o "/"
+  // // you could reverse this behaviour, but be consistent with your choice
 
   char configFileName[200];
   std::strcpy(configFileName,argv[1]);
 
-  Int_t lepton_PDGID = -0;
-  Int_t isdata_flag = -0;
+  Int_t lepton_PDGID = 0;
+  Int_t isdata_flag = 0;
   Int_t tau_veto_flag = 0;
-  Double_t metnolep_start = 0;
+  Double_t metnolep_start = 0.0;
   Int_t met_filters_flag = 0;
   Int_t HLT_flag = 0;
   string uncertainty; // say which uncertainty is to be used for yields in a sample. Can be "poisson", "MC", "X%"

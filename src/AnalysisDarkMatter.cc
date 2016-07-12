@@ -263,23 +263,11 @@ void AnalysisDarkMatter::setVarFromConfigFile() {
     
   }
   
-  // REMINDER: FIX ME
-  //will replace with a common function to be used by any source file, now just testing if things work
-  
-  // here we get environmental variable that we need to use the code, such as CMSSW_BASE
-  string envVar = "CMSSW_BASE";
-  char* pPath;
-  pPath = getenv (envVar.c_str());
   string working_cmssw_path = "";
-  if (pPath!=NULL) {
-    working_cmssw_path = string(pPath);  // assign char* to string. Can also do --> string someString(char*);
-    //cout << "With cout"<<endl;
-    //cout << "The current path is: "<< working_cmssw_path << endl;
-  }
-  working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src 
-
+  mySetCMSSW_BasePath(working_cmssw_path);
+ 
   outputFolder = working_cmssw_path + DIRECTORY_TO_SAVE_FILES + DIRECTORY_NAME;
-  if (calibEle_flag == 1) outputFolder += "_CalibEle";
+  if (calibEle_flag == 1) outputFolder += "_CalibEle";  //
   if (unweighted_event_flag == 1) outputFolder += "_weq1";
   if (dirName_suffix != "") outputFolder += ("_" + dirName_suffix);  // set to "" if not specified
   outputFolder += "/";
