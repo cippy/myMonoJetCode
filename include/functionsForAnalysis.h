@@ -77,4 +77,6 @@ void myEventsInSubsamples_filler_spring15_25ns_2lepSkim(const std::string,  std:
 
 Double_t myGetUncertainty(const mask*, const Int_t, const std::string);
 
+void mySetCMSSW_BasePath(std::string &);
+
 #endif
