@@ -12,11 +12,11 @@
 #include <vector>
 #include <string>
 
-#include "edimarcoTree_v5.h"
+#include "edimarcoTree_v6.h"
 #include "functionsForAnalysis.h"
 #include "myClasses.h"
 
-class AnalysisDarkMatter : public edimarcoTree_v5 {
+class AnalysisDarkMatter : public edimarcoTree_v6 {
  public:
 
   AnalysisDarkMatter(TTree *tree);
