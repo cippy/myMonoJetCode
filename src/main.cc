@@ -336,16 +336,25 @@ int main(int argc, char* argv[]) {
     outputFolder = directory_to_save_files + directory_name + "/";
     std::cout << "Creating new directory " << outputFolder << " ... " << std::endl;
 
-    if (stat(outputFolder.c_str(), &st) == -1) {
+    // testing usage of system to create multiple directories 
+    std::string createDirCommand = "mkdir -p " + outputFolder;
+    system(createDirCommand.c_str());
+    // check presence of directory
+    if ( !(stat(outputFolder.c_str(), &st) == -1) ) std::cout << "Directory created succesfully or already existing" << std::endl;  
 
-      if (mkdir(outputFolder.c_str(),0755) == 0) {   // 755 refers to access rights
+    ////////////////////////////////////////
+    // keep the following commented if using system above
+    /////////////////////////////////////////
+    // if (stat(outputFolder.c_str(), &st) == -1) {
 
-	std::cout << "Directory was created successfully!" << std::endl; 
+    //   if (mkdir(outputFolder.c_str(),0755) == 0) {   // 755 refers to access rights
+
+    // 	std::cout << "Directory was created successfully!" << std::endl; 
     
-      } else std::cout << "Error occurred when creating directory!" << std::endl; 
-      // error will never occur with stat(): stat is -1 if directory doesn't exist, so it is created by mkdir(), which fails if directory already exists (but in this case the stat() prevents programme from entering and doing mkdir()
+    //   } else std::cout << "Error occurred when creating directory!" << std::endl; 
+    //   // error will never occur with stat(): stat is -1 if directory doesn't exist, so it is created by mkdir(), which fails if directory already exists (but in this case the stat() prevents programme from entering and doing mkdir()
 
-    } else std::cout << "Warning: maybe directory already exists" << std::endl;
+    // } else std::cout << "Warning: maybe directory already exists" << std::endl;
 
     // ================== saving content of config file in "report.txt" =====
 
