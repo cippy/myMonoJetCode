@@ -563,7 +563,7 @@ void AnalysisDarkMatter::fillRowVector(const Double_t nTotalWeightedEvents, cons
 void AnalysisDarkMatter::fillEventMask(UInt_t & eventMask) {
 
   eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
-  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
+  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm) > JMET_DPHI_MIN);
   eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
   eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
   if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
