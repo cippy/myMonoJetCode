@@ -22,7 +22,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // adding evVarFriend variables
-      Float_t         nMu10V;
+   Float_t         nMu10V;
    Float_t         nMu20T;
    Float_t         nEle10V;
    Float_t         nEle40T;
