@@ -367,7 +367,7 @@ void distribution(const string folderNameWithRootFiles = "",
   string working_cmssw_path = "";
   myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
   working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
-  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFiles + "/"; 
+  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -786,8 +786,8 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   string filenameExtension = ".root";
   // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/76X/Fall15_25ns/lumi_2p32fb/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)
