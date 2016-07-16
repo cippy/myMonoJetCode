@@ -45,6 +45,7 @@ int main(int argc, char* argv[]) {
   // here we get environmental variable that we need to use the code, such as CMSSW_BASE
   string working_cmssw_path = "";
   mySetCMSSW_BasePath(working_cmssw_path);
+  // now working_cmssw_path is the whole afs path up to $CMSSW_BASE/src
 
   // string envVar = "CMSSW_BASE";
   // char* pPath;
@@ -58,8 +59,9 @@ int main(int argc, char* argv[]) {
   // // WARNING: in the config file the file path starts as /myMonoJetCode/... The initial "/" is important, since working_cmssw_path end with "src" w/o "/"
   // // you could reverse this behaviour, but be consistent with your choice
 
-  char configFileName[200];
-  std::strcpy(configFileName,argv[1]);
+  // char configFileName[200];
+  // std::strcpy(configFileName,argv[1]);
+  string configFileName = working_cmssw_path + "/myMonoJetCode/config/" + string(argv[1]);
 
   Int_t lepton_PDGID = 0;
   Int_t isdata_flag = 0;
@@ -138,7 +140,7 @@ int main(int argc, char* argv[]) {
 
   }
 
-  ifstream inputFile(configFileName);
+  ifstream inputFile(configFileName.c_str());
 
   if (inputFile.is_open()) {
 
@@ -329,6 +331,8 @@ int main(int argc, char* argv[]) {
 
   // =========  Creating directory where files are saved ============
 
+  // here we launch the script that will handle this job. The script is '/myMonoJetCode/scripts/createDirectories.sh'
+
   if ( (directory_to_save_files != "") && (directory_name != "") ) {
 
     struct stat st = {0};
@@ -336,8 +340,10 @@ int main(int argc, char* argv[]) {
     outputFolder = directory_to_save_files + directory_name + "/";
     std::cout << "Creating new directory " << outputFolder << " ... " << std::endl;
 
+    // creating directories using bash script. Passing config file to retrieve the names of folders to create
+    std::string createDirCommand = "source " + working_cmssw_path + "/myMonoJetCode/scripts/createDirectories.sh " + configFileName;  
     // testing usage of system to create multiple directories 
-    std::string createDirCommand = "mkdir -p " + outputFolder;
+    //std::string createDirCommand = "mkdir -p " + outputFolder;
     system(createDirCommand.c_str());
     // check presence of directory
     if ( !(stat(outputFolder.c_str(), &st) == -1) ) std::cout << "Directory created succesfully or already existing" << std::endl;  
@@ -370,11 +376,11 @@ int main(int argc, char* argv[]) {
 
       string str;
 
-      inputFile.open(configFileName); //opening inputFile named configFileName again to save content in file named "report.txt"
+      inputFile.open(configFileName.c_str()); //opening inputFile named configFileName again to save content in file named "report.txt"
 
       if (inputFile.is_open()) {
      
-	cout << "Saving content of " << configFileName << " file in "<< reportFileName << " located in \n -->" << outputFolder << endl;
+	cout << "Saving content of file --> " << configFileName << " \n in "<< reportFileName << " located in \n -->" << outputFolder << endl;
 	reportFile << "Content of " << configFileName << endl;
 	reportFile << endl;
 
@@ -685,7 +691,7 @@ int main(int argc, char* argv[]) {
 
 	  monojet_SignalRegion tree( chain);
 	  //cout << " CHECK IN MAIN " << endl;
-	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	  tree.setDirNameSuffix(dirName_suffix);
 	  // tree.set_SF_NLO_name(sf_nlo_option);
 	  //tree.loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
@@ -700,7 +706,7 @@ int main(int argc, char* argv[]) {
 
 	  if (controlSample_boson == "Z") {
 	    zlljetsControlSample tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	    tree.setDirNameSuffix(dirName_suffix);
 	    // tree.set_SF_NLO_name(sf_nlo_option);
 	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
@@ -713,7 +719,7 @@ int main(int argc, char* argv[]) {
 	    }
 	  } else if (controlSample_boson == "W") {
 	    wlnujetsControlSample tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	    tree.setDirNameSuffix(dirName_suffix);
 	    // tree.set_SF_NLO_name(sf_nlo_option);
 	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
@@ -726,7 +732,7 @@ int main(int argc, char* argv[]) {
 	    }
 	  } else if (controlSample_boson == "GAMMA") {
 	    monojet_PhotonControlRegion tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	    tree.setDirNameSuffix(dirName_suffix);
 	    // tree.set_SF_NLO_name(sf_nlo_option);
 	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
@@ -741,7 +747,7 @@ int main(int argc, char* argv[]) {
 	} else if (metResolutionAndResponse_flag == 1) {
 
 	  zlljets_metResoResp tree( chain);
-	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName, isdata_flag, unweighted_event_flag, sf_friend_flag);
+	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	  tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
 	  tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
 
