@@ -50,7 +50,10 @@ mkdir -p ${basePath}${finalDir}
 # ex: finalDir=/myMonoJetCode/output/monojet/80X/lumi_7p65fb/SignalRegion
 #echo "\$finalDir = $finalDir"
 #echo $finalDir
-echo ${finalDir#/myMonoJetCode/output/}  # remove shortestpattern matching '/myMonoJetCode/output/' from the beginning
+#echo ${finalDir#/myMonoJetCode/output/}  # remove shortestpattern matching '/myMonoJetCode/output/' from the beginning
 dirToCreateInWWW=${finalDir#/myMonoJetCode/output/}
 echo "mkdir -p ${wwwDir}${dirToCreateInWWW}"
 mkdir -p ${wwwDir}${dirToCreateInWWW}
+cd ${wwwDir}
+./copyphp
+cd -
