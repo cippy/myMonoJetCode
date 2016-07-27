@@ -473,8 +473,14 @@ void wlnujetsControlSample::fillEventMask(UInt_t & eventMask) {
   if (fabs(LEP_PDG_ID) == 11)  eventMask += metC.addToMask(met_pt > 50);    
   eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
   // Warning: tightLep cut is slightly different between W and Z (1 or 2 leptons), so we keep this here
-  if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
-  else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
+  if (fabs(LEP_PDG_ID) == 11) {
+    eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+    if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SingleEl == 1);
+  } else {
+    eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
+    if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5);
+  }
+
 
 
 }
@@ -537,9 +543,9 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    fChain->SetBranchStatus("nVert",1);  // number of good vertices 
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
+   fChain->SetBranchStatus("HLT_Met170",1);
    fChain->SetBranchStatus("HLT_SingleEl",1);
-   fChain->SetBranchStatus("HLT_SinglePho",1);
-
+   //fChain->SetBranchStatus("HLT_SinglePho",1);
  
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);
@@ -688,7 +694,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      ptr_nLepLoose = &nEle10V;                      // ask 2 electrons
      ptr_nLep10V = &nMu10V;                         // veto on muons   
      if (fChain->GetBranch("nEle40T")) ptr_nLepTight = &nEle40T;
-     //else if (fChain->GetBranch("nEle20T")) ptr_nLepTight = &nEle20T;  // the most recent version for this variable si nEle40T, but older versions use nEle20T
+     //else if (fChain->GetBranch("nEle20T")) ptr_nLepTight = &nEle20T;  // the most recent version for this variable is nEle40T, but older versions use nEle20T
 
      ptr_nRecoLepton = &nLepGood;
      ptr_lepton_pt = LepGood_pt;
@@ -769,24 +775,24 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 
      if (fabs(LEP_PDG_ID) == 13) { 
 
-       if ( HLT_FLAG != 0) {
+       // if ( HLT_FLAG != 0) {
 
-       	 if ( HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 ) HLT_passed_flag = 1; 	 
-       	 else HLT_passed_flag = 0;
+       // 	 if ( HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 ) HLT_passed_flag = 1; 	 
+       // 	 else HLT_passed_flag = 0;
 
-       }  // end of   if ( HLT_FLAG )
+       // }  // end of   if ( HLT_FLAG )
 
        metNoLepPt = *ptr_metNoLepPt;       
        metNoLepPhi = *ptr_metNoLepPhi; 
 
      } else if (fabs(LEP_PDG_ID) == 11) { 
 
-       if ( HLT_FLAG != 0 ) {
+       // if ( HLT_FLAG != 0 ) {
 
-	 if (HLT_SingleEl == 1) HLT_passed_flag = 1; 	 
-	 else HLT_passed_flag = 0;  //continue;
+       // 	 if (HLT_SingleEl == 1) HLT_passed_flag = 1; 	 
+       // 	 else HLT_passed_flag = 0;  //continue;
 
-       }  // end of   if ( HLT_FLAG )
+       // }  // end of   if ( HLT_FLAG )
 
        metNoLepTV.SetMagPhi(met_pt,met_phi);
    

@@ -135,60 +135,60 @@ void zlljetsControlSample::setMask() {
 
   analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
 
-   if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
-     if (using_zlljets_MCsample_flag ) {
-       analysisMask.append(genLepC.get2ToId());
-       analysisMask.append(recoGenLepMatchC.get2ToId());
-     }
-     else if (using_ztautaujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());    
-   }
-   if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
-   if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
-   analysisMask.append(twoLepLooseC.get2ToId());
-   analysisMask.append(tightLepC.get2ToId());
-   analysisMask.append(oppChargeLeptonsC.get2ToId());     
-   analysisMask.append(invMassC.get2ToId());
-   analysisMask.append(lepLooseVetoC.get2ToId());
-   analysisMask.append(gammaLooseVetoC.get2ToId());
-   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
-   analysisMask.append(bjetVetoC.get2ToId());
-   analysisMask.append(jet1C.get2ToId());
-   analysisMask.append(jetNoiseCleaningC.get2ToId());
-   analysisMask.append(jetMetDphiMinC.get2ToId());
-   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+  if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
+    if (using_zlljets_MCsample_flag ) {
+      analysisMask.append(genLepC.get2ToId());
+      analysisMask.append(recoGenLepMatchC.get2ToId());
+    }
+    else if (using_ztautaujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());    
+  }
+  if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
+  if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+  analysisMask.append(twoLepLooseC.get2ToId());
+  analysisMask.append(tightLepC.get2ToId());
+  analysisMask.append(oppChargeLeptonsC.get2ToId());     
+  analysisMask.append(invMassC.get2ToId());
+  analysisMask.append(lepLooseVetoC.get2ToId());
+  analysisMask.append(gammaLooseVetoC.get2ToId());
+  if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
+  analysisMask.append(bjetVetoC.get2ToId());
+  analysisMask.append(jet1C.get2ToId());
+  analysisMask.append(jetNoiseCleaningC.get2ToId());
+  analysisMask.append(jetMetDphiMinC.get2ToId());
+  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
    
-   analysisSelectionManager.SetMaskPointer(&analysisMask);
+  analysisSelectionManager.SetMaskPointer(&analysisMask);
 
-   if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
-   if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
-   analysisSelectionManager.append(&twoLepLooseC);
-   analysisSelectionManager.append(&tightLepC);
-   analysisSelectionManager.append(&oppChargeLeptonsC);  
-   analysisSelectionManager.append(&invMassC);
-   analysisSelectionManager.append(&lepLooseVetoC);
-   analysisSelectionManager.append(&gammaLooseVetoC);
-   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
-   analysisSelectionManager.append(&bjetVetoC);
-   analysisSelectionManager.append(&jet1C);
-   analysisSelectionManager.append(&jetNoiseCleaningC);
-   analysisSelectionManager.append(&jetMetDphiMinC);
-   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
+  if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
+  if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
+  analysisSelectionManager.append(&twoLepLooseC);
+  analysisSelectionManager.append(&tightLepC);
+  analysisSelectionManager.append(&oppChargeLeptonsC);  
+  analysisSelectionManager.append(&invMassC);
+  analysisSelectionManager.append(&lepLooseVetoC);
+  analysisSelectionManager.append(&gammaLooseVetoC);
+  if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
+  analysisSelectionManager.append(&bjetVetoC);
+  analysisSelectionManager.append(&jet1C);
+  analysisSelectionManager.append(&jetNoiseCleaningC);
+  analysisSelectionManager.append(&jetMetDphiMinC);
+  if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
    
   // ========== Mono-J ==============
 
-   analysisMask_monoJ.setName(Form("monojet %s control sample",CONTROL_SAMPLE));
+  analysisMask_monoJ.setName(Form("monojet %s control sample",CONTROL_SAMPLE));
    
-   analysisMask_monoJ.append(analysisMask.globalMask.back()); // all the common selections
-   analysisMask_monoJ.append(noVtagC.get2ToId());
+  analysisMask_monoJ.append(analysisMask.globalMask.back()); // all the common selections
+  analysisMask_monoJ.append(noVtagC.get2ToId());
    
-   analysisSelectionManager_monoJ.SetMaskPointer(&analysisMask_monoJ);
+  analysisSelectionManager_monoJ.SetMaskPointer(&analysisMask_monoJ);
    
-   analysisSelectionManager_monoJ.append("all cuts");
-   analysisSelectionManager_monoJ.append(&noVtagC);
+  analysisSelectionManager_monoJ.append("all cuts");
+  analysisSelectionManager_monoJ.append(&noVtagC);
 
   // ========== Mono-V ==============                                                                                                                                  
 
-   analysisMask_monoV.setName(Form("monoV %s control sample",CONTROL_SAMPLE));
+  analysisMask_monoV.setName(Form("monoV %s control sample",CONTROL_SAMPLE));
 
   analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections                                                                              
   // analysisMask_monoV.append(VtagC.get2ToId());                                                                                                                      
@@ -439,8 +439,13 @@ void zlljetsControlSample::fillEventMask(UInt_t & eventMask) {
   eventMask += oppChargeLeptonsC.addToMask(LepGood_pdgId[0] == - LepGood_pdgId[1]); 
   eventMask += twoLepLooseC.addToMask(nLepLoose > 1.5 && nLepLoose < 2.5);
   // Warning: tightLep cut is slightly different between W and Z (1 or 2 leptons), so we keep this here        
-  if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
-  else eventMask += tightLepC.addToMask(nLepTight > 0.5 );
+  if (fabs(LEP_PDG_ID) == 11) {
+    eventMask += tightLepC.addToMask(nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
+    if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_SingleEl == 1);
+  } else {
+    eventMask += tightLepC.addToMask(nLepTight > 0.5 );
+    if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5);
+  }
 
 }
 
@@ -482,7 +487,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    fChain->SetBranchStatus("LepGood_mass",1);
    //fChain->SetBranchStatus("LepGood_charge",1);
    fChain->SetBranchStatus("LepGood_tightId",1);
-   fChain->SetBranchStatus("LepGood_relIso04",1);
+   //fChain->SetBranchStatus("LepGood_relIso04",1);
    // fChain->SetBranchStatus("ngenLep",1);         // not needed, using GenPart to study generator level quantities
    // fChain->SetBranchStatus("genLep_pdgId",1);
    // fChain->SetBranchStatus("genLep_pt",1);
@@ -500,10 +505,12 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    fChain->SetBranchStatus("htJet25",1);
 
    fChain->SetBranchStatus("nVert",1);  // number of good vertices 
+
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
-   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1); 
+   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
+   fChain->SetBranchStatus("HLT_Met170",1); 
    fChain->SetBranchStatus("HLT_SingleEl",1);
-   fChain->SetBranchStatus("HLT_SinglePho",1); 
+   //fChain->SetBranchStatus("HLT_SinglePho",1); 
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);
@@ -575,9 +582,13 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
    }
 
+   cout << "CHECK 1 " << endl;
    setVarFromConfigFile();
+   cout << "CHECK 2 " << endl;
    setSelections();
+   cout << "CHECK 3 " << endl;
    setMask();
+   cout << "CHECK 4 " << endl;
    //set_SF_NLO_pointers(sf_nlo, ptr_sf_nlo_QCD, ptr_sf_nlo_EWK);
 
    //  TVector2 metNoLepTV, ele;
@@ -759,24 +770,24 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      if (fabs(LEP_PDG_ID) == 13) { 
 
-       if ( HLT_FLAG != 0) {
+       // if ( HLT_FLAG != 0) {
 
-       	 if ( HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 ) HLT_passed_flag = 1; 	 
-       	 else HLT_passed_flag = 0; //continue;
+       // 	 if ( HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5) HLT_passed_flag = 1; 	 
+       // 	 else HLT_passed_flag = 0; //continue;
 
-       }  // end of   if ( HLT_FLAG )
+       // }  // end of   if ( HLT_FLAG )
 
        metNoLepPt = *ptr_metNoLepPt;       
        metNoLepPhi = *ptr_metNoLepPhi; 
 
      } else if (fabs(LEP_PDG_ID) == 11) { 
 
-       if ( HLT_FLAG != 0 ) {
+       // if ( HLT_FLAG != 0 ) {
 
-	 if (HLT_SingleEl == 1) HLT_passed_flag = 1; 
-	 else HLT_passed_flag = 0;  //continue;
+       // 	 if (HLT_SingleEl == 1) HLT_passed_flag = 1; 
+       // 	 else HLT_passed_flag = 0;  //continue;
 
-       }  // end of   if ( HLT_FLAG )
+       // }  // end of   if ( HLT_FLAG )
 
        metNoLepTV.SetMagPhi(met_pt,met_phi);
        // summing just electrons from Z if found
