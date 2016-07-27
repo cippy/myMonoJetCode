@@ -1169,9 +1169,19 @@ Int_t main(int argc, char* argv[]) {
 
       string thisArgument(argv[i]);
 
+      //cout << "CHECK: argc = " << argc << "\t i = " << i << endl;
+
       if (thisArgument  == "-sr" ) whichRegion = "sig";
-      else if (thisArgument  == "-cr") whichRegion = argv[i+1];
-      else if (thisArgument  == "-tf") makeTransferFactor_flag = true; 
+      else if (thisArgument  == "-cr") {
+	if ((i+1) >= argc) {
+	  cout << "ERROR: must specify which CR after -cr option. Choose among --> zmm, zee, gam, wmn, wen, all" << endl;
+	  cout << "ABORT" << endl;
+	  exit(EXIT_FAILURE);
+	} else {
+	  whichRegion = argv[i+1];
+	  i++;
+	}
+      } else if (thisArgument  == "-tf") makeTransferFactor_flag = true; 
 
     }
 
