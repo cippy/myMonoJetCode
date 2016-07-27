@@ -341,10 +341,20 @@ int main(int argc, char* argv[]) {
     std::cout << "Creating new directory " << outputFolder << " ... " << std::endl;
 
     // creating directories using bash script. Passing config file to retrieve the names of folders to create
-    std::string createDirCommand = "source " + working_cmssw_path + "/myMonoJetCode/scripts/createDirectories.sh " + configFileName;  
+    std::string createDirCommand = "source " + working_cmssw_path + "/myMonoJetCode/scripts/createDirectories.sh " + configFileName + " " + directory_name;  
+    Int_t sys_ret_value = system(createDirCommand.c_str());
+    //std::cout << "sys_ret_value = " << sys_ret_value << std::endl;
+    if (sys_ret_value != 0) {  // if my script return n, then system() returns 256*n, so I make the script return n > 0 to warn that an error occurred
+      std::cout << "Error occurred when creating directory using system()! EXIT" << std::endl; 
+      exit(EXIT_FAILURE);      
+    } else {
+      std::cout << "Call to system() was successful" << std::endl;
+    }
+
     // testing usage of system to create multiple directories 
     //std::string createDirCommand = "mkdir -p " + outputFolder;
-    system(createDirCommand.c_str());
+    //system(createDirCommand.c_str());
+
     // check presence of directory
     if ( !(stat(outputFolder.c_str(), &st) == -1) ) std::cout << "Directory created succesfully or already existing" << std::endl;  
 
@@ -380,7 +390,7 @@ int main(int argc, char* argv[]) {
 
       if (inputFile.is_open()) {
      
-	cout << "Saving content of file --> " << configFileName << " \n in "<< reportFileName << " located in \n -->" << outputFolder << endl;
+	cout << "Saving content of file --> " << configFileName << " \nin "<< reportFileName << " located in \n-->" << outputFolder << endl;
 	reportFile << "Content of " << configFileName << endl;
 	reportFile << endl;
 
@@ -408,7 +418,7 @@ int main(int argc, char* argv[]) {
 
       if (inputFile.is_open()) {
 
-	cout << "Saving content of " << fileWithSamplesPath << " file in "<< reportFileName << " located in \n -->" << outputFolder << endl;
+	cout << "Saving content of file --> " << fileWithSamplesPath << "\nin "<< reportFileName << " located in \n-->" << outputFolder << endl;
 	reportFile << "Content of " << fileWithSamplesPath << endl;
 	reportFile << endl;
 
@@ -483,6 +493,10 @@ int main(int argc, char* argv[]) {
 
       //std::cout << "CHECK IN READING SAMPLE FILE" << std::endl;
       std::vector<std::string> subSampleNameVector; // if using Emanuele's tree, for each sample (e.g. ZJetsToNuNu) there is more than one subsample (e.g. different HT bins or different processes). This vector holds this subsamples's name to be chained (previously I used to merge and copy them from Emanuele's area to mine, so that I only had one tree or friend if any). For backward compatibility, I keep the possibility to use the merged trees when reading the file
+
+      // sometimes I need to get some missing MC files from other production campaign (just a temporary solution)
+      // so they will be added as a new vector of samples
+      std::vector<std::string> missingSubSampleNameVector;  
 
       //============================================/
 
@@ -581,6 +595,25 @@ int main(int argc, char* argv[]) {
 
 	  }
 
+	  if (parameterName == "MISSING_SUB_SAMPLE_NAMES") { 
+
+	    cout << right << setw(20) << parameterName << "  ";
+	    string stringvalues;
+	    getline(sampleFile, stringvalues);    // read whole line starting from current position (i.e. without reading ARRAY_STR and SAMPLE_NAME)
+	    istringstream iss(stringvalues);
+	    std::string subSample;
+
+	    while(iss >> subSample) {
+	    
+	      missingSubSampleNameVector.push_back(subSample);
+	      cout << missingSubSampleNameVector.back() << " ";
+
+	    }
+
+	    cout << endl;
+
+	  }
+
 	}
 
       }
@@ -650,6 +683,33 @@ int main(int argc, char* argv[]) {
 	    if (sf_friend_flag != 0) chSfFriend->Add(TString(sf_friend_treeRootFile.c_str()));
 
 	  }
+
+	  ///////////////////////////////////////////////////////
+
+	  for(UInt_t i = 0; i < missingSubSampleNameVector.size(); i++) {
+	  
+	    std::string treeRootFile = "";
+	    std::string friend_treeRootFile = "";
+	    std::string sf_friend_treeRootFile = "";
+
+	    // missing trees will be taken from here on eos. It is a temporary solution, so I don't use another option in samplePath file 
+	    std::string missingTreePath = "/TREES_25ns_MET200SKIM_76X/";
+
+	    if (whereAreTrees == "eos") {
+
+	      treeRootFile = "root://eoscms//eos/cms" + treeLocation + missingTreePath + missingSubSampleNameVector[i] + "_treeProducerDarkMatterMonoJet_tree.root";
+	      friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + missingTreePath + "evVarFriend_" + missingSubSampleNameVector[i]+ ".root";
+	      if (sf_friend_flag != 0) sf_friend_treeRootFile = "root://eoscms//eos/cms" + treeLocation + missingTreePath + "sfFriend_" + missingSubSampleNameVector[i]+ ".root";
+
+	    }
+
+	    chain->Add(TString(treeRootFile.c_str()));
+	    chFriend->Add(TString(friend_treeRootFile.c_str()));
+	    if (sf_friend_flag != 0) chSfFriend->Add(TString(sf_friend_treeRootFile.c_str()));
+
+	  }
+
+	  ////////////////////////////////////////////////////////
 
 	  std::cout << "Adding friend to chain ..." << std::endl;	    
 	  chain->AddFriend(chFriend);  //adding whole friend chain as friend
