@@ -79,6 +79,7 @@ void wlnujetsControlSample::setSelections() {
   monojet_LeptonControlRegion::setSelections();
 
   gammaLooseVetoC.set("photon veto","photons veto");
+  transverseMassC.set("mT",Form("mT < %2.0lf",MT_UP));
 
   if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {
     if (using_wlnujets_MCsample_flag) {
@@ -98,7 +99,7 @@ void wlnujetsControlSample::setSelections() {
 
     oneLepLooseC.set("1 loose ele",Form("1 loose %s",FLAVOUR));
     tightLepC.set("1 tight ele",Form("1 tight %s",FLAVOUR));
-    //metC.set("met","met > 50");
+    metC.set("met","met > 50");
   
   }
 
@@ -168,7 +169,8 @@ void wlnujetsControlSample::setMask() {
   analysisMask.append(gammaLooseVetoC.get2ToId());
   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
   analysisMask.append(bjetVetoC.get2ToId());
-  //if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
+  if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
+  analysisMask.append(transverseMassC.get2ToId());
   analysisMask.append(jet1C.get2ToId());
   analysisMask.append(jetNoiseCleaningC.get2ToId());
   analysisMask.append(jetMetDphiMinC.get2ToId());
@@ -184,7 +186,8 @@ void wlnujetsControlSample::setMask() {
    analysisSelectionManager.append(&gammaLooseVetoC);
    if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
    analysisSelectionManager.append(&bjetVetoC);
-   //if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
+   if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
+   analysisSelectionManager.append(&transverseMassC);
    analysisSelectionManager.append(&jet1C);
    analysisSelectionManager.append(&jetNoiseCleaningC);
    analysisSelectionManager.append(&jetMetDphiMinC);
@@ -340,6 +343,8 @@ void wlnujetsControlSample::setNumberParameterValue(const std::string parameterN
 
   // }
 
+  if (parameterName == "MT_UP") MT_UP = value;
+
 }
 
 //===============================================
@@ -472,6 +477,7 @@ void wlnujetsControlSample::fillEventMask(UInt_t & eventMask) {
 
   if (fabs(LEP_PDG_ID) == 11)  eventMask += metC.addToMask(met_pt > 50);    
   eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
+  eventMask += transverseMassC.addToMask(mT < MT_UP);
   // Warning: tightLep cut is slightly different between W and Z (1 or 2 leptons), so we keep this here
   if (fabs(LEP_PDG_ID) == 11) {
     eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
