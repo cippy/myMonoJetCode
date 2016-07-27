@@ -121,7 +121,6 @@ namespace myAnalyzerTEman {
     virtual void setSelections();
     virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
 
-
     selection lepLooseVetoC;  //if Z->mumu, veto on electrons and viceversa  // could use muon or electron veto selection in AnalysisDarkMatter, but then I should define a selection* pointing to the correct one to be used (for now I define a new selection)
    // selection lep1tightIdIso04C;
    // selection twoLepTightC;
@@ -285,11 +284,14 @@ namespace myAnalyzerTEman {
     selection oneLepLooseC;   //if W->munu, select loose muon (if W->enu select electron)
     selection tightLepC;
     selection metC; //real met, used only for W->ev 
+    selection transverseMassC;
+
+    Double_t MT_UP;
 
     // control samples specific parameters
     // nothing for now
       
-    // variables used in loop() or other methods. Some of them will be put in monojet_LeptonControlRegion class, now it is just a test
+    // variables used in loop() or other methods. 
     Double_t mT; // transverse mass, computed in loop 
 
     // the following flag is needed to enable search for W->lnu at generator level. For MC samples different from WJetsToLNu I must not require 2 gen leptons from Z
