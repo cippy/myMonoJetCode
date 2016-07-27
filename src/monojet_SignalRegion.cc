@@ -246,7 +246,8 @@ void monojet_SignalRegion::fillEventMask(UInt_t & eventMask) {
   eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
   eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
   eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
-  if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5); //HLT_* variables are stored as float, so using "== 1" might yield unexpected results
+  if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5); 
+  //HLT_* variables are stored as float, so using "== 1" might yield unexpected results
   eventMask += VtagC.addToMask(Vtagged_flag);
   eventMask += noVtagC.addToMask(!Vtagged_flag);
   eventMask += recoilC.addToMask(metNoMu_pt > METNOLEP_START);
@@ -313,6 +314,7 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    fChain->SetBranchStatus("nVert",1);  // number of good vertices 
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
    fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
+   fChain->SetBranchStatus("HLT_Met170",1);
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
    fChain->SetBranchStatus("cscfilter",1);

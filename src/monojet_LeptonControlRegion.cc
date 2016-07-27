@@ -196,7 +196,7 @@ void monojet_LeptonControlRegion::fillEventMask(UInt_t & eventMask) {
 
   AnalysisDarkMatter::fillEventMask(eventMask);
 
-  if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);
+  //if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);  // trigger added to mask in the specific region
   eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);     // veto on electrons (if V->mu X) or on electrons (if V->e X)
   eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
   eventMask += VtagC.addToMask(Vtagged_flag);
