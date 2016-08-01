@@ -150,7 +150,7 @@ void monojet_LeptonControlRegion::setNumberParameterValue(const std::string para
 
   if (parameterName == "LEP_PDG_ID") LEP_PDG_ID = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "LEP1PT") LEP1PT = value;
-  else if (parameterName == "LEP_ISO_04") LEP_ISO_04 = value;
+  //else if (parameterName == "LEP_ISO_04") LEP_ISO_04 = value;
   else if (parameterName == "LEP1ETA") LEP1ETA = value;
   else if (parameterName == "HLT_LEP1PT") HLT_LEP1PT = value;
   else if (parameterName == "HLT_LEP1ETA") HLT_LEP1ETA = value;

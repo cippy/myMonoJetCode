@@ -582,13 +582,13 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
    }
 
-   cout << "CHECK 1 " << endl;
+   //cout << "CHECK 1 " << endl;
    setVarFromConfigFile();
-   cout << "CHECK 2 " << endl;
+   //cout << "CHECK 2 " << endl;
    setSelections();
-   cout << "CHECK 3 " << endl;
+   //cout << "CHECK 3 " << endl;
    setMask();
-   cout << "CHECK 4 " << endl;
+   //cout << "CHECK 4 " << endl;
    //set_SF_NLO_pointers(sf_nlo, ptr_sf_nlo_QCD, ptr_sf_nlo_EWK);
 
    //  TVector2 metNoLepTV, ele;
