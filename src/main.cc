@@ -693,7 +693,15 @@ int main(int argc, char* argv[]) {
 	    std::string sf_friend_treeRootFile = "";
 
 	    // missing trees will be taken from here on eos. It is a temporary solution, so I don't use another option in samplePath file 
-	    std::string missingTreePath = "/TREES_25ns_MET200SKIM_76X/";
+	    std::string missingTreePath = "";
+
+	    if (signalRegion_flag) missingTreePath = "/TREES_25ns_MET200SKIM_76X/";
+	    else if (controlSample_flag) {
+	      if (controlSample_boson == "GAMMA") missingTreePath = "/TREES_25ns_1GSKIM_76X/";
+	      else if (fabs(lepton_PDGID) == 11 ) missingTreePath = "/TREES_25ns_1TLEP1JETSKIM_76X/";
+	      else if (fabs(lepton_PDGID) == 13 ) missingTreePath = "/TREES_25ns_MET200SKIM_76X/";
+	    }
+
 
 	    if (whereAreTrees == "eos") {
 
@@ -965,7 +973,7 @@ int main(int argc, char* argv[]) {
 
     cout <<"-----------------"<<endl;
     cout<<"creating file "<<endl;
-    cout <<"'"<<finalFileName<<"'"<<endl;
+    cout <<"--> "<<finalFileName<<""<<endl;
     cout <<"to save table with yields in folder " << endl;
     cout << outputFolder << endl;
     cout <<"-----------------"<<endl;
