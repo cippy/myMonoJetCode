@@ -343,6 +343,7 @@ void wlnujetsControlSample::setNumberParameterValue(const std::string parameterN
 
   // }
 
+  //cout << "CHECK " << endl;
   if (parameterName == "MT_UP") MT_UP = value;
 
 }
@@ -814,6 +815,11 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoLepPt > 250.)) Vtagged_flag = 1;
      else Vtagged_flag = 0;
 
+     // transverse mass to fill histograms below
+     lep.SetMagPhi(ptr_lepton_pt[0],ptr_lepton_phi[0]);
+     met.SetMagPhi(met_pt,met_phi);
+     mT = sqrt(2*ptr_lepton_pt[0]*met_pt*(1- TMath::Cos(lep.DeltaPhi(met))));
+
      // beginning of eventMask building
 
      // genLepC added to mask above if ISDATA_FLAG == false (in order not to repeat here the check) 
@@ -840,7 +846,6 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      // eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
      // eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
      // eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
-
 
      // end of eventMask building
 
@@ -869,11 +874,6 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
      analysisMask.countEvents(eventMask,newwgt);
      analysisMask_monoJ.countEvents(eventMask,newwgt);
      analysisMask_monoV.countEvents(eventMask,newwgt);
-
-     // transverse mass to fill histograms below
-     lep.SetMagPhi(ptr_lepton_pt[0],ptr_lepton_phi[0]);
-     met.SetMagPhi(met_pt,met_phi);
-     mT = sqrt(2*ptr_lepton_pt[0]*met_pt*(1- TMath::Cos(lep.DeltaPhi(met))));
 
      if ( ((eventMask & analysisMask_monoJ.globalMask.back()) == analysisMask_monoJ.globalMask.back()) ) {
        
