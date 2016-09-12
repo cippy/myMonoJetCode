@@ -392,6 +392,8 @@ void zlljetsControlSample::createSystematicsHistogram() {
   vector<TH1D*> hptr;
   hptr.push_back(HSyst_LepTightLoose);
 
+  HSyst_total->Multiply(HSyst_total);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
+
   for (Int_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total->Add(Htmp);             // adding the squares
@@ -414,6 +416,8 @@ void zlljetsControlSample::createSystematicsHistogram() {
   hptr.clear(); // erase all elements (now it is as if it was created at this point)
   hptr.push_back(HSyst_LepTightLoose_monoV);
      
+  HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
+
   for (Int_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares

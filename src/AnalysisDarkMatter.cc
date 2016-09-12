@@ -478,6 +478,9 @@ void AnalysisDarkMatter::createSystematicsHistogram() {
   hptr.push_back(HSyst_qcdFacScale);
   hptr.push_back(HSyst_qcdPdf);
   hptr.push_back(HSyst_ewk);
+
+  // now HSyst should be empty, so the next step is not necessary
+  HSyst_total->Multiply(HSyst_total);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
      
   for (Int_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
@@ -505,7 +508,9 @@ void AnalysisDarkMatter::createSystematicsHistogram() {
   hptr.push_back(HSyst_qcdFacScale_monoV);
   hptr.push_back(HSyst_qcdPdf_monoV);
   hptr.push_back(HSyst_ewk_monoV);
-     
+
+  HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature    
+
   for (Int_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares
