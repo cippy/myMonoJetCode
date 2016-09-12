@@ -72,21 +72,21 @@ class cut {
    Int_t getId() const { return id_; }
    UInt_t get2ToId() const { return twoToId_; }
    // other member functions
-   void print(ostream &, Bool_t) const;
-   void printAllInfo(ostream &) const;
+   void print(std::ostream &, Bool_t) const;
+   void printAllInfo(std::ostream &) const;
    Bool_t isPassed(Double_t input);
    UInt_t addToMask(Double_t input) {return (this->isPassed(input)) ? (this->get2ToId()) : 0; }
    Bool_t isActive() const { return flag_; }
 
    static Int_t getNCuts() { return nCuts_; }
    static std::vector<cut*> listOfCuts;
-   static void printCutFlow(ostream &, const Int_t, const UInt_t *);
-   static void printCutFlow(ostream &, const std::vector<UInt_t>);
-   static void printCutFlow(ostream &, const mask *);
-   static void printCutFlowAndYields(ostream &, const Double_t, const Double_t, const std::vector<Double_t>, const std::vector<UInt_t>);
-   static void printCutFlowAndYields(ostream &, const Double_t, const Double_t, const Double_t, const UInt_t);
-   static void printCutFlowAndYields(ostream & myOutStream, const Double_t, const Double_t, const mask *);
-   static void printActiveCuts(ostream &);
+   static void printCutFlow(std::ostream &, const Int_t, const UInt_t *);
+   static void printCutFlow(std::ostream &, const std::vector<UInt_t>);
+   static void printCutFlow(std::ostream &, const mask *);
+   static void printCutFlowAndYields(std::ostream &, const Double_t, const Double_t, const std::vector<Double_t>, const std::vector<UInt_t>);
+   static void printCutFlowAndYields(std::ostream &, const Double_t, const Double_t, const Double_t, const UInt_t);
+   static void printCutFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const mask *);
+   static void printActiveCuts(std::ostream &);
    static void checkMaskLength();
   
  private:
@@ -141,19 +141,19 @@ class selection {
    Int_t getId() const { return id_; }
    UInt_t get2ToId() const { return twoToId_; }
    // other member functions
-   void print(ostream &, Bool_t) const;
-   void printAllInfo(ostream &) const;
+   void print(std::ostream &, Bool_t) const;
+   void printAllInfo(std::ostream &) const;
    Bool_t isPassed(Bool_t input);
    UInt_t addToMask(Bool_t input) {return input ? (this->get2ToId()) : 0; }
    Bool_t isActive() const { return flag_; }
 
    static Int_t getNSelections() { return nSelections_; }
    static std::vector<selection*> listOfSelections;
-   static void printSelectionFlow(ostream &, const mask *);
-   static void printSelectionFlowAndYields(ostream & myOutStream, const Double_t, const Double_t, const Double_t, const UInt_t);
-   static void printSelectionFlowAndYields(ostream & myOutStream, const Double_t, const Double_t, const mask *);
+   static void printSelectionFlow(std::ostream &, const mask *);
+   static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const Double_t, const UInt_t);
+   static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const mask *);
    static void saveYieldsAndEfficiency(const Double_t, const mask *, std::vector<Double_t>&, std::vector<Double_t>&);
-   static void printActiveSelections(ostream &);
+   static void printActiveSelections(std::ostream &);
    static void checkMaskLength();
   
  private:

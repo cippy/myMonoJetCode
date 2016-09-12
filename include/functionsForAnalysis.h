@@ -10,8 +10,8 @@
 
 #include "myClasses.h"
 
-void myDashes(ostream &);
-void mySpaces(ostream &, Int_t );
+void myDashes(std::ostream &);
+void mySpaces(std::ostream &, Int_t );
 
 Double_t myGetPhi(Double_t, Double_t);
 
@@ -49,9 +49,9 @@ char myAskToSaveFile(const char*);
 
 Int_t myGetBin(Double_t, Double_t*, Int_t);
 
-void myPrintEventYields(ostream &, const Double_t, const Int_t, const Double_t *);
+void myPrintEventYields(std::ostream &, const Double_t, const Int_t, const Double_t *);
 
-void myPrintEventYields(ostream &, const Double_t, const std::vector<Double_t>);
+void myPrintEventYields(std::ostream &, const Double_t, const std::vector<Double_t>);
 
 Int_t myPartGenAlgo(const Int_t, const Int_t*, const Int_t*, const Int_t, const Int_t);
 Int_t myPartGenAlgo(const Int_t, const Int_t*, const Int_t*, const Int_t, const Int_t, Int_t &, Int_t &);
@@ -64,8 +64,8 @@ Int_t myGetPartIndex(const Int_t, const Int_t, const Int_t*);
 
 void myPrintYieldsMetBin(const TH1D* histo, const Double_t *metBinEdges, const Int_t nMetBins, const char* YieldsFileName); 
 void myPrintYieldsMetBin(const TH1D* histo, const Double_t *metBinEdges, const Int_t nMetBins); 
-void myPrintYieldsMetBinInStream(ostream &, const TH1D* histo, const Double_t *metBinEdges, const Int_t nMetBins);
-void myPrintYieldsMetBinInStream(ostream &, const TH1D* histo, const std::vector<Double_t> &); 
+void myPrintYieldsMetBinInStream(std::ostream &, const TH1D* histo, const Double_t *metBinEdges, const Int_t nMetBins);
+void myPrintYieldsMetBinInStream(std::ostream &, const TH1D* histo, const std::vector<Double_t> &); 
 
 void mySumWeight_filler_spring15_25ns(const std::string,  std::vector<Double_t> &);
 
