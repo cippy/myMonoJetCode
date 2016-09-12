@@ -9,10 +9,10 @@ PROGRAMS = $(patsubst %.cc,%,$(BINFILES))
 
 
 # --- External configuration ---------------------------------
-CC         = g++ -Wno-deprecated
+CC         = g++ -Wno-deprecated 
 #CC         = g++ -Wall -pedantic
 #CC         = g++ -Wno-deprecated -pedantic
-CCFLAGS    =  -g -O3
+CCFLAGS    =  -g -O3 -std=c++11 -std=gnu++11
 MFLAGS     = -MM
 INCLUDES   =
 WORKDIR    = tmp/
