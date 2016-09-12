@@ -106,8 +106,7 @@ void myDrawOverflow(const TH1D *oldHisto, const char* myOptions) {
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  TAxis *axis = 0;
-  axis = oldHisto->GetXaxis();
+  const TAxis *axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -154,8 +153,7 @@ void myDrawOverflow(const TH1D *oldHisto, const char* myOptions, const Int_t myS
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  TAxis *axis = 0;
-  axis = oldHisto->GetXaxis();
+  const TAxis *axis = axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -205,8 +203,7 @@ TH1D *myOverflowInLastBin(const TH1D *oldHisto) {
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  TAxis *axis = 0;
-  axis = oldHisto->GetXaxis();
+  const TAxis *axis = axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -255,8 +252,7 @@ void myOverflowInLastBin2(TH1D *newHisto, const TH1D *oldHisto) {
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  TAxis *axis = 0;
-  axis = oldHisto->GetXaxis();
+  const TAxis *axis = axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
