@@ -15,6 +15,50 @@
 
 namespace myAnalyzerTEman {
 
+
+  //====================================================
+
+  class vbfHiggsToInvAna : public AnalysisDarkMatter {
+  public:
+
+    vbfHiggsToInvAna(TTree *tree); 
+    virtual ~vbfHiggsToInvAna() { std::cout<<"~vbfHiggsToInvAna() called"<<std::endl; }
+    
+    virtual void setSelections(); 
+    virtual void setHistograms();
+    virtual void setHistogramLastBinAsOverFlow(const Int_t);
+    virtual void setNumberParameterValue(const std::string, const Double_t);
+    virtual void setVarFromConfigFile();
+    virtual void createSystematicsHistogram();
+    virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
+  };
+
+  class vbfHiggsToInv_SignalRegion : public vbfHiggsToInvAna {
+  public:
+
+    vbfHiggsToInv_SignalRegion(TTree *tree); 
+    virtual ~vbfHiggsToInv_SignalRegion() { std::cout<<"~vbfHiggsToInv_SignalRegion() called"<<std::endl; }
+    
+    void setSelections(); 
+    void setMask();
+    void setHistograms();
+    void setHistogramLastBinAsOverFlow(const Int_t);
+    void setNumberParameterValue(const std::string, const Double_t);
+    void setVarFromConfigFile();
+    Double_t computeEventWeight();
+    //void loop(std::vector< std::vector<Double_t>* > &, std::vector< std::vector<Double_t>* > &, std::vector< std::vector<Double_t>* > &);
+    void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &);
+    void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
+  };
+
+
+
+  //====================================================
+
+
+
   class zlljets_Axe_noSkim_light : public AnalysisDarkMatter /*,public edimarcoTreeFriend*/ {
   public:
 
