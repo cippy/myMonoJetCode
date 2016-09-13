@@ -127,7 +127,7 @@ Int_t mask::whichStepHas(const selection* sel) const {
   Int_t size = this->getMaskSize();
   Int_t index = size;
   Int_t i = 0;
-  Int_t a = sel->get2ToId();
+  UInt_t a = sel->get2ToId();
 
   while( (index == size) && (i < size)) {
     if( (this->singleMask[i] & a) == a ) index = i;
@@ -182,7 +182,7 @@ Int_t mask::whichStepHas(const selection* sel) const {
   myOutStream<<"**************************"<<endl;
   myOutStream<<"-----------------------------------------------------------------------------------"<<endl;  
   myOutStream<<"Printing list of cuts applied at each step"<<endl;
-  for (Int_t i = 0; i < singleCutMask.size(); i++) {
+  for (UInt_t i = 0; i < singleCutMask.size(); i++) {
     myOutStream<<"-----------------------------------"<<endl;
     myOutStream<<setw(2)<<(i+1)<<endl;
     for (Int_t j = 0; j < cut::getNCuts(); j++) {
@@ -236,7 +236,7 @@ void cut::printCutFlowAndYields(ostream & myOutStream, const Double_t lumi, cons
   myOutStream<<"==========================================================="<<endl;  
   myOutStream<<setw(5)<<right<<"cut"<<setw(25)<<"definition"<<setw(12)<<"n"<<setw(12)<<"aR"<<setw(8)<<"rR"<<endl;    
   myOutStream<<"==========================================================="<<endl;  
-  for (Int_t i = 0; i < eventsInStep.size(); i++) {
+  for (UInt_t i = 0; i < eventsInStep.size(); i++) {
     if (i == 0) { 
       myOutStream<<setw(5)<<right<<i+1<<setw(25)<<""<<setw(12)<<eventsInStep[i]<<fixed<<setprecision(4)<<setw(12)<<eventsInStep[i]/nwentries<<
       setw(8)<<eventsInStep[i]/nwentries<<endl;  
@@ -337,7 +337,7 @@ void cut::printActiveCuts(ostream & myOutStream) {
 
 void cut::checkMaskLength() {
 
-  if (cut::getNCuts() > 8*sizeof(UInt_t)) {
+  if (((UInt_t)cut::getNCuts()) > 8*sizeof(UInt_t)) {
      cout<<"Warning: not enough bits in the mask to accomodate all "<<cut::getNCuts()<<" cuts (max is "<<8*sizeof(UInt_t)<<").\n End of programme."<<endl;
      exit(EXIT_FAILURE);
    }

@@ -630,7 +630,7 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
    hptr.push_back(HSyst_qcdPdf);
    hptr.push_back(HSyst_ewk);
      
-   for (Int_t i = 0; i < hptr.size(); i++) {
+   for (UInt_t i = 0; i < hptr.size(); i++) {
    Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
    HSyst_total->Add(Htmp);             // adding the squares
    }

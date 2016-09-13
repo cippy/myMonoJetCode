@@ -434,7 +434,7 @@ void wlnujetsControlSample::createSystematicsHistogram() {
 
   HSyst_total->Multiply(HSyst_total);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
 
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total->Add(Htmp);             // adding the squares
   }
@@ -458,7 +458,7 @@ void wlnujetsControlSample::createSystematicsHistogram() {
 
   HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
      
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares
   }
@@ -643,7 +643,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
    // myGetPairIndexInArray (see functionsForAnalysis.cc for reference). 
    // When myGetPairIndexInArray() is called, the index of "correct" particles will be used. If they are not found (e.g. a pair of OS/SF is mismeasured as 2 mu+), 
    // indices are set as 0 and 1 (and following selection asking lep[0] and lep[1] to be OS or whatever will fail).
-   Int_t firstIndex = 0;
+   //Int_t firstIndex = 0;
    //Int_t secondIndex = 1;
 
    Int_t firstIndexGen = 0;
@@ -1031,7 +1031,7 @@ void wlnujetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &e
 
      // fill file using histogram method
 
-     for (Int_t i = 0; i < testHistogramVector.size(); i++) {
+     for (UInt_t i = 0; i < testHistogramVector.size(); i++) {
        testHistogramVector[i]->Write();
        // HgenDphiLepMet->Write();
        // HgenTransverseMass->Write();

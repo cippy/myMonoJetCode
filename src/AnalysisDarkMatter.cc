@@ -78,13 +78,13 @@ AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v6(tree) {
 //===============================================
 
 Int_t AnalysisDarkMatter::GetEntry(Long64_t entry) {
-  edimarcoTree_v6::GetEntry(entry);
+  return edimarcoTree_v6::GetEntry(entry);
 }
 
 //===============================================
 
 Long64_t AnalysisDarkMatter::LoadTree(Long64_t entry) {
-  edimarcoTree_v6::LoadTree(entry);
+  return edimarcoTree_v6::LoadTree(entry);
 }
 
 //===============================================
@@ -482,7 +482,7 @@ void AnalysisDarkMatter::createSystematicsHistogram() {
   // now HSyst should be empty, so the next step is not necessary
   HSyst_total->Multiply(HSyst_total);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
      
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total->Add(Htmp);             // adding the squares
   }
@@ -511,7 +511,7 @@ void AnalysisDarkMatter::createSystematicsHistogram() {
 
   HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature    
 
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares
   }

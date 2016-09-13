@@ -33,36 +33,36 @@ void mySpaces(ostream &myOutStream, Int_t nSpace) {
 }
 
 Double_t myGetPhi(const Double_t x_component, const Double_t y_component) {
-
+  
   Double_t phi = 0;
   //some useful variables
-   Double_t myPi = TMath::Pi(); //just not to call TMath::Pi() every time
-   Double_t twoPi = 2*TMath::Pi(); //just not to calculate 2*TMath::Pi() every time
+  Double_t myPi = TMath::Pi(); //just not to call TMath::Pi() every time
+  //Double_t twoPi = 2*TMath::Pi(); //just not to calculate 2*TMath::Pi() every time
+  
+  //while evaluating phi =atan(y/x), we require x!=0. If x=0, then 
+  //phi= +/- Pi()/2 with the same sign as the y 
+  //for x!=0, since atan(y/x) yields a value in [-Pi()/2, +Pi()/2]
+  //we must sum or subtract Pi() depending on the dial
+  
+  if (x_component!=0) {
+    
+    if ( (x_component<0) && (y_component<0) ) {
+      phi = atan(y_component/x_component)-myPi;
+    } else if ( (x_component<0) && (y_component>0) ) {
+      phi = atan(y_component/x_component)+myPi;
+    } else {
+      phi = atan(y_component/x_component);
+    }
 
-     //while evaluating phi =atan(y/x), we require x!=0. If x=0, then 
-     //phi= +/- Pi()/2 with the same sign as the y 
-     //for x!=0, since atan(y/x) yields a value in [-Pi()/2, +Pi()/2]
-     //we must sum or subtract Pi() depending on the dial
+  } else {
 
-     if (x_component!=0) {
-
-       if ( (x_component<0) && (y_component<0) ) {
-         phi = atan(y_component/x_component)-myPi;
-       } else if ( (x_component<0) && (y_component>0) ) {
-         phi = atan(y_component/x_component)+myPi;
-       } else {
-         phi = atan(y_component/x_component);
-       }
-
-     } else {
-
-      if ( (y_component<0) ) {
-	 phi = -myPi/2.;
-       } else { 
-	 phi = myPi/2.;
-      }
-     }
-     return phi;
+    if ( (y_component<0) ) {
+      phi = -myPi/2.;
+    } else { 
+      phi = myPi/2.;
+    }
+  }
+  return phi;
 
 }
 
@@ -153,7 +153,7 @@ void myDrawOverflow(const TH1D *oldHisto, const char* myOptions, const Int_t myS
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  const TAxis *axis = axis = oldHisto->GetXaxis();
+  const TAxis *axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -203,7 +203,7 @@ TH1D *myOverflowInLastBin(const TH1D *oldHisto) {
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  const TAxis *axis = axis = oldHisto->GetXaxis();
+  const TAxis *axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -252,7 +252,7 @@ void myOverflowInLastBin2(TH1D *newHisto, const TH1D *oldHisto) {
   TH1::SetDefaultSumw2();            // all the following histograms will automatically call TH1::Sumw2() 
   TH1::StatOverflows();                 // enable use of underflows and overflows for statistics computation 
 
-  const TAxis *axis = axis = oldHisto->GetXaxis();
+  const TAxis *axis = oldHisto->GetXaxis();
   Double_t overflowBinWidth = axis->GetBinWidth(axis->GetLast());
   Double_t newUpperEdge = axis->GetBinUpEdge(axis->GetLast()) + overflowBinWidth;
   Double_t newLowerEdge = axis->GetBinLowEdge(axis->GetFirst());
@@ -678,7 +678,7 @@ void myCreateTexTable(const char* texFileName, const string outputFolder, const 
     myAddDefaultPackages(fp,texFileName);
     fprintf(fp,"\\begin{document}\n");
     fprintf(fp,"\n");
-    for (Int_t i = 0; i < m.size(); i++) {
+    for (UInt_t i = 0; i < m.size(); i++) {
       makeTableTex(fp, integratedLumi, nTotalWeightedEvents, m[i]);
       fprintf(fp,"\n\n");
     }
@@ -769,7 +769,7 @@ void myPrintEventYields(ostream & myOutStream, const Double_t lumi, const vector
   myOutStream<<"**************************"<<endl;
   myOutStream<<"data normalised to "<<lumi<<" fb^-1"<<endl;
   myOutStream<<setw(5)<<"cut"<<setw(12)<<"n"<<setw(12)<<"aR"<<setw(8)<<"rR"<<endl;    
-  for (Int_t i = 1; i < eventsInStep.size(); i++) {
+  for (UInt_t i = 1; i < eventsInStep.size(); i++) {
     myOutStream<<setw(5)<<i<<setw(12)<<eventsInStep[i]<<fixed<<setprecision(4)<<setw(12)<<eventsInStep[i]/eventsInStep[0]<<
       setw(8)<<eventsInStep[i]/eventsInStep[i-1]<<endl;  
   }
@@ -903,7 +903,6 @@ Int_t myPartGenWLNuAlgo(const Int_t nGenParticles, const Int_t* particleId, cons
   Int_t found = 0;  // will become 1 if search is successful, that is to say, two OS particles coming from Z are found
   //Int_t flag = 0;   // will become 1 when charged lepton from W is found 
   Int_t i = 0;      // index of the array
-  Int_t Windex = 0;
   Int_t Wid = 0;
   Int_t absLepPdgId = fabs(part_pdgId);
   Int_t negLepPdgId = (-1) * absLepPdgId;
@@ -916,7 +915,6 @@ Int_t myPartGenWLNuAlgo(const Int_t nGenParticles, const Int_t* particleId, cons
 
     if (fabs(particleId[j]) == 24) {
 
-      Windex = j;
       Wid = particleId[j];
       lepPdgId =  (Wid < 0) ? absLepPdgId : negLepPdgId;  // W+ generates l+ which have negative pdgId
       Wfound = 1;
@@ -963,7 +961,6 @@ Int_t myPartGenWLNuAlgo(const Int_t nGenParticles, const Int_t* particleId, cons
   Int_t found = 0;  // will become 1 if search is successful, that is to say, two OS particles coming from Z are found
   //Int_t flag = 0;   // will become 1 when charged lepton from W is found 
   Int_t i = 0;      // index of the array
-  Int_t Windex = 0;
   Int_t Wid = 0;
   Int_t absLepPdgId = fabs(part_pdgId);
   Int_t negLepPdgId = (-1) * absLepPdgId;
@@ -976,7 +973,6 @@ Int_t myPartGenWLNuAlgo(const Int_t nGenParticles, const Int_t* particleId, cons
 
     if (fabs(particleId[j]) == 24) {
 
-      Windex = j;
       Wid = particleId[j];
       lepPdgId =  (Wid > 0) ? absLepPdgId : negLepPdgId;
       Wfound = 1;
@@ -1354,6 +1350,10 @@ Double_t myGetUncertainty(const mask* m, const Int_t mstep, const std::string un
     Double_t unc = strtod(substr.c_str(),&p) / 100.; //e.g. 20% --> 0.2
     return  unc * m->getEvents(mstep);      // return fraction of yield according to percentage
   }
+
+  // if none is found return Poisson;
+  cout << "Warning in myGetUncertainty(): undefined uncertainty. Will return Poisson uncertainty" << endl;
+  return m->getSqrtEvents(mstep);
 
 }
 

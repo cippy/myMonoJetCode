@@ -394,7 +394,7 @@ void zlljetsControlSample::createSystematicsHistogram() {
 
   HSyst_total->Multiply(HSyst_total);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
 
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total->Add(Htmp);             // adding the squares
   }
@@ -418,7 +418,7 @@ void zlljetsControlSample::createSystematicsHistogram() {
      
   HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature
 
-  for (Int_t i = 0; i < hptr.size(); i++) {
+  for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares
   }
@@ -729,7 +729,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      nRecoLepton = *ptr_nRecoLepton;
 
      //Double_t ZgenMass;        // not used for now
-     Double_t ZtoLLGenPt = 0;    // filled below (only if running on MC DYJetsToLL)
+     //Double_t ZtoLLGenPt = 0;    // filled below (only if running on MC DYJetsToLL)
      Double_t ZtoLLRecoPt = 0;   // filled below
 
      // genLepFound_flag is used when analysing DYJetsToLL in MC fo Z->mumu or Z->ee. For other MC samples it's not used.
@@ -746,7 +746,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 	   l1gen.SetPtEtaPhiM(GenPart_pt[firstIndexGen],GenPart_eta[firstIndexGen],GenPart_phi[firstIndexGen],GenPart_mass[firstIndexGen]);
 	   l2gen.SetPtEtaPhiM(GenPart_pt[secondIndexGen],GenPart_eta[secondIndexGen],GenPart_phi[secondIndexGen],GenPart_mass[secondIndexGen]);
 	   Zgen = l1gen + l2gen;
-	   ZtoLLGenPt = Zgen.Pt();                             
+	   //ZtoLLGenPt = Zgen.Pt();                             
 	 }
 
        } else if (using_ztautaujets_MCsample_flag) {
