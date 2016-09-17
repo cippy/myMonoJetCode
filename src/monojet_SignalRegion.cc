@@ -42,7 +42,7 @@ using namespace myAnalyzerTEman;
 
 #ifdef monojet_SignalRegion_cxx
 
-monojet_SignalRegion::monojet_SignalRegion(TTree *tree) : AnalysisDarkMatter(tree) {
+monojet_SignalRegion::monojet_SignalRegion(TTree *tree) : monojetAna(tree) {
   //cout <<"check in constructor "<<endl;
   // suffix = "";
   // uncertainty = "";
@@ -60,7 +60,7 @@ monojet_SignalRegion::monojet_SignalRegion(TTree *tree) : AnalysisDarkMatter(tre
 
 void monojet_SignalRegion::setSelections() {
 
-  AnalysisDarkMatter::setSelections();
+  monojetAna::setSelections();
 
   recoilC.set(Form("recoil > %2.0lf",METNOLEP_START),Form("metNoMu > %4.0lf",METNOLEP_START),"first cut on met");
   muonLooseVetoC.set("muon veto","muons veto");
@@ -179,16 +179,16 @@ void monojet_SignalRegion::setMask() {
 
 void monojet_SignalRegion::setHistograms() {
 
-  AnalysisDarkMatter::setHistograms();
+  monojetAna::setHistograms();
 
-  // following histograms are really needed only when using Zvv or Wlv samples, so they are not instantiated in AnalysisDarkMatter::setHistograms();
+  // following histograms are really needed only when using Zvv or Wlv samples, so they are not instantiated in monojetAna::setHistograms();
 
   if (suffix == "ZJetsToNuNu" || suffix == "WJetsToLNu") {
     hasScaledHistograms_flag = 1;
     setScaleFactorHistograms();
   }
 
-  //histograms specific to monojet selection (but not to control regions) must be set here as in AnalysisDarkMatter::setHistograms()
+  //histograms specific to monojet selection (but not to control regions) must be set here as in monojetAna::setHistograms()
 
 }
 
@@ -196,7 +196,7 @@ void monojet_SignalRegion::setHistograms() {
 
 void monojet_SignalRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
-  AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
+  monojetAna::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
 }
 
@@ -204,9 +204,9 @@ void monojet_SignalRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHi
 
 void monojet_SignalRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {
 	 	 
-  AnalysisDarkMatter::setNumberParameterValue(parameterName, value);
+  monojetAna::setNumberParameterValue(parameterName, value);
 
-  //parameters specific to monojet selection (but not to control regions) must be set here as in AnalysisDarkMatter::setNumberParameterValue()
+  //parameters specific to monojet selection (but not to control regions) must be set here as in monojetAna::setNumberParameterValue()
 
 }
 
@@ -214,7 +214,7 @@ void monojet_SignalRegion::setNumberParameterValue(const std::string parameterNa
 
 void monojet_SignalRegion::setVarFromConfigFile() {
 
-  AnalysisDarkMatter::setVarFromConfigFile();
+  monojetAna::setVarFromConfigFile();
 
 }
 
@@ -241,7 +241,7 @@ Double_t monojet_SignalRegion::computeEventWeight() {
 
 void monojet_SignalRegion::fillEventMask(UInt_t & eventMask) {
 
-  AnalysisDarkMatter::fillEventMask(eventMask);
+  monojetAna::fillEventMask(eventMask);
 
   eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
   eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);

@@ -12,11 +12,11 @@
 #include <vector>
 #include <string>
 
-#include "edimarcoTree_v6.h"
+#include "edimarcoTree_v7.h"
 #include "functionsForAnalysis.h"
 #include "myClasses.h"
 
-class AnalysisDarkMatter : public edimarcoTree_v6 {
+class AnalysisDarkMatter : public edimarcoTree_v7 {
  public:
 
   AnalysisDarkMatter(TTree *tree);
@@ -30,21 +30,11 @@ class AnalysisDarkMatter : public edimarcoTree_v6 {
   selection HLTC;
   selection metFiltersC;
   selection recoilC; //selection metNoLepC;
-  selection jet1C;
-  selection jetMetDphiMinC;
-  selection jetNoiseCleaningC;
   selection bjetVetoC;
   selection muonLooseVetoC; 
   selection electronLooseVetoC; 
   selection tauLooseVetoC;
   selection gammaLooseVetoC;
-  selection VtagC;
-  selection noVtagC; // opposite of VtagC: monojet and monoV are now exclusive cathegories
-  //adding VTag selections separately
-  selection ak8jet1C;
-  selection ak8Tau2OverTau1C;
-  selection ak8prunedMassC;
-  selection harderRecoilC; // met > 250 instead of 200
 
   mask analysisMask;
   selectionManager analysisSelectionManager;
@@ -76,17 +66,10 @@ class AnalysisDarkMatter : public edimarcoTree_v6 {
   char TEX_FNAME[100];
 
   Double_t LUMI;
-  //Int_t NJETS;
-  Double_t J1PT;
-  Double_t J1ETA;
-  //Double_t J2PT;
-  //Double_t J2ETA;
-  //Double_t J1J2DPHI;
   Int_t TAU_VETO_FLAG;
   Int_t HLT_FLAG;                  // usage depends on specific analysis
   Double_t METNOLEP_START;
   Int_t MET_FILTERS_FLAG;
-  Double_t JMET_DPHI_MIN;
   Int_t ENABLE_HISTOGRAM_FOR_TESTS_FLAG;
   std::string FILENAME_BASE;
   std::string DIRECTORY_TO_SAVE_FILES;
@@ -97,6 +80,7 @@ class AnalysisDarkMatter : public edimarcoTree_v6 {
 
   std::vector<Double_t> metBinEdgesVector;  // filled with values in file named configFileName
   Int_t nMetBins;
+
   std::vector<Double_t> metBinEdgesVector_monoV;  // filled with values in file named configFileName
   Int_t nMetBins_monoV;
 
@@ -123,8 +107,6 @@ class AnalysisDarkMatter : public edimarcoTree_v6 {
   // Maybe it would be better to left following two variables in analyzers
   Double_t nTotalWeightedEvents;  // counter of total events (with weights if any). Initialized to 0 in constructor
   Double_t newwgt;                           // weight for the event (specific definition depends on sample and on whether data are being analyzed)
-
-  Int_t Vtagged_flag; // set to 1 or 0 in the event loop depending on the event passing the selection specific for the mono-V cathegory (not taking the common part into account, that one can or cannot be passed)
 
   //histograms for monojet (exclusive, but I don't rename them with *monoJ)
 
@@ -157,32 +139,6 @@ class AnalysisDarkMatter : public edimarcoTree_v6 {
   TH1D *HSyst_ewk = NULL;
   TH1D *HSyst_total = NULL;
 
-  //monoV histograms
-  TH1D *HYieldsMetBin_monoV = NULL;
-  TH1D *HhtDistribution_monoV = NULL; 
-  TH1D *HvtxDistribution_monoV = NULL;   
-  TH1D *HnjetsDistribution_monoV = NULL;   
-  TH1D *Hjet1etaDistribution_monoV = NULL;
-  TH1D *HrecoilDistribution_monoV = NULL;
-  TH1D *Hjet1ptDistribution_monoV = NULL;
-  TH1D *HprunedMassDistribution_monoV = NULL;
-  TH1D *Htau2OverTau1Distribution_monoV = NULL;
-  TH1D *HmetBinEdges_monoV = NULL;
-  //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
-  TH1D *HYieldsMetBin_qcdRenScaleUp_monoV = NULL;
-  TH1D *HYieldsMetBin_qcdRenScaleDown_monoV = NULL;
-  TH1D *HYieldsMetBin_qcdFacScaleUp_monoV = NULL;
-  TH1D *HYieldsMetBin_qcdFacScaleDown_monoV = NULL;
-  TH1D *HYieldsMetBin_qcdPdfUp_monoV = NULL;
-  TH1D *HYieldsMetBin_qcdPdfDown_monoV = NULL;
-  TH1D *HYieldsMetBin_ewkUp_monoV = NULL;
-  TH1D *HYieldsMetBin_ewkDown_monoV = NULL;
-  //systematic uncertainties
-  TH1D *HSyst_qcdRenScale_monoV = NULL;
-  TH1D *HSyst_qcdFacScale_monoV = NULL;
-  TH1D *HSyst_qcdPdf_monoV = NULL;
-  TH1D *HSyst_ewk_monoV = NULL;
-  TH1D *HSyst_total_monoV = NULL;
 
   TFile *file_HistogramForTests = NULL;
   std::vector<TH1D*> testHistogramVector;  // for bookkeping, this vector will hold the pointers to histograms used for tests

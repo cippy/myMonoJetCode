@@ -42,7 +42,7 @@ using namespace myAnalyzerTEman;
 
 #ifdef monojet_PhotonControlRegion_cxx
 
-monojet_PhotonControlRegion::monojet_PhotonControlRegion(TTree *tree) : AnalysisDarkMatter(tree) {
+monojet_PhotonControlRegion::monojet_PhotonControlRegion(TTree *tree) : monojetAna(tree) {
   //cout <<"check in constructor "<<endl;
   // suffix = "";
   // uncertainty = "";
@@ -60,7 +60,7 @@ monojet_PhotonControlRegion::monojet_PhotonControlRegion(TTree *tree) : Analysis
 
 void monojet_PhotonControlRegion::setSelections() {
 
-  AnalysisDarkMatter::setSelections();
+  monojetAna::setSelections();
 
   recoilC.set(Form("recoil > %2.0lf",METNOLEP_START),Form("metNoPhoton > %4.0lf",METNOLEP_START),"first cut on met");
   muonLooseVetoC.set("muon veto","muons veto");
@@ -156,7 +156,7 @@ void monojet_PhotonControlRegion::setMask() {
 
 void monojet_PhotonControlRegion::setHistograms() {
 
-  AnalysisDarkMatter::setHistograms();
+  monojetAna::setHistograms();
 
   Hphoton1ptDistribution = new TH1D("Hphoton1ptDistribution","",135,150.0,1500.0);
   Hphoton1etaDistribution = new TH1D("Hphoton1etaDistribution","",50,-2.5,2.5);
@@ -164,7 +164,7 @@ void monojet_PhotonControlRegion::setHistograms() {
   Hphoton1ptDistribution_monoV = new TH1D("Hphoton1ptDistribution_monoV","",135,150.0,1500.0);
   Hphoton1etaDistribution_monoV = new TH1D("Hphoton1etaDistribution_monoV","",50,-2.5,2.5);
 
-  // following histograms are really needed only when using GJets samples, so they are not instantiated in AnalysisDarkMatter::setHistograms();
+  // following histograms are really needed only when using GJets samples, so they are not instantiated in monojetAna::setHistograms();
 
   if (suffix == "GJets") {
     hasScaledHistograms_flag = 1;
@@ -178,7 +178,7 @@ void monojet_PhotonControlRegion::setHistograms() {
 
 void monojet_PhotonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
-  AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
+  monojetAna::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
   myAddOverflowInLastBin(Hphoton1ptDistribution);
   
@@ -190,7 +190,7 @@ void monojet_PhotonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasS
 
 void monojet_PhotonControlRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {
 	 	 
-  AnalysisDarkMatter::setNumberParameterValue(parameterName, value);
+  monojetAna::setNumberParameterValue(parameterName, value);
 
   if (parameterName == "PH1PT") PH1PT = value;
   else if (parameterName == "PH1ETA") PH1ETA = value;
@@ -214,7 +214,7 @@ void monojet_PhotonControlRegion::setControlSampleSpecificParameter() {
 
 void monojet_PhotonControlRegion::setVarFromConfigFile() {
 
-  AnalysisDarkMatter::setVarFromConfigFile();
+  monojetAna::setVarFromConfigFile();
 
 }
 
@@ -241,7 +241,7 @@ Double_t monojet_PhotonControlRegion::computeEventWeight() {
 
 void monojet_PhotonControlRegion::fillEventMask(UInt_t & eventMask) {
 
-  AnalysisDarkMatter::fillEventMask(eventMask);
+  monojetAna::fillEventMask(eventMask);
 
   eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
   eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);

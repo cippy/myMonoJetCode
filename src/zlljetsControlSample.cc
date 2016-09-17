@@ -1,6 +1,6 @@
 #define zlljetsControlSample_cxx
 #include "EmanTreeAnalysis.h"
-//#include "AnalysisDarkMatter.h" // already included in EmanTreeAnalysis.h
+//#include "monojetAna.h" // already included in EmanTreeAnalysis.h
 //C or C++ header files
 #include <stdio.h>
 #include <stdlib.h>
@@ -379,7 +379,7 @@ Double_t zlljetsControlSample::computeEventWeight() {
 
 void zlljetsControlSample::createSystematicsHistogram() {
 
-  // first step is calling the AnalysisDarkMatter method through monoJet_LeptonControlRegion
+  // first step is calling the monojetAna method through monoJet_LeptonControlRegion
   monojet_LeptonControlRegion::createSystematicsHistogram();
     
   //for monojet

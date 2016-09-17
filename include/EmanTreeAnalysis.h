@@ -31,8 +31,99 @@ namespace myAnalyzerTEman {
     virtual void setVarFromConfigFile();
     virtual void createSystematicsHistogram();
     virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+    // use deltaEta between two jets to select the pair of VBF jets
+    // currently we only have scalar variables for VBF. 
+    // The chosen pair of jets is the one with the largest DeltaEta
+    selection vbfTaggedJets_deltaEtaC; 
+    selection vbfTaggedJets_inVMassC; 
+    selection vbfTaggedJets_jetsPtC; 
+    selection dphijmAllJetsC;
+
+    TH1D *HvbfTaggedJets_deltaEta = NULL;
+    TH1D *HvbfTaggedJets_invMass = NULL;
+    TH1D *HvbfTaggedJets_jet1pt = NULL;
+    TH1D *HvbfTaggedJets_jet2pt = NULL;
+    TH1D *HvbfTaggedJets_jet1eta = NULL;
+    TH1D *HvbfTaggedJets_jet2eta = NULL;
+    TH1D *HdphijmAllJets = NULL;
+
+    Double_t DELTAETAMIN_VBFJETS;
+    Double_t INVMASS_VBFJETS;
+    Double_t JET1PT_VBFJETS;
+    Double_t JET2PT_VBFJETS;
+    Double_t DELTAPHIMIN_ALLJETSMET;
+
 
   };
+
+  class monojetAna : public AnalysisDarkMatter {
+  public:
+
+    monojetAna(TTree *tree); 
+    virtual ~monojetAna() { std::cout<<"~monojetAna() called"<<std::endl; }
+    
+    virtual void setSelections(); 
+    virtual void setHistograms();
+    virtual void setScaleFactorHistograms();
+    virtual void setHistogramLastBinAsOverFlow(const Int_t);
+    virtual void setNumberParameterValue(const std::string, const Double_t);
+    virtual void setVarFromConfigFile();
+    virtual void createSystematicsHistogram();
+    virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+
+    selection jet1C;
+    selection jetMetDphiMinC;
+    selection jetNoiseCleaningC;
+    selection VtagC;
+    selection noVtagC; // opposite of VtagC: monojet and monoV are now exclusive cathegories
+    //adding VTag selections separately
+    selection ak8jet1C;
+    selection ak8Tau2OverTau1C;
+    selection ak8prunedMassC;
+    selection harderRecoilC; // met > 250 instead of 200
+
+    //Int_t NJETS;
+    Double_t J1PT;
+    Double_t J1ETA;
+    //Double_t J2PT;
+    //Double_t J2ETA;
+    //Double_t J1J2DPHI;
+    Double_t JMET_DPHI_MIN;
+    
+    Int_t Vtagged_flag; // set to 1 or 0 in the event loop depending on the event passing the selection specific for the mono-V cathegory (not taking the common part into account, that one can or cannot be passed)
+    
+    //monoV histograms
+    TH1D *HYieldsMetBin_monoV = NULL;
+    TH1D *HhtDistribution_monoV = NULL; 
+    TH1D *HvtxDistribution_monoV = NULL;   
+    TH1D *HnjetsDistribution_monoV = NULL;   
+    TH1D *Hjet1etaDistribution_monoV = NULL;
+    TH1D *HrecoilDistribution_monoV = NULL;
+    TH1D *Hjet1ptDistribution_monoV = NULL;
+    TH1D *HprunedMassDistribution_monoV = NULL;
+    TH1D *Htau2OverTau1Distribution_monoV = NULL;
+    TH1D *HmetBinEdges_monoV = NULL;
+    //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
+    TH1D *HYieldsMetBin_qcdRenScaleUp_monoV = NULL;
+    TH1D *HYieldsMetBin_qcdRenScaleDown_monoV = NULL;
+    TH1D *HYieldsMetBin_qcdFacScaleUp_monoV = NULL;
+    TH1D *HYieldsMetBin_qcdFacScaleDown_monoV = NULL;
+    TH1D *HYieldsMetBin_qcdPdfUp_monoV = NULL;
+    TH1D *HYieldsMetBin_qcdPdfDown_monoV = NULL;
+    TH1D *HYieldsMetBin_ewkUp_monoV = NULL;
+    TH1D *HYieldsMetBin_ewkDown_monoV = NULL;
+    //systematic uncertainties
+    TH1D *HSyst_qcdRenScale_monoV = NULL;
+    TH1D *HSyst_qcdFacScale_monoV = NULL;
+    TH1D *HSyst_qcdPdf_monoV = NULL;
+    TH1D *HSyst_ewk_monoV = NULL;
+    TH1D *HSyst_total_monoV = NULL;
+
+
+  };
+
+  //====================================================
+
 
   class vbfHiggsToInv_SignalRegion : public vbfHiggsToInvAna {
   public:
@@ -83,7 +174,7 @@ namespace myAnalyzerTEman {
 
   //====================================================
 
-  class monojet_SignalRegion : public AnalysisDarkMatter {
+  class monojet_SignalRegion : public monojetAna {
   public:
 
     monojet_SignalRegion(TTree *tree); 
@@ -105,7 +196,7 @@ namespace myAnalyzerTEman {
 
   //====================================================
 
-  class monojet_PhotonControlRegion : public AnalysisDarkMatter {
+  class monojet_PhotonControlRegion : public monojetAna {
   public:
 
     monojet_PhotonControlRegion(TTree *tree);  
@@ -148,7 +239,7 @@ namespace myAnalyzerTEman {
 
   //====================================================
 
-  class monojet_LeptonControlRegion : public AnalysisDarkMatter {
+  class monojet_LeptonControlRegion : public monojetAna {
   public:
 
     monojet_LeptonControlRegion(TTree *tree);  

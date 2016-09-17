@@ -43,7 +43,7 @@ using namespace myAnalyzerTEman;
 
 #ifdef monojet_LeptonControlRegion_cxx
 
-monojet_LeptonControlRegion::monojet_LeptonControlRegion(TTree *tree) : AnalysisDarkMatter(tree) {
+monojet_LeptonControlRegion::monojet_LeptonControlRegion(TTree *tree) : monojetAna(tree) {
   //cout <<"check in constructor "<<endl;
   //edimarcoTree_v3::Init(tree);
   // suffix = "";
@@ -52,7 +52,7 @@ monojet_LeptonControlRegion::monojet_LeptonControlRegion(TTree *tree) : Analysis
   // ISDATA_FLAG = 0;
   // unweighted_event_flag = 0;
   // hasSFfriend_flag = 0;
-  //AnalysisDarkMatter::Init(tree);  // could also be just Init(tree)
+  //monojetAna::Init(tree);  // could also be just Init(tree)
   // maybe this is useless because the constructor already calls Init
 
   recoLepFound_flag = 0;
@@ -82,14 +82,14 @@ monojet_LeptonControlRegion::monojet_LeptonControlRegion(TTree *tree) : Analysis
 //===============================================
 
 // void monojet_LeptonControlRegion::Init(TTree *tree) {
-//   AnalysisDarkMatter::Init(tree);
+//   monojetAna::Init(tree);
 // } 
 
 //===============================================
 
 void monojet_LeptonControlRegion::setSelections() {
 
-  AnalysisDarkMatter::setSelections();
+  monojetAna::setSelections();
 
   if (fabs(LEP_PDG_ID) == 13) {  // if we have Z -> mumu do stuff...
 
@@ -112,7 +112,7 @@ void monojet_LeptonControlRegion::setSelections() {
 
 void monojet_LeptonControlRegion::setHistograms() {
 
-  AnalysisDarkMatter::setHistograms();
+  monojetAna::setHistograms();
   
   Hlep1ptDistribution = new TH1D("Hlep1ptDistribution","",200,0.0,1000.0);
   Hlep1etaDistribution = new TH1D("Hlep1etaDistribution","",100,-5.0,5.0);
@@ -126,7 +126,7 @@ void monojet_LeptonControlRegion::setHistograms() {
 
 void monojet_LeptonControlRegion::setScaleFactorHistograms() {
 
-  AnalysisDarkMatter::setScaleFactorHistograms();
+  monojetAna::setScaleFactorHistograms();
   
 }
 
@@ -134,7 +134,7 @@ void monojet_LeptonControlRegion::setScaleFactorHistograms() {
 
 void monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistograms = 0) {
 
-  AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
+  monojetAna::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
   myAddOverflowInLastBin(Hlep1ptDistribution);
 
@@ -146,7 +146,7 @@ void monojet_LeptonControlRegion::setHistogramLastBinAsOverFlow(const Int_t hasS
 
 void monojet_LeptonControlRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {
 
-  AnalysisDarkMatter::setNumberParameterValue(parameterName, value);
+  monojetAna::setNumberParameterValue(parameterName, value);
 
   if (parameterName == "LEP_PDG_ID") LEP_PDG_ID = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "LEP1PT") LEP1PT = value;
@@ -177,7 +177,7 @@ void monojet_LeptonControlRegion::setControlSampleSpecificParameter() {
 
 void monojet_LeptonControlRegion::setVarFromConfigFile() {
 
-  AnalysisDarkMatter::setVarFromConfigFile();
+  monojetAna::setVarFromConfigFile();
   //monojet_LeptonControlRegion::setControlSampleSpecificParameter();
 
 }
@@ -186,7 +186,7 @@ void monojet_LeptonControlRegion::setVarFromConfigFile() {
 
 void monojet_LeptonControlRegion::createSystematicsHistogram() {
 
-  AnalysisDarkMatter::createSystematicsHistogram();
+  monojetAna::createSystematicsHistogram();
 
 }
 
@@ -194,7 +194,7 @@ void monojet_LeptonControlRegion::createSystematicsHistogram() {
 
 void monojet_LeptonControlRegion::fillEventMask(UInt_t & eventMask) {
 
-  AnalysisDarkMatter::fillEventMask(eventMask);
+  monojetAna::fillEventMask(eventMask);
 
   //if (HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_passed_flag);  // trigger added to mask in the specific region
   eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);     // veto on electrons (if V->mu X) or on electrons (if V->e X)

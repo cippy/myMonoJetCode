@@ -1,6 +1,6 @@
 #define wlnujetsControlSample_cxx
 #include "EmanTreeAnalysis.h"
-//#include "AnalysisDarkMatter.h" // already included in EmanTreeAnalysis.h
+//#include "monojetAna.h" // already included in EmanTreeAnalysis.h
 //C or C++ header files
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +52,7 @@ wlnujetsControlSample::wlnujetsControlSample(TTree *tree) : monojet_LeptonContro
   // ISDATA_FLAG = 0;
   // unweighted_event_flag = 0;
   // hasSFfriend_flag = 0;
-  //AnalysisDarkMatter::Init(tree);  // could also be just Init(tree)
+  //monojetAna::Init(tree);  // could also be just Init(tree)
 
   // test: now these variables are defined in .h
   mT = 0.0;  
@@ -419,7 +419,7 @@ Double_t wlnujetsControlSample::computeEventWeight() {
 
 void wlnujetsControlSample::createSystematicsHistogram() {
 
-  // first step is calling the AnalysisDarkMatter method through monoJet_LeptonControlRegion
+  // first step is calling the monojetAna method through monoJet_LeptonControlRegion
   monojet_LeptonControlRegion::createSystematicsHistogram();
     
   //for monojet
