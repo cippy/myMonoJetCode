@@ -50,7 +50,7 @@ vbfHiggsToInvAna::vbfHiggsToInvAna(TTree *tree) : AnalysisDarkMatter(tree) {
   // following variables, if any, are specific to vbf H->inv analysis  
 
   DELTAETAMIN_VBFJETS = 3.6;
-  DELTAPHIMIN_ALLJETSMET = 2.3;
+  JMET_DPHI_MIN = 2.3;
   INVMASS_VBFJETS = 600.0;
   JET1PT_VBFJETS = 80.0;
   JET2PT_VBFJETS = 70.0;
@@ -68,7 +68,6 @@ void vbfHiggsToInvAna::setNumberParameterValue(const string parameterName, const
   else if (parameterName == "INVMASS_VBFJETS") INVMASS_VBFJETS = value;
   else if (parameterName == "JET1PT_VBFJETS") JET1PT_VBFJETS = value;
   else if (parameterName == "JET2PT_VBFJETS") JET2PT_VBFJETS = value;
-  else if (parameterName == "DELTAPHIMIN_ALLJETSMET") DELTAPHIMIN_ALLJETSMET = value;
 
 }
 
@@ -89,7 +88,7 @@ void vbfHiggsToInvAna::setSelections() {
   vbfTaggedJets_deltaEtaC.set("|Deta(j1,j2)|",Form("|Deta(j1,j2)| > %2.1f",DELTAETAMIN_VBFJETS));
   vbfTaggedJets_inVMassC.set("M(j1,j2)",Form("Inv.Mass(j1,j2) > %3.0f",INVMASS_VBFJETS));
   vbfTaggedJets_jetsPtC.set("VBF jets pT",Form("pT j1(j2) > %2.0f(%2.0f)",JET1PT_VBFJETS,JET2PT_VBFJETS));
-  dphijmAllJetsC.set("Dphi(j,MET)",Form("Dphi(jets,MET) > %2.1f",DELTAPHIMIN_ALLJETSMET),"Dphi between any jet (pT>30, |eta|<4.7) and MET");
+  jetMetDphiMinC.set("Dphi(j,MET)",Form("Dphi(jets,MET) > %1.1f",JMET_DPHI_MIN),"Dphi between any jet (pT>30, |eta|<4.7) and MET");
 
   selection::checkMaskLength();
 
@@ -102,7 +101,6 @@ void vbfHiggsToInvAna::setHistograms() {
   AnalysisDarkMatter::setHistograms();
 
   HvbfTaggedJets_deltaEta = new TH1D("HvbfTaggedJets_deltaEta","",100,0.0,10.0);
-  HdphijmAllJets = new TH1D("HdphijmAllJets","",64,0.0,3.2);
   HvbfTaggedJets_invMass = new TH1D("HvbfTaggedJets_invMass","",100,600.0,1600.0);
   HvbfTaggedJets_jet1pt = new TH1D("HvbfTaggedJets_jet1pt","",120,0.0,1200.0);
   HvbfTaggedJets_jet2pt = new TH1D("HvbfTaggedJets_jet2pt","",100,0.0,100.0);
@@ -141,7 +139,6 @@ void vbfHiggsToInvAna::fillEventMask(UInt_t & eventMask) {
   eventMask += vbfTaggedJets_deltaEtaC.addToMask(vbfTaggedJet_deltaEta > DELTAETAMIN_VBFJETS);
   eventMask += vbfTaggedJets_inVMassC.addToMask(vbfTaggedJet_invMass > INVMASS_VBFJETS);
   eventMask += vbfTaggedJets_jetsPtC.addToMask(vbfTaggedJet_leadJetPt > JET1PT_VBFJETS && vbfTaggedJet_trailJetPt > JET2PT_VBFJETS);
-  eventMask += dphijmAllJetsC.addToMask(dphijmAllJets > DELTAPHIMIN_ALLJETSMET);
 
 }
 

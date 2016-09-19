@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -62,6 +63,9 @@ int main(int argc, char* argv[]) {
   // char configFileName[200];
   // std::strcpy(configFileName,argv[1]);
   string configFileName = working_cmssw_path + "/myMonoJetCode/config/" + string(argv[1]);
+
+  string whichAnalysis = ""; // can be monojet or vbfHiggsToInv or something else
+  whichAnalysis = "monojet";
 
   Int_t lepton_PDGID = 0;
   Int_t isdata_flag = 0;
@@ -754,70 +758,73 @@ int main(int argc, char* argv[]) {
 	std::cout<<chain->GetEntries()<<std::endl;      
 	//================ Run Analysis
 	//zmumujetsAna tree( chain );
+
+	AnalysisDarkMatter* tree = NULL;
  
 	if (signalRegion_flag == 1) {
 
-	  monojet_SignalRegion tree( chain);
+	  if (whichAnalysis == "monojet") tree = new monojet_SignalRegion( chain);
+	  else tree = new vbfHiggsToInv_SignalRegion( chain);
 	  //cout << " CHECK IN MAIN " << endl;
-	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	  tree.setDirNameSuffix(dirName_suffix);
-	  // tree.set_SF_NLO_name(sf_nlo_option);
-	  //tree.loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
-	  tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	  tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	  tree->setDirNameSuffix(dirName_suffix);
+	  // tree->set_SF_NLO_name(sf_nlo_option);
+	  //tree->loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
+	  tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	  if (nSample == 0) {  // export definition only once (the first time in the current implementation)
-	    tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
-	    tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	    tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	    tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
+	    tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	    tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
 	  }
 
 	} else if (controlSample_flag == 1) {
 
 	  if (controlSample_boson == "Z") {
-	    zlljetsControlSample tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	    tree.setDirNameSuffix(dirName_suffix);
-	    // tree.set_SF_NLO_name(sf_nlo_option);
-	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
-	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    if (whichAnalysis == "monojet") tree = new zlljetsControlSample( chain);
+	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree->setDirNameSuffix(dirName_suffix);
+	    // tree->set_SF_NLO_name(sf_nlo_option);
+	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree->setCalibEleFlag();
+	    //tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
-	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
 	    }
 	  } else if (controlSample_boson == "W") {
-	    wlnujetsControlSample tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	    tree.setDirNameSuffix(dirName_suffix);
-	    // tree.set_SF_NLO_name(sf_nlo_option);
-	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
-	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    if (whichAnalysis == "monojet") tree = new wlnujetsControlSample( chain);
+	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree->setDirNameSuffix(dirName_suffix);
+	    // tree->set_SF_NLO_name(sf_nlo_option);
+	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree->setCalibEleFlag();
+	    //tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
-	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
 	    }
 	  } else if (controlSample_boson == "GAMMA") {
-	    monojet_PhotonControlRegion tree( chain);
-	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	    tree.setDirNameSuffix(dirName_suffix);
-	    // tree.set_SF_NLO_name(sf_nlo_option);
-	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    if (whichAnalysis == "monojet") tree = new monojet_PhotonControlRegion( chain);
+	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree->setDirNameSuffix(dirName_suffix);
+	    // tree->set_SF_NLO_name(sf_nlo_option);
+	    //tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
-	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
 	    }
 	  } 
 
 	} else if (metResolutionAndResponse_flag == 1) {
 
-	  zlljets_metResoResp tree( chain);
-	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	  tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	  tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
+	  zlljets_metResoResp *tree = new zlljets_metResoResp( chain);
+	  tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	  tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	  tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
 
 	}
 

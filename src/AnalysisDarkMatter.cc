@@ -62,6 +62,7 @@ AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v7(tree) {
   LUMI = 1.0;
   TAU_VETO_FLAG = 1;
   HLT_FLAG = 0;                  // usage depends on specific analysis
+  JMET_DPHI_MIN = 0.5;
   MET_FILTERS_FLAG = 1;
   METNOLEP_START = 0.0;
   ENABLE_HISTOGRAM_FOR_TESTS_FLAG = 0;  
@@ -135,6 +136,7 @@ void AnalysisDarkMatter::setNumberParameterValue(const string parameterName, con
   else if (parameterName == "HLT_FLAG") HLT_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "METNOLEP_START") METNOLEP_START = value;
   else if (parameterName == "MET_FILTERS_FLAG") MET_FILTERS_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
+  else if (parameterName == "JMET_DPHI_MIN") JMET_DPHI_MIN = value;
   else if (parameterName == "ENABLE_HISTOGRAM_FOR_TESTS_FLAG") ENABLE_HISTOGRAM_FOR_TESTS_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value); // here our convention is broken, since the flag is written with lower case. This is because at first I wanted to set in as an option passed to main as I do for unweighted_event_flag.
 
 }
@@ -476,6 +478,7 @@ void AnalysisDarkMatter::fillEventMask(UInt_t & eventMask) {
   eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
   if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
   if (MET_FILTERS_FLAG != 0) eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
+  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm) > JMET_DPHI_MIN);
   
   
 }

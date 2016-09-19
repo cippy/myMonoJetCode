@@ -35,6 +35,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   selection electronLooseVetoC; 
   selection tauLooseVetoC;
   selection gammaLooseVetoC;
+  selection jetMetDphiMinC;
 
   mask analysisMask;
   selectionManager analysisSelectionManager;
@@ -60,6 +61,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   /* virtual void set_SF_NLO_name(const std::string); */
   /* virtual void set_SF_NLO_pointers(const std::string sf_option, Float_t *ptrQCD, Float_t *ptrEWK); */
   //virtual Double_t computeEventWeight() const;   // return weight for the event
+  virtual void loop(std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &, std::vector< Double_t > &) {};
 
   char ROOT_FNAME[100];
   char TXT_FNAME[100];
@@ -69,6 +71,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   Int_t TAU_VETO_FLAG;
   Int_t HLT_FLAG;                  // usage depends on specific analysis
   Double_t METNOLEP_START;
+  Double_t JMET_DPHI_MIN;
   Int_t MET_FILTERS_FLAG;
   Int_t ENABLE_HISTOGRAM_FOR_TESTS_FLAG;
   std::string FILENAME_BASE;
