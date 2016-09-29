@@ -41,6 +41,8 @@
 
 using namespace std;
 
+#define USE_SIGNAL_MC 1
+
 void myAddOverflowInLastBin(TH1D *h) {  // this is the function in functionsForAnalysis.cc, but I copied here to simplify compilation
 
   // to avoid problems regarding memory leak for not deleting htemp in previous function, I sum directly the content of overflow bin in last bin
@@ -97,6 +99,16 @@ Int_t mySetMaxBinWidth(const TH1D *stackCopy, Double_t width) {
 
 }
 
+void setSignalSampleName(vector<string> &sampleName, vector<string> &MC_TexLabel) {
+
+  sampleName.push_back("vbfH125");
+  sampleName.push_back("ggH125");
+
+  MC_TexLabel.push_back("VBF H->Inv");
+  MC_TexLabel.push_back("gg H->Inv");    
+
+}
+
 void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sampleName, vector<string> &MC_TexLabel, const Int_t z0_w1_g2 = 0, const Int_t mumu0_ee1 = 0) {
 
   // for Control region, mumu0_ee1 says if we use muon (0) or electron (1)
@@ -106,17 +118,21 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     sampleName.push_back("GJets");
     sampleName.push_back("DYJetsToLL");
-    sampleName.push_back("QCD");
+    //sampleName.push_back("QCD");
     sampleName.push_back("Diboson");
     sampleName.push_back("Top");
+    sampleName.push_back("EWKW");
+    sampleName.push_back("EWKZToNuNu");
     sampleName.push_back("WJetsToLNu");
     sampleName.push_back("ZJetsToNuNu");
        
     MC_TexLabel.push_back("#gamma + jets");
     MC_TexLabel.push_back("Z(ll)+jets");
-    MC_TexLabel.push_back("QCD");
+    //MC_TexLabel.push_back("QCD");
     MC_TexLabel.push_back("Diboson");
     MC_TexLabel.push_back("t#bar{t},single t");
+    MC_TexLabel.push_back("EWK W(l#nu)+jets");
+    MC_TexLabel.push_back("EWK Z(#nu#nu)+jets");
     MC_TexLabel.push_back("W(l#nu)+jets");
     MC_TexLabel.push_back("Z(#nu#nu)+jets");
     
@@ -128,23 +144,27 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 	sampleName.push_back("ZJetsToNuNu");
       }
       sampleName.push_back("GJets");	
-      sampleName.push_back("QCD");
+      //sampleName.push_back("QCD");
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");
+      sampleName.push_back("EWKDYJetsLL");
       sampleName.push_back("DYJetsToLL");
 
       if (mumu0_ee1 == 0) {
 	MC_TexLabel.push_back("Z(#nu#nu)+jets");
       }
       MC_TexLabel.push_back("#gamma + jets");
-      MC_TexLabel.push_back("QCD");
+      //MC_TexLabel.push_back("QCD");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("Diboson");
       MC_TexLabel.push_back("t#bar{t},single t");
 
-      if (mumu0_ee1 == 0) MC_TexLabel.push_back("Z(#mu#mu)+jets");
-      else MC_TexLabel.push_back("Z(ee)+jets");
+      if (mumu0_ee1 == 0) {
+	MC_TexLabel.push_back("EWK Z(#mu#mu)+jets");
+	MC_TexLabel.push_back("Z(#mu#mu)+jets");
+      }
+	else MC_TexLabel.push_back("Z(ee)+jets");
 
     } else if(z0_w1_g2 == 1) {
 
@@ -204,7 +224,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
 void setHistColor(vector<Int_t> &histColor, const Int_t nSamples) {
 
-  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1};  // the first color is for the main object. This array may contain more values than nSamples
+  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2};  // the first color is for the main object. This array may contain more values than nSamples
 
   for (Int_t i = 0; i < nSamples; i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
 
@@ -213,6 +233,18 @@ void setHistColor(vector<Int_t> &histColor, const Int_t nSamples) {
   }
 
   std::reverse(histColor.begin(), histColor.end());   // reverse order in the array
+
+}
+
+void setSignalHistColor(vector<Int_t> &histColor, const Int_t nSamples) {
+
+  Int_t colorList[] = {kBlack, kBlue+1, kRed+2};  // the first color is for the main object. This array may contain more values than nSamples
+
+  for (Int_t i = 0; i < nSamples; i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
+
+    histColor.push_back(colorList[i]);
+
+  }
 
 }
 
@@ -314,6 +346,21 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
     hvarName = "HptW_mT0to50"; 
     xAxisName = " p_{T} (W) [GeV]";
 
+  } else if ( !(strcmp("vbfJetsMass",var.c_str())) ) {
+
+    hvarName = "HvbfTaggedJets_invMass"; 
+    xAxisName = " Mass(J_{1}J_{2}) [GeV]";
+
+  } else if ( !(strcmp("j1j2Deta",var.c_str())) ) {
+
+    hvarName = "HvbfTaggedJets_deltaEta"; 
+    xAxisName = "#Delta#eta(J_{1}J_{2})";
+
+  } else if ( !(strcmp("jmetDphi",var.c_str())) ) {
+
+    hvarName = "HjetMetDphiMinDistribution"; 
+    xAxisName = "#Delta#phi(Jets,#slash{E}_{T})";
+
   } else {
     
     cout << " Variable " << var << " not available. End of programme." << endl;
@@ -328,7 +375,8 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
 
 
 
-void distribution(const string folderNameWithRootFiles = "", 
+void distribution(const string pathToPlotDir = "",
+		  const string folderNameWithRootFiles = "", 
 		  const Int_t signalRegion0_controlRegion1 = 0, 
 		  const Int_t z0_w1_g2 = 0,
 		  const Int_t mu0_e1 = 0,
@@ -373,7 +421,8 @@ void distribution(const string folderNameWithRootFiles = "",
   string working_cmssw_path = "";
   myGetEnvVariable("CMSSW_BASE",working_cmssw_path);
   working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
-  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFiles + "/"; 
+  //string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFiles + "/"; 
+  string fileDirectoryPath = working_cmssw_path + "/myMonoJetCode/output/" + pathToPlotDir + "/" + folderNameWithRootFiles + "/"; 
 
   string plotDirectoryPath = fileDirectoryPath;
   // string plotDirectoryPath = "/cmshome/ciprianim/CMSSW721/pdfsFromAnalysis/plots/monojet/met_distribution/";
@@ -408,12 +457,15 @@ void distribution(const string folderNameWithRootFiles = "",
   if (monoJ0_monoV1 == 1) hvarName += "_monoV";
 
   vector<TH1D*> hMC;
+  vector<TH1D*> hsignalMC;
   TH1D* hdata = NULL;
 
   vector<string> sampleName;
   vector<string> MC_TexLabel;
-  if (data0_noData1 == 1) setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1_g2, mu0_e1);
-  else setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1_g2, mu0_e1);
+  setSampleName(signalRegion0_controlRegion1, sampleName, MC_TexLabel, z0_w1_g2, mu0_e1);
+  vector<string> signalSampleName;
+  vector<string> signalMC_TexLabel;
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) setSignalSampleName(signalSampleName, signalMC_TexLabel);
 
   string data_TexLabel = "data";
 
@@ -421,14 +473,16 @@ void distribution(const string folderNameWithRootFiles = "",
 
   vector<Int_t> histColor;
   setHistColor(histColor, nFiles);
+  vector<Int_t> signalHistColor;
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) setSignalHistColor(signalHistColor, signalSampleName.size());
 
   string filenameBase;
   string canvasName;
   
   if (signalRegion0_controlRegion1 == 0) {
     
-    canvasName = var + "_monojetSR";
-    filenameBase = "monojet_SR_";    
+    canvasName = var + "_vbfHiggsToInvSR";
+    filenameBase = "vbfHiggsToInv_SR_";    
     
   } else {
     
@@ -442,6 +496,11 @@ void distribution(const string folderNameWithRootFiles = "",
   vector<string> MCfileName;
   for (Int_t i = 0; i < nFiles; i++) {
     MCfileName.push_back(fileDirectoryPath + filenameBase + sampleName[i] + filenameExtension);
+  }
+
+  vector<string> signalMCfileName;
+  for (UInt_t i = 0; i < signalSampleName.size(); i++) {
+    signalMCfileName.push_back(fileDirectoryPath + filenameBase + signalSampleName[i] + filenameExtension);
   }
 
   for(Int_t i = 0; i < nFiles; i++) {
@@ -467,11 +526,34 @@ void distribution(const string folderNameWithRootFiles = "",
 
   } 
 
+  for(UInt_t i = 0; i < signalSampleName.size(); i++) {
+
+    //cout<<"fileName : "<<MCfileName[i]<<endl;
+
+    TFile* f = TFile::Open(signalMCfileName[i].c_str(),"READ");
+    if (!f || !f->IsOpen()) {
+      cout<<"*******************************"<<endl;
+      cout<<"Error opening file \""<<signalMCfileName[i]<<"\".\nApplication will be terminated."<<endl;
+      cout<<"*******************************"<<endl;
+      exit(EXIT_FAILURE);
+    }
+
+    //cout << "check 1 " << endl;    
+
+    hvar = (TH1D*)f->Get(hvarName.c_str());
+    if (!hvar) {
+      cout << "Error: histogram not found in file ' " << signalMCfileName[i] << "'. End of programme." << endl;
+      exit(EXIT_FAILURE);
+    }
+    hsignalMC.push_back( (TH1D*)hvar->Clone() );
+
+  } 
+
   string datafileName = fileDirectoryPath;
 
   if (data0_noData1 == 0) {
 
-    if (signalRegion0_controlRegion1 == 0) datafileName += "monojet_SR_DATA.root";    
+    if (signalRegion0_controlRegion1 == 0) datafileName += "vbfHiggsToInv_SR_DATA.root";    
     else datafileName += suffix + "jets_CR_DATA.root";
 
   }
@@ -518,8 +600,30 @@ void distribution(const string folderNameWithRootFiles = "",
     }
 
     hMC[j]->SetFillColor(histColor[j]);
+    hMC[j]->SetFillStyle(3001);
     stackNorm += hMC[j]->Integral();
 
+  }
+
+  /////////////////
+  // signal MC
+  ///////////////////////
+
+  for (UInt_t j = 0; j < signalSampleName.size(); j++) {
+
+    for (Int_t i = 1; i <= hsignalMC[j]->GetNbinsX(); i++) {
+
+      if (MCpoissonUncertainty_flag == 1) {
+
+	hsignalMC[j]->SetBinError(i,sqrt(hsignalMC[j]->GetBinContent(i)));
+	
+      }
+
+    }
+
+    hsignalMC[j]->SetLineColor(signalHistColor[j]);
+    hsignalMC[j]->SetLineWidth(4);
+   
   }
 
   // loop again on MC histograms to scale them and then fill the thstack
@@ -540,6 +644,31 @@ void distribution(const string folderNameWithRootFiles = "",
 
   }
 
+  //////////////
+  // signal MC
+  ///////////////////
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0)  {
+
+    for (UInt_t j = 0; j < signalSampleName.size(); j++) {
+      
+      if (data0_noData1 == 0 && MCnormalizedToData_flag != 0) {
+	
+	Double_t dataNorm = hdata->Integral();
+	
+	if (binDensity_flag != 0) hsignalMC[j]->Scale(dataNorm/hsignalMC[j]->Integral(),"width");
+	else hsignalMC[j]->Scale(dataNorm/hsignalMC[j]->Integral());
+	
+      } else if (binDensity_flag != 0) hsignalMC[j]->Scale(1.0,"width");  // option width divides by bin width and manages the correct error setting
+      
+      myRebinHisto(hsignalMC[j], rebinFactor);
+     
+    }
+    
+  }
+
+  //////////////
+  // end of signal MC
+  ///////////////////
 
   if (data0_noData1 == 0) {
 
@@ -572,12 +701,10 @@ void distribution(const string folderNameWithRootFiles = "",
     subpad_2->SetBottomMargin(0.3);
     subpad_1->Draw();
     subpad_2->Draw();
-    if (yAxisLog_flag) subpad_1->SetLogy();
 
     subpad_1->cd();
 
   } else if (yAxisLog_flag) c->SetLogy();
-
   
   hMCstack->Draw("HIST");
   //if (yAxisMin > 0) hMCstack->SetMinimum(yAxisMin);
@@ -703,6 +830,13 @@ void distribution(const string folderNameWithRootFiles = "",
     leg->AddEntry(hdata,Form("%s",data_TexLabel.c_str()),"p");
   }
 
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) {
+    for (UInt_t i = 0; i < signalSampleName.size(); i++) {
+      hsignalMC[i]->Draw("HE SAME");
+      leg->AddEntry(hsignalMC[i],Form("%s",signalMC_TexLabel[i].c_str()),"l");
+    }
+  }
+
   gStyle->SetStatStyle(0);
   leg->Draw(); 
   leg->SetMargin(0.3); 
@@ -740,8 +874,14 @@ void distribution(const string folderNameWithRootFiles = "",
 
   }
 
-  c->SaveAs( (plotDirectoryPath + c->GetName() + ".pdf").c_str() );
-  c->SaveAs( (plotDirectoryPath + c->GetName() + ".png").c_str() );
+  if (yAxisLog_flag == 0) {
+    c->SaveAs( (plotDirectoryPath + c->GetName() + ".pdf").c_str() );
+    c->SaveAs( (plotDirectoryPath + c->GetName() + ".png").c_str() );
+  } else {
+    c->SaveAs( (plotDirectoryPath + c->GetName() + "_logY.pdf").c_str() );
+    c->SaveAs( (plotDirectoryPath + c->GetName() + "_logY.png").c_str() );
+  }
+
 
 }
 
@@ -749,7 +889,8 @@ void distribution(const string folderNameWithRootFiles = "",
 // =========================================================
 
 
-void makeTransferFactor(const string folderNameWithRootFilesSR = "",
+void makeTransferFactor(const string pathToPlotDir = "",
+			const string folderNameWithRootFilesSR = "",
 			const string folderNameWithRootFilesCR = "",
 			const Int_t bkgToEstimate_z0_w1 = 0,
 			const Int_t monoJ0_monoV1 = 0,
@@ -791,9 +932,11 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
   working_cmssw_path += "/src"; // now this string is $CMSSW_BASE/src      
 
   string filenameExtension = ".root";
-  // string fileDirectoryPath = "spring15_25ns_rootfiles/";
-  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesSR + "/";
-  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesCR + "/";
+  // string fileDirectoryPath = "spring15_25ns_rootfiles/";vbfHiggsToInv/80X/lumi_24p4fb/
+  // string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesSR + "/";
+  // string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/monojet/80X/lumi_7p65fb/" + folderNameWithRootFilesCR + "/";
+  string fileDirectoryPathSR = working_cmssw_path + "/myMonoJetCode/output/" + pathToPlotDir + "/" + folderNameWithRootFilesSR + "/";
+  string fileDirectoryPathCR = working_cmssw_path + "/myMonoJetCode/output/" + pathToPlotDir + "/" + folderNameWithRootFilesCR + "/";
   string plotDirName;
 
   vector<string> suffixSR;   // to build plot name (will be e.g. znunu_zmumu_trasnferFactor.pdf)
@@ -855,12 +998,12 @@ void makeTransferFactor(const string folderNameWithRootFilesSR = "",
 
   // create name for SR, e.g: <path_to_plots>/SignalRegion_25ns_2p32fb/monojet_SR_ZJetsToNuNu.root
   // this is the SR file to be opened: similar thing done for CR
-  string filenameSR = fileDirectoryPathSR + "monojet_SR_" + bkgSampleSR + filenameExtension;
+  string filenameSR = fileDirectoryPathSR + "vbfHiggsToInv_SR_" + bkgSampleSR + filenameExtension;
 
   // start CR root file name with the directory where it is (note, it might be the same as SR, in this case fileDirectoryPathCR == fileDirectoryPathSR)
   string filenameCR = fileDirectoryPathCR;
   if (zvv_wlv_flag) {
-    filenameCR += "monojet_SR_WJetsToLNu" + filenameExtension;
+    filenameCR += "vbfHiggsToInv_SR_WJetsToLNu" + filenameExtension;
   } else {
     filenameCR += suffixCR.at(indexRightSuffixCR) + "jets_CR_"; 
     if (plotDirName.find("z") != string::npos) filenameCR += ("DYJetsToLL" + filenameExtension);
@@ -1149,9 +1292,21 @@ Int_t main(int argc, char* argv[]) {
 	       const Double_t maxRatioY = 2.0)*/
 
   Int_t j0v1 = 0;  // passing from outside whether to make plots with monojet events (0) or monoV (1). A value different from 1 is considered as monojet
+  // now that we have vbf Higgs->Inv analysis, 0 is fine for that (no monoV available for this analysis
+  string pathToPlotDir = ""; // path like monojet/80X/lumiXXXpYYYfb/, so inside myMonoJetCode/output/
+  string dirName = "";
+  string dirSuffix = "";
+
 
   if (argc > 1) {
     j0v1 = atoi(argv[1]);
+  } 
+  if (argc > 2) {
+    pathToPlotDir = string(argv[2]);
+  } else {
+    cout << "WARNING: you must provide the path where plots are stored as 2nd argument" << endl;
+    cout << "Example: ./distribution [0/1] monojet/80X/lumiXXXpYYYfb/ [other optional options]" << endl;
+    exit(EXIT_FAILURE);
   }
 
   string whichRegion = "ALL";
@@ -1169,9 +1324,9 @@ Int_t main(int argc, char* argv[]) {
   // If whichRegion != "ALL" after considering all options and a CR is analyzed, TF are not made, unless -tf option is passed. In this case, do only TF related to CR specified after -cr option.
   // If whichRegion != "ALL" after considering all options and SR is analyzed, TF between Z and W in SR is automatically enabled (need just sr for that).
 
-  if (argc > 2 ) {
+  if (argc > 3 ) {
 
-    for (Int_t i = 2; i < argc; i++) {   // look at all possible options passed                                                                                         
+    for (Int_t i = 3; i < argc; i++) {   // look at all possible options passed                                                                                         
 
       string thisArgument(argv[i]);
 
@@ -1188,127 +1343,157 @@ Int_t main(int argc, char* argv[]) {
 	  i++;
 	}
       } else if (thisArgument  == "-tf") makeTransferFactor_flag = true; 
-
+      else if (thisArgument  == "-dns") {
+	dirSuffix = argv[i+1];
+	i++;
+      }
+   
     }
 
   }
 
   if (whichRegion == "ALL") makeTransferFactor_flag = true;
 
+  Int_t logYaxis = 0;
+
   // signal region
   if (whichRegion == "ALL" || whichRegion == "sig") {
-    distribution("SignalRegion",0,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("SignalRegion",0,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("SignalRegion",0,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution("SignalRegion",0,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("SignalRegion",0,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("SignalRegion",0,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("SignalRegion",0,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution("SignalRegion",0,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "SignalRegion" + dirSuffix;
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"metBin",1,0,130,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"met",1,0,130,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"ht",1,0,100,1600,0,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1pt",1,0,80,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1eta",0,0,0,-1,0,-1,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMass",1,0,1050,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1j2Deta",1,0,3.5,9.5,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"jmetDphi",1,0,2.25,-1,0.05,10e5,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j2pt",1,0,30,500,0,-1,0,0,2);
     else {
-      distribution("SignalRegion",0,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("SignalRegion",0,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);
+    makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
 
   // Z->mumu control region
   if (whichRegion == "ALL" || whichRegion == "zmm") {
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-    if (j0v1 != 1) distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "ControlRegion_zmumu" + dirSuffix;
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"metBin",1,0,130,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"met",1,0,130,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1pt",1,0,80,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
     else {
-      distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("ControlRegion_zmumu",1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
+    if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
 
   // Z->ee control region
   if (whichRegion == "ALL" || whichRegion == "zee") {
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_zee",1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-    if (j0v1 != 1) distribution("ControlRegion_zee",1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "ControlRegion_zee" + dirSuffix;
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
     else {
-      distribution("ControlRegion_zee",1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("ControlRegion_zee",1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
+    if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
 
   // W->munu control region
   if (whichRegion == "ALL" || whichRegion == "wmn") {
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    if (j0v1 != 1) distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "ControlRegion_wmunu" + dirSuffix;
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
     else {
-      distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("ControlRegion_wmunu",1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
+    if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,1,j0v1,0,-1,0,-1,1,1);
   }
 
   // W->enu control region
   if (whichRegion == "ALL" || whichRegion == "wen") {
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_wenu",1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    if (j0v1 != 1) distribution("ControlRegion_wenu",1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "ControlRegion_wenu" + dirSuffix;
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
     else {
-      distribution("ControlRegion_wenu",1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("ControlRegion_wenu",1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
+    if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,1,j0v1,0,-1,0,0.-1,1,1);
   }
 
   // Gamma control region
   if (whichRegion == "ALL" || whichRegion == "gam") {  
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution("ControlRegion_gamma",1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
-    distribution("ControlRegion_gamma",1,2,1,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution("ControlRegion_gamma",1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    dirName = "ControlRegion_gamma" + dirSuffix;
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
     else {
-      distribution("ControlRegion_gamma",1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution("ControlRegion_gamma",1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
     }
-    if (makeTransferFactor_flag) makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
+    if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,0.-1,0,1);
   }
 
   // void makeTransferFactor(const string folderNameWithRootFilesSR = "",
@@ -1323,12 +1508,12 @@ Int_t main(int argc, char* argv[]) {
   // 			const Int_t rebinFactor = 1)
   // {
 
-  // makeTransferFactor("SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor("SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor("SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor("SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
-  // makeTransferFactor("SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
-  // makeTransferFactor("SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);  
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);  
 
   return 0;
 
