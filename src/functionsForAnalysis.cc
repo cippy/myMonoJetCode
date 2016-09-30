@@ -301,6 +301,10 @@ void myAddOverflowInLastBin(TH1D *h) {
   // add content of overflow bin in last bin and set error as square root of sum of error squares (with the assumption that they are uncorrelated)
   h->SetBinContent(lastBinNumber, lastBinContent + overflowBinContent);
   h->SetBinError(lastBinNumber, sqrt(lastBinError * lastBinError + overflowBinError * overflowBinError));
+  // deleting content of overflow bin (safer, since I might be using that bin to add it again somewhere and I want it to be empty)                   
+  h->SetBinContent(overflowBinNumber,0.0);
+  h->SetBinError(overflowBinNumber,0.0);
+
 
 }
 
@@ -317,6 +321,9 @@ void myAddUnderflowInFirstBin(TH1D *h) {
   // add content of underflow bin in first bin and set error as square root of sum of error squares (with the assumption that they are uncorrelated)
   h->SetBinContent(1, firstBinContent + underflowBinContent);
   h->SetBinError(1, sqrt(firstBinError * firstBinError + underflowBinError * underflowBinError));
+  // deleting content of underflow bin (safer, since I might be using that bin to add it again somewhere and I want it to be empty)                   
+  h->SetBinContent(0,0.0);
+  h->SetBinError(0,0.0);
 
 }
 
