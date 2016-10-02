@@ -57,6 +57,9 @@ void myAddOverflowInLastBin(TH1D *h) {  // this is the function in functionsForA
   // add content of overflow bin in last bin and set error as square root of sum of error squares (with the assumption that they are uncorrelated)
   h->SetBinContent(lastBinNumber, lastBinContent + overflowBinContent);
   h->SetBinError(lastBinNumber, sqrt(lastBinError * lastBinError + overflowBinError * overflowBinError));
+  // deleting content of last bin (safer, since I might be using that bin to add it again somewhere and I want it to be empty)
+  h->SetBinContent(overflowBinNumber,0.0);
+  h->SetBinError(overflowBinNumber,0.0);
 
 }
 
@@ -70,6 +73,33 @@ void myRebinHisto(TH1D *h, const Int_t rebinFactor = 1) {
 
 }
 
+void myAddOutliersAfterSetRangeUser(TH1D *h, const Double_t leftBoundary, const Double_t rightBoundary) {
+
+  // Double_t epsilon = 10e-7;
+  // // now get bin number for bins at the edge within the range set by user
+  // // this bin will still be visible in the plot
+  // Int_t lb = h->FindBin(leftBoundary+epsilon);
+  // Int_t rb = h->FindBin(rightBoundary-epsilon);
+
+  // for (Int_t i = 0; i <= (h->GetNbinsX()+1); i++) {
+  //   if (i < lb) {
+  //     h->SetBinContent(lb, h->GetBinContent(lb) + h->GetBinContent(i));
+  //     h->SetBinError(lb, sqrt( h->GetBinError(lb) * h->GetBinError(lb) + h->GetBinError(i) * h->GetBinError(i) ));
+  //   } else if (i > rb) {
+  //     h->SetBinContent(lb, h->GetBinContent(rb) + h->GetBinContent(i));
+  //     h->SetBinError(lb, sqrt( h->GetBinError(rb) * h->GetBinError(lb) + h->GetBinError(i) * h->GetBinError(i) ));
+  //   }
+  // }
+
+}
+
+void myAddOutliersManager(TH1D *h, const Double_t xAxisMin, const Double_t xAxisMax, const Double_t defaultXmax) {
+
+  // if (xAxisMin < xAxisMax) myAddOutliersAfterSetRangeUser(h, xAxisMin, xAxisMax);
+  // else if (xAxisMin > xAxisMax && (fabs(xAxisMax + 1.0) < 0.0001)) myAddOutliersAfterSetRangeUser(h,xAxisMin,defaultXmax);
+
+}
+
 void myGetEnvVariable(const string envVar, string& input) {
 
   // here we get environmental variable that we need to use the code, such as CMSSW_BASE                                                                               
@@ -79,7 +109,6 @@ void myGetEnvVariable(const string envVar, string& input) {
     input = string(pPath);  // assign char* to string. Can also do --> string someString(char*);                  
     //cout << "Environment variable is : "<< input << endl;                                                                                                    
   }      
-
 
 }
 
@@ -118,7 +147,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     sampleName.push_back("GJets");
     sampleName.push_back("DYJetsToLL");
-    //sampleName.push_back("QCD");
+    sampleName.push_back("QCD");
     sampleName.push_back("Diboson");
     sampleName.push_back("Top");
     sampleName.push_back("EWKW");
@@ -128,7 +157,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
        
     MC_TexLabel.push_back("#gamma + jets");
     MC_TexLabel.push_back("Z(ll)+jets");
-    //MC_TexLabel.push_back("QCD");
+    MC_TexLabel.push_back("QCD");
     MC_TexLabel.push_back("Diboson");
     MC_TexLabel.push_back("t#bar{t},single t");
     MC_TexLabel.push_back("EWK W(l#nu)+jets");
@@ -140,22 +169,22 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
     if(z0_w1_g2 == 0) {
 
-      if (mumu0_ee1 == 0) {
-	sampleName.push_back("ZJetsToNuNu");
-      }
+      // // if (mumu0_ee1 == 0) {
+      // // 	sampleName.push_back("ZJetsToNuNu");
+      // // }
       sampleName.push_back("GJets");	
-      //sampleName.push_back("QCD");
+      sampleName.push_back("QCD");
       sampleName.push_back("WJetsToLNu");
       sampleName.push_back("Diboson");
       sampleName.push_back("Top");
       sampleName.push_back("EWKDYJetsLL");
       sampleName.push_back("DYJetsToLL");
 
-      if (mumu0_ee1 == 0) {
-	MC_TexLabel.push_back("Z(#nu#nu)+jets");
-      }
+      // if (mumu0_ee1 == 0) {
+      // 	MC_TexLabel.push_back("Z(#nu#nu)+jets");
+      // }
       MC_TexLabel.push_back("#gamma + jets");
-      //MC_TexLabel.push_back("QCD");
+      MC_TexLabel.push_back("QCD");
       MC_TexLabel.push_back("W(l#nu)+jets");
       MC_TexLabel.push_back("Diboson");
       MC_TexLabel.push_back("t#bar{t},single t");
@@ -163,9 +192,10 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
       if (mumu0_ee1 == 0) {
 	MC_TexLabel.push_back("EWK Z(#mu#mu)+jets");
 	MC_TexLabel.push_back("Z(#mu#mu)+jets");
+      } else {
+	MC_TexLabel.push_back("EWK Z(ee)+jets");
+	MC_TexLabel.push_back("Z(ee)+jets");
       }
-	else MC_TexLabel.push_back("Z(ee)+jets");
-
     } else if(z0_w1_g2 == 1) {
 
       if (mumu0_ee1 == 0) {
@@ -224,7 +254,7 @@ void setSampleName(const Int_t signalRegion0_controlRegion1, vector<string> &sam
 
 void setHistColor(vector<Int_t> &histColor, const Int_t nSamples) {
 
-  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2};  // the first color is for the main object. This array may contain more values than nSamples
+  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray};  // the first color is for the main object. This array may contain more values than nSamples
 
   for (Int_t i = 0; i < nSamples; i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
 
@@ -351,6 +381,11 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
     hvarName = "HvbfTaggedJets_invMass"; 
     xAxisName = " Mass(J_{1}J_{2}) [GeV]";
 
+  } else if ( !(strcmp("vbfJetsMt",var.c_str())) ) {
+
+    hvarName = "HvbfTaggedJets_mT"; 
+    xAxisName = " M_{T}(J_{1}J_{2}) [GeV]";
+
   } else if ( !(strcmp("j1j2Deta",var.c_str())) ) {
 
     hvarName = "HvbfTaggedJets_deltaEta"; 
@@ -359,6 +394,11 @@ void setDistribution(const Int_t mumu0_ee1, const string var, string &hvarName, 
   } else if ( !(strcmp("jmetDphi",var.c_str())) ) {
 
     hvarName = "HjetMetDphiMinDistribution"; 
+    xAxisName = "#Delta#phi(4-Jets,#slash{E}_{T})";
+
+  } else if ( !(strcmp("jmetDphiAllJets",var.c_str())) ) {
+
+    hvarName = "HjetMetDphiMinAllJets"; 
     xAxisName = "#Delta#phi(Jets,#slash{E}_{T})";
 
   } else {
@@ -499,8 +539,10 @@ void distribution(const string pathToPlotDir = "",
   }
 
   vector<string> signalMCfileName;
-  for (UInt_t i = 0; i < signalSampleName.size(); i++) {
-    signalMCfileName.push_back(fileDirectoryPath + filenameBase + signalSampleName[i] + filenameExtension);
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) {
+    for (UInt_t i = 0; i < signalSampleName.size(); i++) {
+      signalMCfileName.push_back(fileDirectoryPath + filenameBase + signalSampleName[i] + filenameExtension);
+    }
   }
 
   for(Int_t i = 0; i < nFiles; i++) {
@@ -526,28 +568,32 @@ void distribution(const string pathToPlotDir = "",
 
   } 
 
-  for(UInt_t i = 0; i < signalSampleName.size(); i++) {
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) {
 
-    //cout<<"fileName : "<<MCfileName[i]<<endl;
+    for(UInt_t i = 0; i < signalSampleName.size(); i++) {
 
-    TFile* f = TFile::Open(signalMCfileName[i].c_str(),"READ");
-    if (!f || !f->IsOpen()) {
-      cout<<"*******************************"<<endl;
-      cout<<"Error opening file \""<<signalMCfileName[i]<<"\".\nApplication will be terminated."<<endl;
-      cout<<"*******************************"<<endl;
-      exit(EXIT_FAILURE);
-    }
+      //cout<<"fileName : "<<MCfileName[i]<<endl;
 
-    //cout << "check 1 " << endl;    
+      TFile* f = TFile::Open(signalMCfileName[i].c_str(),"READ");
+      if (!f || !f->IsOpen()) {
+	cout<<"*******************************"<<endl;
+	cout<<"Error opening file \""<<signalMCfileName[i]<<"\".\nApplication will be terminated."<<endl;
+	cout<<"*******************************"<<endl;
+	exit(EXIT_FAILURE);
+      }
 
-    hvar = (TH1D*)f->Get(hvarName.c_str());
-    if (!hvar) {
-      cout << "Error: histogram not found in file ' " << signalMCfileName[i] << "'. End of programme." << endl;
-      exit(EXIT_FAILURE);
-    }
-    hsignalMC.push_back( (TH1D*)hvar->Clone() );
+      //cout << "check 1 " << endl;    
 
-  } 
+      hvar = (TH1D*)f->Get(hvarName.c_str());
+      if (!hvar) {
+	cout << "Error: histogram not found in file ' " << signalMCfileName[i] << "'. End of programme." << endl;
+	exit(EXIT_FAILURE);
+      }
+      hsignalMC.push_back( (TH1D*)hvar->Clone() );
+
+    } 
+
+  }
 
   string datafileName = fileDirectoryPath;
 
@@ -584,6 +630,20 @@ void distribution(const string pathToPlotDir = "",
 
   // ===============================
 
+  ////////////////////////////////////////////////////////////////////
+  // get a preliminary version of the stack just to get the maximum x value (the x axis range is set using the THStack range)
+  THStack *tmpStack = new THStack("tmpStack","");;
+  for (Int_t j = 0; j < nFiles; j++) {
+    tmpStack->Add(hMC[j]);
+  } 
+  TCanvas *tmpc = new TCanvas("tmpc","");
+  tmpStack->Draw("HE");
+  Double_t defaultXmax = tmpStack->GetXaxis()->GetXmax();
+  delete tmpc;
+  delete tmpStack;
+
+  ///////////////////////////////////////////////////////////////////
+
   THStack* hMCstack = new THStack("hMCstack","");
   Double_t stackNorm = 0.0;
 
@@ -609,21 +669,28 @@ void distribution(const string pathToPlotDir = "",
   // signal MC
   ///////////////////////
 
-  for (UInt_t j = 0; j < signalSampleName.size(); j++) {
+  Double_t signalNorm = 0.0;
 
-    for (Int_t i = 1; i <= hsignalMC[j]->GetNbinsX(); i++) {
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0) {
 
-      if (MCpoissonUncertainty_flag == 1) {
+    for (UInt_t j = 0; j < signalSampleName.size(); j++) {
 
-	hsignalMC[j]->SetBinError(i,sqrt(hsignalMC[j]->GetBinContent(i)));
+      for (Int_t i = 1; i <= hsignalMC[j]->GetNbinsX(); i++) {
+
+	if (MCpoissonUncertainty_flag == 1) {
+
+	  hsignalMC[j]->SetBinError(i,sqrt(hsignalMC[j]->GetBinContent(i)));
 	
+	}
+
       }
+
+      hsignalMC[j]->SetLineColor(signalHistColor[j]);
+      hsignalMC[j]->SetLineWidth(4);
+      signalNorm += hsignalMC[j]->Integral();
 
     }
 
-    hsignalMC[j]->SetLineColor(signalHistColor[j]);
-    hsignalMC[j]->SetLineWidth(4);
-   
   }
 
   // loop again on MC histograms to scale them and then fill the thstack
@@ -640,6 +707,9 @@ void distribution(const string pathToPlotDir = "",
     } else if (binDensity_flag != 0) hMC[j]->Scale(1.0,"width");  // option width divides by bin width and manages the correct error setting
 
     myRebinHisto(hMC[j], rebinFactor);
+
+    myAddOutliersManager(hMC[j],xAxisMin,xAxisMax,defaultXmax);
+
     hMCstack->Add(hMC[j]);
 
   }
@@ -655,17 +725,25 @@ void distribution(const string pathToPlotDir = "",
 	
 	Double_t dataNorm = hdata->Integral();
 	
-	if (binDensity_flag != 0) hsignalMC[j]->Scale(dataNorm/hsignalMC[j]->Integral(),"width");
-	else hsignalMC[j]->Scale(dataNorm/hsignalMC[j]->Integral());
+	if (binDensity_flag != 0) hsignalMC[j]->Scale(dataNorm/signalNorm,"width");
+	else hsignalMC[j]->Scale(dataNorm/signalNorm);
 	
       } else if (binDensity_flag != 0) hsignalMC[j]->Scale(1.0,"width");  // option width divides by bin width and manages the correct error setting
       
       myRebinHisto(hsignalMC[j], rebinFactor);
+      myAddOutliersManager(hsignalMC[j],xAxisMin,xAxisMax,defaultXmax);
      
     }
     
   }
 
+  TH1D* hAllSignalMC = NULL;
+  if (USE_SIGNAL_MC && signalRegion0_controlRegion1 == 0)  {
+    hAllSignalMC = new TH1D(*hsignalMC[0]);
+    for (UInt_t i = 1; i < hsignalMC.size(); i++) {
+      hAllSignalMC->Add(hsignalMC[i]);
+    }
+  }
   //////////////
   // end of signal MC
   ///////////////////
@@ -673,24 +751,26 @@ void distribution(const string pathToPlotDir = "",
   if (data0_noData1 == 0) {
 
     myRebinHisto(hdata, rebinFactor);
+    myAddOutliersManager(hdata,xAxisMin,xAxisMax,defaultXmax);
     if (binDensity_flag != 0) hdata->Scale(1.0,"width");
 
   }
-
 
   // now here we go with the canvas
 
   TH1D * ratioplot = NULL; // will use it for the ratio plots
   TPad *subpad_1 = NULL;  // will use it to access specific subpad in canvas
-  TPad *subpad_2 = NULL; 
-  TLegend *leg = new TLegend(0.7,0.6,0.99,0.94);  
+  TPad *subpad_2 = NULL;
+  Double_t legYmin = 0.6;
+  if (nFiles > 8) legYmin = 0.45; 
+  TLegend *leg = new TLegend(0.7,legYmin,0.99,0.94);  
   TCanvas *c = NULL;
   if (data0_noData1 == 0) c = new TCanvas(canvasName.c_str(), (var + " distribution").c_str(), 700, 700);
-  else c = new TCanvas(canvasName.c_str(), (var + " distribution").c_str());
+  else c = new TCanvas(canvasName.c_str(), (var + " distribution").c_str(),700,700); // in principle I might use different dimensions
 
   // if there are data, split canvas to draw the dta/MC ratio plot
 
-  if (data0_noData1 == 0) {
+  if (data0_noData1 == 0 || (signalRegion0_controlRegion1 == 0 && USE_SIGNAL_MC)) {
 
     subpad_1 = new TPad("pad_1","",0.0,0.28,1.0,1.0);
     if (yAxisLog_flag) subpad_1->SetLogy();
@@ -790,10 +870,14 @@ void distribution(const string pathToPlotDir = "",
   // else c->Update(); 
   // //hMCstack->SetMaximum(4000.0);
 
-  if (data0_noData1 == 1) {    //  when using data ( == 0) the x axis will not have labels (they will only be below in the ratio plot)
+  if (data0_noData1 == 1) {    
+    //  when using data ( == 0) the x axis will not have labels (they will only be below in the ratio plot)
     hMCstack->GetXaxis()->SetTitle(xAxisName.c_str());
-    hMCstack->GetXaxis()->SetTitleSize(0.06);
-    hMCstack->GetXaxis()->SetTitleOffset(0.6);
+    hMCstack->GetXaxis()->SetTitleSize(0.05);
+    hMCstack->GetXaxis()->SetTitleOffset(0.8);
+  }
+  if (signalRegion0_controlRegion1 == 0 && USE_SIGNAL_MC) {
+    hMCstack->GetXaxis()->SetTitle("");
   }
 
   Double_t stackXmax = 0.0; // will be used to save the maximum value of x Axis for MC stack
@@ -843,11 +927,25 @@ void distribution(const string pathToPlotDir = "",
   leg->SetBorderSize(0);
   //leg->SetFillStyle(0);  // transparent legend
 
-  if (data0_noData1 == 0) { // if using data, draw the ratio plot
+  if (data0_noData1 == 0 || (signalRegion0_controlRegion1 == 0 && USE_SIGNAL_MC)) { // if using data, draw the ratio plot
 
     subpad_2->cd();
     ratioplot = new TH1D(*stackCopy);  // to have ratioplot with the same x axis range as stack, I copy it from stackcopy created above, then I substitute bin content with hdata/stackcopy
-    ratioplot->Divide(hdata,stackCopy);
+    if (signalRegion0_controlRegion1 == 0 && USE_SIGNAL_MC) {
+      // get sqrt(B) that is to say the square root of the stack histogram
+      TH1D* hsqrtB = new TH1D(*stackCopy);
+      // for (Int_t i = 0; i <= hsqrtB->GetNbinsX(); i++) {
+      // 	// hsqrtB->SetBinContent(i,sqrt(stackCopy->GetBinContent(i)));
+      // 	// // x+/- Dx  --> y = sqrt(x) ===> dy = dy/dx * Dx = 0.5/sqrt(x) * DX = Dx/(2y)
+      // 	// hsqrtB->SetBinError(i,stackCopy->GetBinError(i)/(2. * hsqrtB->GetBinContent(i)));   
+      // }
+      ratioplot->Divide(hAllSignalMC,hsqrtB);
+      //ratioplot->GetYaxis()->SetTitle("S/#sqrt{B}");
+      ratioplot->GetYaxis()->SetTitle("S/B");
+    } else {
+      ratioplot->Divide(hdata,stackCopy);
+      ratioplot->GetYaxis()->SetTitle("data / MC");
+    }    
     ratioplot->SetStats(0);
     ratioplot->SetTitle("");
     ratioplot->GetXaxis()->SetLabelSize(0.10);
@@ -855,7 +953,6 @@ void distribution(const string pathToPlotDir = "",
     ratioplot->GetXaxis()->SetTitleSize(0.14);
     ratioplot->GetXaxis()->SetTitleOffset(0.8);
     ratioplot->GetYaxis()->SetLabelSize(0.10);
-    ratioplot->GetYaxis()->SetTitle("data / MC");
     ratioplot->GetYaxis()->SetTitleSize(0.15);
     ratioplot->GetYaxis()->SetTitleOffset(0.3);
     ratioplot->GetYaxis()->CenterTitle();
@@ -870,6 +967,19 @@ void distribution(const string pathToPlotDir = "",
       ratioplot->GetXaxis()->SetRangeUser(xAxisMin,ratioplotXmax); 
       //ratioplot->GetXaxis()->SetRangeUser(xAxisMin,stackXmax); //ok, it works
     }
+    if (signalRegion0_controlRegion1 == 0 && USE_SIGNAL_MC) {
+      //      ratioplot->GetYaxis()->SetRangeUser(0.9*ratioplot->GetMinimum(),1.1*ratioplot->GetMaximum());
+      //      cout << "checkpoint" << endl;
+      Double_t ratiomin = 999999.9;
+      Double_t ratiomax = -9999999.9;
+      for (Int_t i = 1; i <= ratioplot->GetNbinsX(); i++) {
+	if (ratioplot->GetBinContent(i) > ratiomax) ratiomax = ratioplot->GetBinContent(i);
+	if (ratioplot->GetBinContent(i) < ratiomin) ratiomin = ratioplot->GetBinContent(i);
+      }
+      if (ratiomin < 0.0) ratiomin = 0.0;
+      ratioplot->SetMinimum(0.9 * ratiomin);
+      ratioplot->SetMaximum(1.1 * ratiomax);
+    } 
     ratioplot->DrawCopy("E");
 
   }
@@ -1319,6 +1429,8 @@ Int_t main(int argc, char* argv[]) {
   // wen for W(enu) ...
   // all (with -cr) all control regions
 
+  Int_t logYaxis = 0;
+
   Bool_t makeTransferFactor_flag = false;  // enable making of tranfer factors between SR and CR. By default it is false, but it will be set to true if all regions are analyzed. However, one might want them even though only SR or CR have been analyzed.
   // If whichRegion == "ALL" after considering all options, then it is set to true.
   // If whichRegion != "ALL" after considering all options and a CR is analyzed, TF are not made, unless -tf option is passed. In this case, do only TF related to CR specified after -cr option.
@@ -1334,7 +1446,8 @@ Int_t main(int argc, char* argv[]) {
 
       if (thisArgument  == "-sr" ) whichRegion = "sig";
       else if (thisArgument  == "-cr") {
-	if ((i+1) >= argc) {
+	string crOpt = string(argv[i+1]);
+	if (crOpt != "zmm" && crOpt != "zee" && crOpt != "gam" && crOpt != "wmn" && crOpt != "wen") {
 	  cout << "ERROR: must specify which CR after -cr option. Choose among --> zmm, zee, gam, wmn, wen, all" << endl;
 	  cout << "ABORT" << endl;
 	  exit(EXIT_FAILURE);
@@ -1346,6 +1459,8 @@ Int_t main(int argc, char* argv[]) {
       else if (thisArgument  == "-dns") {
 	dirSuffix = argv[i+1];
 	i++;
+      } else if (thisArgument  == "-logy") {
+	logYaxis = 1;
       }
    
     }
@@ -1354,25 +1469,25 @@ Int_t main(int argc, char* argv[]) {
 
   if (whichRegion == "ALL") makeTransferFactor_flag = true;
 
-  Int_t logYaxis = 0;
-
   // signal region
   if (whichRegion == "ALL" || whichRegion == "sig") {
     dirName = "SignalRegion" + dirSuffix;
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"metBin",1,0,130,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"met",1,0,130,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"ht",1,0,100,1600,0,-1,0,0,6);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1pt",1,0,80,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1eta",0,0,0,-1,0,-1,0,2);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMass",1,0,1050,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1j2Deta",1,0,3.5,9.5,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"jmetDphi",1,0,2.25,-1,0.05,10e5,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j2pt",1,0,30,500,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"metBin",logYaxis,0,130,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"met",logYaxis,0,130,1000,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"ht",logYaxis,0,100,1250,10e-2,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1pt",logYaxis,0,60,1200,0,-1,0,0,5);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"njets",logYaxis,0,0.5,8.5,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMass",logYaxis,0,1050,5000,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"jmetDphi",logYaxis,0,2.25,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"jmetDphiAllJets",logYaxis,0,2.25,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j2pt",logYaxis,0,30,500,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
@@ -1380,24 +1495,26 @@ Int_t main(int argc, char* argv[]) {
   // Z->mumu control region
   if (whichRegion == "ALL" || whichRegion == "zmm") {
     dirName = "ControlRegion_zmumu" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"metBin",1,0,130,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"met",1,0,130,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1pt",1,0,80,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"metBin",logYaxis,0,130,1000,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"met",logYaxis,0,130,1000,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"ht",logYaxis,0,100,1700,10e-2,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1pt",logYaxis,0,60,1200,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0,5);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"njets",logYaxis,0,0.5,7.5,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"zpt",logYaxis,0,0,900,0,-1,0,0,8);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"invMass",logYaxis,0,0,-1,0,-1,0,0,5);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep1pt",logYaxis,0,0,800,0,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep2pt",logYaxis,0,0,500,0,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,1,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j2pt",logYaxis,0,30,500,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
@@ -1405,24 +1522,26 @@ Int_t main(int argc, char* argv[]) {
   // Z->ee control region
   if (whichRegion == "ALL" || whichRegion == "zee") {
     dirName = "ControlRegion_zee" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"zpt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"invMass",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep2pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"metBin",logYaxis,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"met",logYaxis,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"ht",logYaxis,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1pt",logYaxis,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"zpt",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"invMass",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep1pt",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep2pt",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,-1,1,1);
   }
@@ -1430,22 +1549,24 @@ Int_t main(int argc, char* argv[]) {
   // W->munu control region
   if (whichRegion == "ALL" || whichRegion == "wmn") {
     dirName = "ControlRegion_wmunu" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"metBin",logYaxis,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"met",logYaxis,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"ht",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1pt",logYaxis,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"Mt",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"lep1pt",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,1,j0v1,0,-1,0,-1,1,1);
   }
@@ -1453,22 +1574,24 @@ Int_t main(int argc, char* argv[]) {
   // W->enu control region
   if (whichRegion == "ALL" || whichRegion == "wen") {
     dirName = "ControlRegion_wenu" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"Mt",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"lep1pt",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"metBin",logYaxis,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"met",logYaxis,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"ht",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1pt",logYaxis,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"Mt",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"lep1pt",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,1,j0v1,0,-1,0,0.-1,1,1);
   }
@@ -1476,22 +1599,24 @@ Int_t main(int argc, char* argv[]) {
   // Gamma control region
   if (whichRegion == "ALL" || whichRegion == "gam") {  
     dirName = "ControlRegion_gamma" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"metBin",1,0,200,-1,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"met",1,0,200,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ht",1,0,0,-1,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1pt",1,0,100,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"nvtx",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"njets",1,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1pt",1,0,150,-1,0,-1,0,0,2);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1eta",0,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMass",1,0,1000,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1j2Deta",1,0,3.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphi",1,0,2.2,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j2pt",1,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"metBin",logYaxis,0,200,-1,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"met",logYaxis,0,200,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ht",logYaxis,0,0,-1,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1pt",logYaxis,0,100,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1pt",logYaxis,0,150,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1eta",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
     else {
-      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"prunedMass",0,0,0,-1,0,-1,0,0);
-      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"tau2OverTau1",0,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
+      distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
     }
     if (makeTransferFactor_flag) makeTransferFactor(pathToPlotDir,"SignalRegion"+dirSuffix,dirName,0,j0v1,0,-1,0,0.-1,0,1);
   }
@@ -1508,15 +1633,18 @@ Int_t main(int argc, char* argv[]) {
   // 			const Int_t rebinFactor = 1)
   // {
 
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zmumu",0,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zee",0,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wmunu",1,j0v1,0,-1,0,-1,1,1);
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wenu",1,j0v1,0,-1,0,0.-1,1,1);
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_gamma",0,j0v1,0,-1,0,0.-1,0,1);
-  // makeTransferFactor(pathToPlotDir,"SignalRegion","SignalRegion",0,j0v1,0,-1,0,-1,1,1);  
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zmumu",logYaxis,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_zee",logYaxis,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wmunu",logYaxis,j0v1,0,-1,0,-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_wenu",logYaxis,j0v1,0,-1,0,0.-1,1,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","ControlRegion_gamma",logYaxis,j0v1,0,-1,0,0.-1,0,1);
+  // makeTransferFactor(pathToPlotDir,"SignalRegion","SignalRegion",logYaxis,j0v1,0,-1,0,-1,1,1);  
 
   return 0;
 
 }
+
+
+
 
 
