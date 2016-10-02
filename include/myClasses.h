@@ -128,43 +128,43 @@ class selection {
   selection();
   selection(const char *selection_name, const char *definition, const std::string comment);
   selection(const char *selection_name, const char *definition);
-   ~selection();
-   /* void setName(const char* name) { name_ = name; } */
-   /* void setDefinition(const char* definition) { definition_ = definition; } */
-   void set(const char* name, const char* definition, const char* comment);
-   void set(const char* name, const char* definition);
-   void setComment(const char* comment) { comment_ = comment; }
-   void setFlagTrue() { flag_ = true; }
-   void setFlagFalse() { flag_ = false; }
-   std::string getName() const { return name_; }
-   std::string getDefinition() const {return definition_; }
-   Int_t getId() const { return id_; }
-   UInt_t get2ToId() const { return twoToId_; }
-   // other member functions
-   void print(std::ostream &, Bool_t) const;
-   void printAllInfo(std::ostream &) const;
-   Bool_t isPassed(Bool_t input);
-   UInt_t addToMask(Bool_t input) {return input ? (this->get2ToId()) : 0; }
-   Bool_t isActive() const { return flag_; }
+  ~selection();
+  /* void setName(const char* name) { name_ = name; } */
+  /* void setDefinition(const char* definition) { definition_ = definition; } */
+  void set(const char* name, const char* definition, const char* comment);
+  void set(const char* name, const char* definition);
+  void setComment(const char* comment) { comment_ = comment; }
+  void setFlagTrue() { flag_ = true; }
+  void setFlagFalse() { flag_ = false; }
+  std::string getName() const { return name_; }
+  std::string getDefinition() const {return definition_; }
+  Int_t getId() const { return id_; }
+  UInt_t get2ToId() const { return twoToId_; }
+  // other member functions
+  void print(std::ostream &, Bool_t) const;
+  void printAllInfo(std::ostream &) const;
+  Bool_t isPassed(Bool_t input);
+  UInt_t addToMask(Bool_t input) {return input ? (this->get2ToId()) : 0; }
+  Bool_t isActive() const { return flag_; }
 
-   static Int_t getNSelections() { return nSelections_; }
-   static std::vector<selection*> listOfSelections;
-   static void printSelectionFlow(std::ostream &, const mask *);
-   static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const Double_t, const UInt_t);
-   static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const mask *);
-   static void saveYieldsAndEfficiency(const Double_t, const mask *, std::vector<Double_t>&, std::vector<Double_t>&);
-   static void printActiveSelections(std::ostream &);
-   static void checkMaskLength();
+  static Int_t getNSelections() { return nSelections_; }
+  static std::vector<selection*> listOfSelections;
+  static void printSelectionFlow(std::ostream &, const mask *);
+  static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const Double_t, const UInt_t);
+  static void printSelectionFlowAndYields(std::ostream & myOutStream, const Double_t, const Double_t, const mask *);
+  static void saveYieldsAndEfficiency(const Double_t, const mask *, std::vector<Double_t>&, std::vector<Double_t>&);
+  static void printActiveSelections(std::ostream &);
+  static void checkMaskLength();
   
  private:
-   Bool_t flag_;
-   std::string name_;
-   std::string definition_;
-   std::string comment_;
-   Int_t id_;          //identifies selection in the mask (is 0 for the first selection, 1 for the second, 2 for the third ecc...)
-   UInt_t twoToId_;     // 2^id_; this number has all 0 digits except for the bit corresponding to the selection, which is set to 1.
-   static Int_t nSelections_; // total number of variables on which a selection is applied 
-   // a selection can consist of more than 1 cut e.g. for invariant mass, where we have an interval
+  Bool_t flag_;
+  std::string name_;
+  std::string definition_;
+  std::string comment_;
+  Int_t id_;          //identifies selection in the mask (is 0 for the first selection, 1 for the second, 2 for the third ecc...)
+  ULong64_t twoToId_;     // 2^id_; this number has all 0 digits except for the bit corresponding to the selection, which is set to 1.
+  static Int_t nSelections_; // total number of variables on which a selection is applied 
+  // a selection can consist of more than 1 cut e.g. for invariant mass, where we have an interval
 
 };
 

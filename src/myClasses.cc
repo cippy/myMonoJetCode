@@ -127,7 +127,7 @@ Int_t mask::whichStepHas(const selection* sel) const {
   Int_t size = this->getMaskSize();
   Int_t index = size;
   Int_t i = 0;
-  UInt_t a = sel->get2ToId();
+  ULong64_t a = sel->get2ToId();
 
   while( (index == size) && (i < size)) {
     if( (this->singleMask[i] & a) == a ) index = i;
@@ -337,8 +337,8 @@ void cut::printActiveCuts(ostream & myOutStream) {
 
 void cut::checkMaskLength() {
 
-  if (((UInt_t)cut::getNCuts()) > 8*sizeof(UInt_t)) {
-     cout<<"Warning: not enough bits in the mask to accomodate all "<<cut::getNCuts()<<" cuts (max is "<<8*sizeof(UInt_t)<<").\n End of programme."<<endl;
+  if (((UInt_t)cut::getNCuts()) > 8*sizeof(ULong64_t)) {
+     cout<<"Warning: not enough bits in the mask to accomodate all "<<cut::getNCuts()<<" cuts (max is "<<8*sizeof(ULong64_t)<<").\n End of programme."<<endl;
      exit(EXIT_FAILURE);
    }
 
@@ -353,7 +353,7 @@ cut::cut(const char *cut_name, const char *var_name, const char *condition, cons
   thr2_ = 0.;
   comment_ = comment;
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -367,7 +367,7 @@ cut::cut(const char *cut_name, const char *var_name, const char *condition, cons
   thr2_ =  0.;
   comment_ = "";
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -381,7 +381,7 @@ cut::cut(const char *cut_name, const char *var_name, const char *condition) {
   thr2_ = 0.;
   comment_ = "";
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -395,7 +395,7 @@ cut::cut(const char *cut_name, const char *var_name) {
   thr2_ =  0.;
   comment_ = "";
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -409,7 +409,7 @@ cut::cut(const char *cut_name, const char *var_name, const char *condition, cons
   thr2_ = (threshold >= thr2) ? threshold : thr2;
   comment_ = comment;
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -423,7 +423,7 @@ cut::cut(const char *cut_name, const char *var_name, const char *condition, cons
   thr2_ = (threshold >= thr2) ? threshold : thr2;
   comment_ = "";
   id_ = nCuts_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nCuts_++;
   listOfCuts.push_back(this);
 }
@@ -503,8 +503,8 @@ Bool_t cut::isPassed(Double_t input) {
 
 
 //static data members
- Int_t selection::nSelections_ = 0;
- vector<selection*> selection::listOfSelections; 
+Int_t selection::nSelections_ = 0;
+vector<selection*> selection::listOfSelections; 
 
 void selection::printSelectionFlow(ostream & myOutStream, const mask *m) {
 
@@ -629,8 +629,8 @@ void selection::printActiveSelections(ostream & myOutStream) {
 
 void selection::checkMaskLength() {
 
-  if ( (UInt_t) selection::getNSelections() > 8*sizeof(UInt_t)) {
-    cout<<"Warning: not enough bits in the mask to accomodate all "<<selection::getNSelections()<<" selections (max is "<<8*sizeof(UInt_t)<<")"<<endl;
+  if ( (UInt_t) selection::getNSelections() > 8*sizeof(ULong64_t)) {
+    cout<<"Warning: not enough bits in the mask to accomodate all "<<selection::getNSelections()<<" selections (max is "<<8*sizeof(ULong64_t)<<")"<<endl;
     cout<<"End of programme."<<endl;
     exit(EXIT_FAILURE);
   }
@@ -644,7 +644,7 @@ selection::selection() {
   definition_ = "";
   comment_ = "";
   id_ = nSelections_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nSelections_++;
   listOfSelections.push_back(this);
 
@@ -657,7 +657,7 @@ selection::selection(const char *selection_name, const char *definition, const s
   definition_ = definition;
   comment_ = comment;
   id_ = nSelections_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nSelections_++;
   listOfSelections.push_back(this);
 
@@ -672,7 +672,7 @@ selection::selection(const char *selection_name, const char *definition) {
   definition_ = definition;
   comment_ = "";
   id_ = nSelections_;
-  twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   nSelections_++;
   listOfSelections.push_back(this);
 
@@ -692,7 +692,7 @@ void selection::set(const char* name, const char* definition, const char* commen
   definition_ = definition;
   comment_ = comment;
   // id_ = nSelections_;
-  // twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  // twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   // nSelections_++;
   // listOfSelections.push_back(this);
  
@@ -706,7 +706,7 @@ void selection::set(const char* name, const char* definition) {
   name_ = name;
   definition_ = definition;
   // id_ = nSelections_;
-  // twoToId_ = (UInt_t) TMath::Power(2.,id_);
+  // twoToId_ = (ULong64_t) TMath::Power(2.,id_);
   // nSelections_++;
   // listOfSelections.push_back(this);
 
