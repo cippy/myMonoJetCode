@@ -1477,8 +1477,8 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"ht",logYaxis,0,100,1250,10e-2,-1,0,0,4);
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1pt",logYaxis,0,60,1200,0,-1,0,0,5);
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"njets",logYaxis,0,0.5,8.5,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMass",logYaxis,0,1050,5000,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
     distribution(pathToPlotDir,dirName,0,0,0,1,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
@@ -1495,23 +1495,23 @@ Int_t main(int argc, char* argv[]) {
   // Z->mumu control region
   if (whichRegion == "ALL" || whichRegion == "zmm") {
     dirName = "ControlRegion_zmumu" + dirSuffix;
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"metBin",logYaxis,0,130,1000,0,-1,1,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"met",logYaxis,0,130,1000,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"ht",logYaxis,0,100,1700,10e-2,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"metBin",logYaxis,0,130,1200,0,-1,1,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"met",logYaxis,0,130,1200,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"ht",logYaxis,0,100,2500,10e-2,-1,0,0,6);
     distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1pt",logYaxis,0,60,1200,0,-1,0,0,4);
     distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0,5);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"njets",logYaxis,0,0.5,7.5,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"zpt",logYaxis,0,0,900,0,-1,0,0,8);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"njets",logYaxis,0,0.5,9.5,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"zpt",logYaxis,0,0,1000,0,-1,0,0,8);
     distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"invMass",logYaxis,0,0,-1,0,-1,0,0,5);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep1pt",logYaxis,0,0,800,0,-1,0,0,6);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep2pt",logYaxis,0,0,500,0,-1,0,0,6);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep1pt",logYaxis,0,0,900,0,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"lep2pt",logYaxis,0,0,600,0,-1,0,0,6);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMass",logYaxis,0,1050,4500,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
-    distribution(pathToPlotDir,dirName,1,0,0,1,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
-    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j2pt",logYaxis,0,30,500,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1000.0,0,-1,0,0,2);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphi",logYaxis,0,0.45,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.45,-1,0,-1,0,0);
+    if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"j2pt",logYaxis,0,30,600,0,-1,0,0,2);
     else {
       distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"prunedMass",logYaxis,0,0,-1,0,-1,0,0);
       distribution(pathToPlotDir,dirName,1,0,0,0,j0v1,"tau2OverTau1",logYaxis,0,0,-1,0,-1,0,0);
@@ -1527,7 +1527,7 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"ht",logYaxis,0,0,-1,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1pt",logYaxis,0,100,-1,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1eta",logYaxis,0,0,-1,0,-1,0,0);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"nvtx",logYaxis,0,0,-1,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"njets",logYaxis,0,0,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"zpt",logYaxis,0,0,-1,0,-1,0,0,4);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"invMass",logYaxis,0,0,-1,0,-1,0,0);
@@ -1535,7 +1535,7 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"lep2pt",logYaxis,0,0,-1,0,-1,0,0,4);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
     if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,0,1,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
@@ -1560,7 +1560,7 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"lep1pt",logYaxis,0,0,-1,0,-1,0,0,4);
     distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
     if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,0,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
@@ -1585,7 +1585,7 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"lep1pt",logYaxis,0,0,-1,0,-1,0,0,4);
     distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
     if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,1,1,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
@@ -1610,7 +1610,7 @@ Int_t main(int argc, char* argv[]) {
     distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"ph1eta",logYaxis,0,0,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMass",logYaxis,0,550,4500,0,-1,0,0,10);
     distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j1j2Deta",logYaxis,0,3.5,9.5,0,-1,0,0,3);
-    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,1500.0,0,-1,0,0,4);
+    distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"vbfJetsMt",logYaxis,0,0.0,700.0,0,-1,0,0,2);
     distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphi",logYaxis,0,0.5,-1,0,-1,0,0);
     distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"jmetDphiAllJets",logYaxis,0,0.5,-1,0,-1,0,0);
     if (j0v1 != 1) distribution(pathToPlotDir,dirName,1,2,0,0,j0v1,"j2pt",logYaxis,0,0,-1,0,-1,0,0,2);
