@@ -203,7 +203,6 @@ void monojetAna::createSystematicsHistogram() {
   hptr.push_back(HSyst_ewk_monoV);
 
   HSyst_total_monoV->Multiply(HSyst_total_monoV);  // before adding anything we must get the square of this histogram, because we will add histograms in quadrature    
-
   for (UInt_t i = 0; i < hptr.size(); i++) {
     Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
     HSyst_total_monoV->Add(Htmp);             // adding the squares
@@ -222,7 +221,7 @@ void monojetAna::createSystematicsHistogram() {
 //===============================================
 
 
-void monojetAna::fillEventMask(UInt_t & eventMask) {
+void monojetAna::fillEventMask(ULong64_t & eventMask) {
 
   AnalysisDarkMatter::fillEventMask(eventMask);  
 

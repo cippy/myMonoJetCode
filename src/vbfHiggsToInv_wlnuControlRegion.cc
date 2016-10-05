@@ -132,10 +132,11 @@ void vbfHiggsToInv_wlnuControlRegion::setMask() {
   if (fabs(LEP_PDG_ID) == 11) analysisMask.append(metC.get2ToId());
   analysisMask.append(transverseMassC.get2ToId());
   analysisMask.append(vbfTaggedJets_jetsPtC.get2ToId());
+  analysisMask.append(jetNoiseCleaningC.get2ToId());
   analysisMask.append(vbfTaggedJets_inVMassC.get2ToId());
   analysisMask.append(vbfTaggedJets_deltaEtaC.get2ToId());
   analysisMask.append(jetMetDphiMinC.get2ToId());
-   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+  if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
   
   analysisSelectionManager.SetMaskPointer(&analysisMask);
 
@@ -150,6 +151,7 @@ void vbfHiggsToInv_wlnuControlRegion::setMask() {
    if (fabs(LEP_PDG_ID) == 11) analysisSelectionManager.append(&metC);
    analysisSelectionManager.append(&transverseMassC);
    analysisSelectionManager.append(&vbfTaggedJets_jetsPtC);
+   analysisSelectionManager.append(&jetNoiseCleaningC);  
    analysisSelectionManager.append(&vbfTaggedJets_inVMassC);
    analysisSelectionManager.append(&vbfTaggedJets_deltaEtaC);
    analysisSelectionManager.append(&jetMetDphiMinC);
@@ -372,7 +374,7 @@ void vbfHiggsToInv_wlnuControlRegion::createSystematicsHistogram() {
 
 //===============================================
 
-void vbfHiggsToInv_wlnuControlRegion::fillEventMask(UInt_t & eventMask) {
+void vbfHiggsToInv_wlnuControlRegion::fillEventMask(ULong64_t & eventMask) {
 
   vbfHiggsToInv_LeptonControlRegion::fillEventMask(eventMask);
 
@@ -418,7 +420,7 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
    fChain->SetBranchStatus("nTauClean18V",1);
 
    fChain->SetBranchStatus("dphijj",1);          // dphi between 1st and 2nd jet, 999 if second jet doesn't exist
-   fChain->SetBranchStatus("nJetClean30",1);    // # of jet with pt > 30 & eta < 2.5 and cleaning for against muons misidentified as PFjets   
+   fChain->SetBranchStatus("nJetClean",1);    // # of jet with pt > 30 & eta < 4.7 and cleaning for against muons misidentified as PFjets   
    fChain->SetBranchStatus("JetClean_pt",1);  
    fChain->SetBranchStatus("JetClean_eta",1); 
 
@@ -468,6 +470,12 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
    // fChain->SetBranchStatus("hbheFilterNew25ns",1);
    // fChain->SetBranchStatus("hbheFilterIso",1);
    // fChain->SetBranchStatus("Flag_eeBadScFilter",1);
+   fChain->SetBranchStatus("Flag_EcalDeadCellTriggerPrimitiveFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseIsoFilter",1);
+   fChain->SetBranchStatus("Flag_goodVertices",1);
+   fChain->SetBranchStatus("Flag_eeBadScFilter",1);
+   fChain->SetBranchStatus("Flag_globalTightHalo2016Filter",1);
 
    //added on November 2015. These are new variables (except for weight, which has just changed in the definition)
    fChain->SetBranchStatus("nBTag15",1);  // for b-jet veto
@@ -649,7 +657,7 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
 
      if (jentry%500000 == 0) cout << jentry << endl;
 
-     UInt_t eventMask = 0; 
+     ULong64_t eventMask = 0; 
 
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
@@ -731,27 +739,6 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
 
      fillEventMask(eventMask); 
      
-     // eventMask += HLTC.addToMask(HLT_passed_flag); 
-     // eventMask += jet1C.addToMask(nJetClean30 >= 1 && JetClean_pt[0] > J1PT /*&& fabs(JetClean_eta[0]) < J1ETA*/);
-     // eventMask += jetMetDphiMinC.addToMask(fabs(dphijm > JMET_DPHI_MIN));
-     // eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
-     // eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
-     // eventMask += lepLooseVetoC.addToMask(nLep10V < 0.5);
-     // eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-     // eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);     
-     // eventMask += metC.addToMask(met_pt > 50);    
-     // eventMask += recoilC.addToMask(metNoLepPt > METNOLEP_START);
-     // eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);  
-     // eventMask += VtagC.addToMask(Vtagged_flag);
-     // eventMask += noVtagC.addToMask(!Vtagged_flag);
-     // eventMask += oneLepLooseC.addToMask(nLepLoose > 0.5 && nLepLoose < 1.5);
-     // if (fabs(LEP_PDG_ID) == 11) eventMask += tightLepC.addToMask(nLepTight < 1.5 && nLepTight > 0.5 && ptr_lepton_pt[0] > LEP1PT && fabs(LepGood_pdgId[0]) == 11);
-     // else eventMask += tightLepC.addToMask(nLepTight > 0.5 && nLepTight < 1.5);
-     // eventMask += ak8jet1C.addToMask((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4));
-     // eventMask += ak8Tau2OverTau1C.addToMask(((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6));
-     // eventMask += ak8prunedMassC.addToMask((FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.));
-     // eventMask += harderRecoilC.addToMask(metNoLepPt > 250.);
-
      // end of eventMask building
 
      // test matching of reco and gen lep for DY MC 
@@ -789,21 +776,20 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
 	 HtransverseMass->Fill(mT,newwgt);
 	 HrecoilDistribution->Fill(metNoLepPt,newwgt);
 	 HvtxDistribution->Fill(nVert,newwgt);
-	 HnjetsDistribution->Fill(nJetClean30,newwgt);
-	 Hjet1etaDistribution->Fill(vbfTaggedJet_leadJetEta,newwgt);
-	 Hjet1ptDistribution->Fill(vbfTaggedJet_leadJetPt,newwgt);
-	 Hjet2etaDistribution->Fill(vbfTaggedJet_trailJetEta,newwgt);
-	 Hjet2ptDistribution->Fill(vbfTaggedJet_trailJetPt,newwgt);
-	 HvbfTaggedJets_deltaEta->Fill(vbfTaggedJet_deltaEta);
-	 HvbfTaggedJets_invMass->Fill(vbfTaggedJet_invMass);
-	 HjetMetDphiMinDistribution->Fill(dphijmAllJets,newwgt);
-	 Hlep1ptDistribution->Fill(ptr_lepton_pt[0],newwgt);
+	 HnjetsDistribution->Fill(nJetClean,newwgt);
+	 Hjet1etaDistribution->Fill(JetClean_eta[0],newwgt);
+	 Hjet1ptDistribution->Fill(JetClean_pt[0],newwgt);
+	 HjetMetDphiMinDistribution->Fill(dphijm,newwgt);
+	 HjetMetDphiMinAllJets->Fill(dphijmAllJets,newwgt);
+	 Hjet2etaDistribution->Fill(JetClean_eta[1],newwgt);
+	 Hjet2ptDistribution->Fill(JetClean_pt[1],newwgt);
+	 HvbfTaggedJets_mT->Fill(vbfJetsMT(),newwgt);
+	 HvbfTaggedJets_deltaEta->Fill(fabs(JetClean_eta[0]-JetClean_eta[1]),newwgt);
+	 HvbfTaggedJets_invMass->Fill(vbfJetsInvMass(),newwgt);
+	 if (nJetClean > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
+
+  	 Hlep1ptDistribution->Fill(ptr_lepton_pt[0],newwgt);
 	 Hlep1etaDistribution->Fill(ptr_lepton_eta[0],newwgt);
-	 if (nJetClean30 >= 2) {
-	   Hj1j2dphiDistribution->Fill(dphijj,newwgt);
-	   Hjet2etaDistribution->Fill(JetClean_eta[1],newwgt);
-	   Hjet2ptDistribution->Fill(JetClean_pt[1],newwgt);
-	 }
 
 	 if (hasScaledHistograms_flag) {
 

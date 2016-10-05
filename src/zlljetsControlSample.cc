@@ -435,7 +435,7 @@ void zlljetsControlSample::createSystematicsHistogram() {
 
 //===============================================                                                                                                                       
 
-void zlljetsControlSample::fillEventMask(UInt_t & eventMask) {
+void zlljetsControlSample::fillEventMask(ULong64_t & eventMask) {
 
   monojet_LeptonControlRegion::fillEventMask(eventMask);
 
@@ -716,7 +716,7 @@ void zlljetsControlSample::loop(vector< Double_t > &yRow, vector< Double_t > &eR
 
      if (jentry%500000 == 0) cout << jentry << endl;
 
-     UInt_t eventMask = 0; 
+     ULong64_t eventMask = 0; 
 
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights

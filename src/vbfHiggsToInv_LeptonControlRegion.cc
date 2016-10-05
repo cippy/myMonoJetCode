@@ -187,7 +187,7 @@ void vbfHiggsToInv_LeptonControlRegion::createSystematicsHistogram() {
 
 //===============================================                                                                                                                       
 
-void vbfHiggsToInv_LeptonControlRegion::fillEventMask(UInt_t & eventMask) {
+void vbfHiggsToInv_LeptonControlRegion::fillEventMask(ULong64_t & eventMask) {
 
   vbfHiggsToInvAna::fillEventMask(eventMask);
 

@@ -239,7 +239,7 @@ Double_t monojet_SignalRegion::computeEventWeight() {
 //===============================================                                                                                                                       
 
 
-void monojet_SignalRegion::fillEventMask(UInt_t & eventMask) {
+void monojet_SignalRegion::fillEventMask(ULong64_t & eventMask) {
 
   monojetAna::fillEventMask(eventMask);
 
@@ -433,7 +433,7 @@ void monojet_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t > &eR
      nb = fChain->GetEntry(jentry);   nbytes += nb;
      // if (Cut(ientry) < 0) continue;   
 
-     UInt_t eventMask = 0; 
+     ULong64_t eventMask = 0; 
 
      if (jentry%500000 == 0) {
        cout << "entry: " << jentry << endl;

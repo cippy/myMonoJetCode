@@ -60,6 +60,7 @@ AnalysisDarkMatter::AnalysisDarkMatter(TTree *tree) : edimarcoTree_v7(tree) {
 
   // initialize some variables with sensible values. They will be set later depending on config file
   LUMI = 1.0;
+  B_VETO_FLAG = 1;
   TAU_VETO_FLAG = 1;
   HLT_FLAG = 0;                  // usage depends on specific analysis
   JMET_DPHI_MIN = 0.5;
@@ -132,6 +133,7 @@ void AnalysisDarkMatter::setNumberParameterValue(const string parameterName, con
 
   if (parameterName == "LUMI") LUMI = value;
   //else if (parameterName == "NJETS") NJETS = (value < 0) ? (-0.5 + value) : (0.5 + value);
+  else if (parameterName == "B_VETO_FLAG") B_VETO_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "TAU_VETO_FLAG") TAU_VETO_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "HLT_FLAG") HLT_FLAG = (value < 0) ? (-0.5 + value) : (0.5 + value);
   else if (parameterName == "METNOLEP_START") METNOLEP_START = value;
@@ -308,11 +310,15 @@ void AnalysisDarkMatter::setVarFromConfigFile() {
 
 void AnalysisDarkMatter::setSelections() {
 
-  if (MET_FILTERS_FLAG != 0) metFiltersC.set("met filters","met filters","cscfilter, ecalfilter, hbheFilterNeww25ns, hbheFilterIso, Flag_eeBadScFilter");
-  bjetVetoC.set("bjet veto","b-jets veto");
+
+  //cout << "CHECK ANALYSISDARKMATTER"<< endl;
+  if (B_VETO_FLAG != 0) bjetVetoC.set("bjet veto","b-jets veto");
+  //cout << "CHECK ANALYSISDARKMATTER 2"<< endl;
   if (HLT_FLAG != 0) HLTC.set("trigger","trigger");
+  //cout << "CHECK ANALYSISDARKMATTER 3"<< endl;
   if (TAU_VETO_FLAG) tauLooseVetoC.set("tau veto","tau veto");
-  
+  //cout << "CHECK ANALYSISDARKMATTER 4"<< endl;
+
   selection::checkMaskLength();
 
 }
@@ -325,16 +331,16 @@ void AnalysisDarkMatter::setHistograms() {
   // histograms for monojet (exclusive, but I don't rename them as *_monoJ)
 
   HYieldsMetBin = new TH1D("HYieldsMetBin","yields in bins of met; #slash{E}_{T};# of events",nMetBins,metBinEdgesVector.data());
-  HhtDistribution = new TH1D("HhtDistribution","",200,0.0,2000.0);
+  HhtDistribution = new TH1D("HhtDistribution","",400,0.0,4000.0);
   HvtxDistribution = new TH1D("HvtxDistribution","",40,-0.5,39.5);   
   HnjetsDistribution = new TH1D("HnjetsDistribution","njets using nJetClean30",10,-0.5,9.5);   
-  Hj1j2dphiDistribution = new TH1D("Hj1j2dphiDistribution","",30,0.0,3.0);
+  Hj1j2dphiDistribution = new TH1D("Hj1j2dphiDistribution","",32,0.0,3.2);
   HjetMetDphiMinDistribution = new TH1D("HjetMetDphiMinDistribution","",32,0.0,3.2);
-  Hjet1etaDistribution = new TH1D("Hjet1etaDistribution","",60,-3.0,3.0);
-  Hjet2etaDistribution = new TH1D("Hjet2etaDistribution","",60,-3.0,3.0);
-  HrecoilDistribution = new TH1D("HrecoilDistribution","",100,0.0,1000.0);
-  Hjet1ptDistribution = new TH1D("Hjet1ptDistribution","",100,0.0,1000.0); 
-  Hjet2ptDistribution = new TH1D("Hjet2ptDistribution","",100,0.0,1000.0);
+  Hjet1etaDistribution = new TH1D("Hjet1etaDistribution","",100,-5.0,5.0);
+  Hjet2etaDistribution = new TH1D("Hjet2etaDistribution","",100,-5.0,5.0);
+  HrecoilDistribution = new TH1D("HrecoilDistribution","",100,0.0,1500.0);
+  Hjet1ptDistribution = new TH1D("Hjet1ptDistribution","",100,0.0,1500.0); 
+  Hjet2ptDistribution = new TH1D("Hjet2ptDistribution","",100,0.0,1500.0);
 
   // saving histograms with bin edges of other histograms used (e.g. content of metBinEdges array ...)
   HmetBinEdges = new TH1D("HmetBinEdges","bin edges for met distributions",nMetBins+1,0.0,nMetBins+1);
@@ -473,17 +479,23 @@ void AnalysisDarkMatter::fillRowVector(const Double_t nTotalWeightedEvents, cons
 //===============================================
 
 
-void AnalysisDarkMatter::fillEventMask(UInt_t & eventMask) {
+void AnalysisDarkMatter::fillEventMask(ULong64_t & eventMask) {
 
-  eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
-  if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);
-  if (MET_FILTERS_FLAG != 0) eventMask += metFiltersC.addToMask(cscfilter == 1 && ecalfilter == 1 && hbheFilterNew25ns == 1 && hbheFilterIso == 1 && Flag_eeBadScFilter > 0.5);
-  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm) > JMET_DPHI_MIN);
-  
+  if (B_VETO_FLAG) eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
+  if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);  
   
 }
 
 //===============================================
+
+// void AnalysisDarkMatter::fillEventMask(UInt_t & eventMask) {
+
+//   if (B_VETO_FLAG) eventMask += bjetVetoC.addToMask(nBTag15 < 0.5);
+//   if (TAU_VETO_FLAG) eventMask += tauLooseVetoC.addToMask(nTauClean18V < 0.5);  
+  
+// }
+
+// //===============================================
 
 
 #endif

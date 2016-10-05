@@ -192,7 +192,7 @@ void monojet_LeptonControlRegion::createSystematicsHistogram() {
 
 //===============================================                                                                                                                       
 
-void monojet_LeptonControlRegion::fillEventMask(UInt_t & eventMask) {
+void monojet_LeptonControlRegion::fillEventMask(ULong64_t & eventMask) {
 
   monojetAna::fillEventMask(eventMask);
 

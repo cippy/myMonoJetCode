@@ -92,15 +92,55 @@ void vbfHiggsToInv_zllControlRegion::setSelections() {
 
 void vbfHiggsToInv_zllControlRegion::setMask() {
 
-  analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
+  // analysisMask.setName(Form("%s control sample (inclusive)",CONTROL_SAMPLE));
 
-  if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
-    if (using_zlljets_MCsample_flag ) {
-      analysisMask.append(genLepC.get2ToId());
-      analysisMask.append(recoGenLepMatchC.get2ToId());
-    }
-    else if (using_ztautaujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());    
-  }
+  // if (!ISDATA_FLAG && (GENLEP_TAG != 0)) {     
+  //   if (using_zlljets_MCsample_flag ) {
+  //     analysisMask.append(genLepC.get2ToId());
+  //     analysisMask.append(recoGenLepMatchC.get2ToId());
+  //   }
+  //   else if (using_ztautaujets_MCsample_flag) analysisMask.append(genTauC.get2ToId());    
+  // }
+  // if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
+  // if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
+  // analysisMask.append(twoLepLooseC.get2ToId());
+  // analysisMask.append(tightLepC.get2ToId());
+  // analysisMask.append(oppChargeLeptonsC.get2ToId());     
+  // analysisMask.append(invMassC.get2ToId());
+  // analysisMask.append(lepLooseVetoC.get2ToId());
+  // analysisMask.append(gammaLooseVetoC.get2ToId());
+  // if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
+  // if (B_VETO_FLAG) analysisMask.append(bjetVetoC.get2ToId());
+  // analysisMask.append(vbfTaggedJets_jetsPtC.get2ToId());
+  // analysisMask.append(jetNoiseCleaningC.get2ToId());
+  // analysisMask.append(vbfTaggedJets_inVMassC.get2ToId());
+  // analysisMask.append(vbfTaggedJets_deltaEtaC.get2ToId());
+  // analysisMask.append(jetMetDphiMinC.get2ToId());
+  // if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
+   
+  // analysisSelectionManager.SetMaskPointer(&analysisMask);
+
+  // if ( HLT_FLAG != 0 ) analysisSelectionManager.append(&HLTC);
+  // if (MET_FILTERS_FLAG != 0) analysisSelectionManager.append(&metFiltersC);
+  // analysisSelectionManager.append(&twoLepLooseC);
+  // analysisSelectionManager.append(&tightLepC);
+  // analysisSelectionManager.append(&oppChargeLeptonsC);  
+  // analysisSelectionManager.append(&invMassC);
+  // analysisSelectionManager.append(&lepLooseVetoC);
+  // analysisSelectionManager.append(&gammaLooseVetoC);
+  // if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
+  // if (B_VETO_FLAG) analysisSelectionManager.append(&bjetVetoC);
+  // analysisSelectionManager.append(&vbfTaggedJets_jetsPtC);
+  // analysisSelectionManager.append(&jetNoiseCleaningC);
+  // analysisSelectionManager.append(&vbfTaggedJets_inVMassC);
+  // analysisSelectionManager.append(&vbfTaggedJets_deltaEtaC);
+  // analysisSelectionManager.append(&jetMetDphiMinC);
+  // if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
+
+  // ===================================================
+
+  analysisMask.setName(Form("%s control sample (no VBF selections)",CONTROL_SAMPLE));
+
   if ( HLT_FLAG != 0 ) analysisMask.append(HLTC.get2ToId());
   if (MET_FILTERS_FLAG != 0) analysisMask.append(metFiltersC.get2ToId());
   analysisMask.append(twoLepLooseC.get2ToId());
@@ -111,10 +151,6 @@ void vbfHiggsToInv_zllControlRegion::setMask() {
   analysisMask.append(gammaLooseVetoC.get2ToId());
   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
   if (B_VETO_FLAG) analysisMask.append(bjetVetoC.get2ToId());
-  analysisMask.append(vbfTaggedJets_jetsPtC.get2ToId());
-  analysisMask.append(vbfTaggedJets_inVMassC.get2ToId());
-  analysisMask.append(vbfTaggedJets_deltaEtaC.get2ToId());
-  analysisMask.append(jetMetDphiMinC.get2ToId());
   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());
    
   analysisSelectionManager.SetMaskPointer(&analysisMask);
@@ -129,14 +165,41 @@ void vbfHiggsToInv_zllControlRegion::setMask() {
   analysisSelectionManager.append(&gammaLooseVetoC);
   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
   if (B_VETO_FLAG) analysisSelectionManager.append(&bjetVetoC);
-  analysisSelectionManager.append(&vbfTaggedJets_jetsPtC);
-  analysisSelectionManager.append(&vbfTaggedJets_inVMassC);
-  analysisSelectionManager.append(&vbfTaggedJets_deltaEtaC);
-  analysisSelectionManager.append(&jetMetDphiMinC);
   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC);
-   
+
+
+  // analysisMask_preSel.setName(Form("%s control sample (no VBF selections)",CONTROL_SAMPLE));
+
+  // if ( HLT_FLAG != 0 ) analysisMask_preSel.append(HLTC.get2ToId());
+  // if (MET_FILTERS_FLAG != 0) analysisMask_preSel.append(metFiltersC.get2ToId());
+  // analysisMask_preSel.append(twoLepLooseC.get2ToId());
+  // analysisMask_preSel.append(tightLepC.get2ToId());
+  // analysisMask_preSel.append(oppChargeLeptonsC.get2ToId());     
+  // analysisMask_preSel.append(invMassC.get2ToId());
+  // analysisMask_preSel.append(lepLooseVetoC.get2ToId());
+  // analysisMask_preSel.append(gammaLooseVetoC.get2ToId());
+  // if (TAU_VETO_FLAG) analysisMask_preSel.append(tauLooseVetoC.get2ToId());
+  // if (B_VETO_FLAG) analysisMask_preSel.append(bjetVetoC.get2ToId());
+
+  // analysisSelectionManager_preSel.SetMaskPointer(&analysisMask_preSel);
+
+  // if ( HLT_FLAG != 0 ) analysisSelectionManager_preSel.append(&HLTC);
+  // if (MET_FILTERS_FLAG != 0) analysisSelectionManager_preSel.append(&metFiltersC);
+  // analysisSelectionManager_preSel.append(&twoLepLooseC);
+  // analysisSelectionManager_preSel.append(&tightLepC);
+  // analysisSelectionManager_preSel.append(&oppChargeLeptonsC);  
+  // analysisSelectionManager_preSel.append(&invMassC);
+  // analysisSelectionManager_preSel.append(&lepLooseVetoC);
+  // analysisSelectionManager_preSel.append(&gammaLooseVetoC);
+  // if (TAU_VETO_FLAG) analysisSelectionManager_preSel.append(&tauLooseVetoC);
+  // if (B_VETO_FLAG) analysisSelectionManager_preSel.append(&bjetVetoC);
+
+  // ======================================================
+
+
   // creating collection of pointers to mask used in the analysis                                                                                                      
   anaMasksPtrCollection.push_back(&analysisMask);
+  //  anaMasksPtrCollection.push_back(&analysisMask_preSel);
 
 
 }
@@ -315,7 +378,7 @@ void vbfHiggsToInv_zllControlRegion::createSystematicsHistogram() {
 
 //===============================================                                                                                                                       
 
-void vbfHiggsToInv_zllControlRegion::fillEventMask(UInt_t & eventMask) {
+void vbfHiggsToInv_zllControlRegion::fillEventMask(ULong64_t & eventMask) {
 
   vbfHiggsToInv_LeptonControlRegion::fillEventMask(eventMask);
 
@@ -360,7 +423,7 @@ void vbfHiggsToInv_zllControlRegion::loop(vector< Double_t > &yRow, vector< Doub
    fChain->SetBranchStatus("nTauClean18V",1);
 
    fChain->SetBranchStatus("dphijj",1);          // dphi between 1st and 2nd jet, 999 if second jet doesn't exist
-   fChain->SetBranchStatus("nJetClean30",1);    // # of jet with pt > 30 & eta < 2.5 and cleaning for against muons misidentified as PFjets   
+   fChain->SetBranchStatus("nJetClean",1);    // # of jet with pt > 30 & eta < 4.7 and cleaning for against muons misidentified as PFjets   
    fChain->SetBranchStatus("JetClean_pt",1);  
    fChain->SetBranchStatus("JetClean_eta",1); 
 
@@ -411,6 +474,12 @@ void vbfHiggsToInv_zllControlRegion::loop(vector< Double_t > &yRow, vector< Doub
    // fChain->SetBranchStatus("hbheFilterNew25ns",1);
    // fChain->SetBranchStatus("hbheFilterIso",1);
    // fChain->SetBranchStatus("Flag_eeBadScFilter",1);
+   fChain->SetBranchStatus("Flag_EcalDeadCellTriggerPrimitiveFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseIsoFilter",1);
+   fChain->SetBranchStatus("Flag_goodVertices",1);
+   fChain->SetBranchStatus("Flag_eeBadScFilter",1);
+   fChain->SetBranchStatus("Flag_globalTightHalo2016Filter",1);
 
    //added on November 2015. These are new variables (except for weight, which has just changed in the definition)
    fChain->SetBranchStatus("nBTag15",1);  // for b-jet veto
@@ -563,7 +632,7 @@ void vbfHiggsToInv_zllControlRegion::loop(vector< Double_t > &yRow, vector< Doub
 
      if (jentry%500000 == 0) cout << jentry << endl;
 
-     UInt_t eventMask = 0; 
+     ULong64_t eventMask = 0; 
 
      //cout << "CHECK -2 in zll"<< endl;
 
@@ -714,23 +783,26 @@ void vbfHiggsToInv_zllControlRegion::loop(vector< Double_t > &yRow, vector< Doub
        HYieldsMetBin->Fill(metNoLepPt,newwgt);
 	 
        HhtDistribution->Fill(htJet25,newwgt);
-       HinvMass->Fill(mZ1,newwgt);
        HrecoilDistribution->Fill(metNoLepPt,newwgt);
-       HzptDistribution->Fill(ZtoLLRecoPt,newwgt);
        HvtxDistribution->Fill(nVert,newwgt);
-       HnjetsDistribution->Fill(nJetClean30,newwgt);
-       HjetMetDphiMinDistribution->Fill(dphijmAllJets,newwgt);
+       HnjetsDistribution->Fill(nJetClean,newwgt);
+       HjetMetDphiMinDistribution->Fill(dphijm,newwgt);
+       HjetMetDphiMinAllJets->Fill(dphijmAllJets,newwgt);
+       Hjet1etaDistribution->Fill(JetClean_eta[0],newwgt);
+       Hjet1ptDistribution->Fill(JetClean_pt[0],newwgt);
+       Hjet2etaDistribution->Fill(JetClean_eta[1],newwgt);
+       Hjet2ptDistribution->Fill(JetClean_pt[1],newwgt);
+       HvbfTaggedJets_mT->Fill(vbfJetsMT(),newwgt);
+       HvbfTaggedJets_deltaEta->Fill(fabs(JetClean_eta[0]-JetClean_eta[1]),newwgt);
+       HvbfTaggedJets_invMass->Fill(vbfJetsInvMass(),newwgt);
+       if (nJetClean > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
+
+       HinvMass->Fill(mZ1,newwgt);
        Hlep1ptDistribution->Fill(ptr_lepton_pt[0],newwgt);
        Hlep1etaDistribution->Fill(ptr_lepton_eta[0],newwgt);
        Hlep2ptDistribution->Fill(ptr_lepton_pt[1],newwgt);
        Hlep2etaDistribution->Fill(ptr_lepton_eta[1],newwgt);
-       Hjet1etaDistribution->Fill(vbfTaggedJet_leadJetEta,newwgt);
-       Hjet1ptDistribution->Fill(vbfTaggedJet_leadJetPt,newwgt);
-       Hjet2etaDistribution->Fill(vbfTaggedJet_trailJetEta,newwgt);
-       Hjet2ptDistribution->Fill(vbfTaggedJet_trailJetPt,newwgt);
-       HvbfTaggedJets_deltaEta->Fill(vbfTaggedJet_deltaEta);
-       HvbfTaggedJets_invMass->Fill(vbfTaggedJet_invMass);
-       if (nJetClean30 > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
+       HzptDistribution->Fill(ZtoLLRecoPt,newwgt);
        	 
        if (hasScaledHistograms_flag) {
 
@@ -801,6 +873,7 @@ void vbfHiggsToInv_zllControlRegion::loop(vector< Double_t > &yRow, vector< Doub
      fillRowVector(nTotalWeightedEvents, analysisSelectionManager, analysisMask, yRow, eRow, uncRow,0);
      // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoJ, analysisMask_monoJ, yRow_monoJ, eRow_monoJ, uncRow_monoJ,0);
      // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoV, analysisMask_monoV, yRow_monoV, eRow_monoV, uncRow_monoV,0);
+     //fillRowVector(nTotalWeightedEvents, analysisSelectionManager, analysisMask_preSel, yRow, eRow, uncRow,0);
    }
 
    // fill last bin with overflow 

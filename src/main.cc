@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -65,8 +64,7 @@ int main(int argc, char* argv[]) {
   string configFileName = working_cmssw_path + "/myMonoJetCode/config/" + string(argv[1]);
 
   string whichAnalysis = ""; // can be monojet or vbfHiggsToInv or something else
-  whichAnalysis = "monojet";
-
+  //  whichAnalysis = "monojet";
   Int_t lepton_PDGID = 0;
   Int_t isdata_flag = 0;
   Int_t tau_veto_flag = 0;
@@ -485,8 +483,10 @@ int main(int argc, char* argv[]) {
   std::vector<std::string> selectionDefinition_monoJ;
   std::vector<std::string> selectionDefinition_monoV;
   selectionDefinition.push_back("entry point"); //other steps will be set in the following using the selectionManager object in the analyzer
-  selectionDefinition_monoJ.push_back("entry point");
-  selectionDefinition_monoV.push_back("entry point");
+  if (whichAnalysis == "monojet") {
+    selectionDefinition_monoJ.push_back("entry point");
+    selectionDefinition_monoV.push_back("entry point");
+  }
 
   ifstream sampleFile(fileWithSamplesPath.c_str());
   Int_t fileEndReached_flag = 0;
@@ -759,54 +759,67 @@ int main(int argc, char* argv[]) {
 	//================ Run Analysis
 	//zmumujetsAna tree( chain );
 
-	AnalysisDarkMatter* tree = NULL;
+	//	AnalysisDarkMatter* tree = NULL;
  
 	if (signalRegion_flag == 1) {
 
-	  if (whichAnalysis == "monojet") tree = new monojet_SignalRegion( chain);
-	  else tree = new vbfHiggsToInv_SignalRegion( chain);
+	  // if (whichAnalysis == "monojet") tree = new monojet_SignalRegion( chain);
+	  // else tree = new vbfHiggsToInv_SignalRegion( chain);
+	  vbfHiggsToInv_SignalRegion tree( chain);
 	  //cout << " CHECK IN MAIN " << endl;
-	  tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	  tree->setDirNameSuffix(dirName_suffix);
-	  // tree->set_SF_NLO_name(sf_nlo_option);
-	  //tree->loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
-	  tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	  tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	  tree.setDirNameSuffix(dirName_suffix);
+	  // tree.set_SF_NLO_name(sf_nlo_option);
+	  //tree.loop(yieldsVectorList, efficiencyVectorList, uncertaintyVectorList);
+	  tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	  if (nSample == 0) {  // export definition only once (the first time in the current implementation)
-	    tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
-	    tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	    tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	    tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
+	    if (whichAnalysis == "monojet") {
+	      tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+	      tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	    }
 	  }
 
 	} else if (controlSample_flag == 1) {
 
 	  if (controlSample_boson == "Z") {
-	    if (whichAnalysis == "monojet") tree = new zlljetsControlSample( chain);
-	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	    tree->setDirNameSuffix(dirName_suffix);
+	    //if (whichAnalysis == "monojet") tree = new zlljetsControlSample( chain);
+	    //	    zlljetsControlSample *tree = new zlljetsControlSample( chain);
+	    vbfHiggsToInv_zllControlRegion tree(chain);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setDirNameSuffix(dirName_suffix);
 	    // tree->set_SF_NLO_name(sf_nlo_option);
-	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree->setCalibEleFlag();
+	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
 	    //tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
-	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      if (whichAnalysis == "monojet") {
+		tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+		tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      }
 	    }
 	  } else if (controlSample_boson == "W") {
-	    if (whichAnalysis == "monojet") tree = new wlnujetsControlSample( chain);
-	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
-	    tree->setDirNameSuffix(dirName_suffix);
-	    // tree->set_SF_NLO_name(sf_nlo_option);
-	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree->setCalibEleFlag();
-	    //tree->loop(yieldsRow, efficiencyRow, uncertaintyRow);
-	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+	    //if (whichAnalysis == "monojet") tree = new wlnujetsControlSample( chain);
+	    vbfHiggsToInv_wlnuControlRegion tree( chain);
+	    //vbfHiggsToInv_wlnuControlRegion tree(chain);
+	    tree.setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
+	    tree.setDirNameSuffix(dirName_suffix);
+	    // tree.set_SF_NLO_name(sf_nlo_option);
+	    if (calibEle_flag == 1 && fabs(lepton_PDGID) == 11) tree.setCalibEleFlag();
+	    //tree.loop(yieldsRow, efficiencyRow, uncertaintyRow);
+	    tree.loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
-	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      tree.analysisSelectionManager.exportDefinition(&selectionDefinition);
+	      if (whichAnalysis == "monojet") {
+		tree.analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+		tree.analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      }
 	    }
 	  } else if (controlSample_boson == "GAMMA") {
-	    if (whichAnalysis == "monojet") tree = new monojet_PhotonControlRegion( chain);
+	    //if (whichAnalysis == "monojet") tree = new monojet_PhotonControlRegion( chain);
+	    monojet_PhotonControlRegion *tree = new monojet_PhotonControlRegion( chain);
+	    //vbfHiggsToInv_PhotonControlRegion tree( chain);
 	    tree->setBasicConf(sampleName[nSample].c_str(), uncertainty, configFileName.c_str(), isdata_flag, unweighted_event_flag, sf_friend_flag);
 	    tree->setDirNameSuffix(dirName_suffix);
 	    // tree->set_SF_NLO_name(sf_nlo_option);
@@ -814,8 +827,10 @@ int main(int argc, char* argv[]) {
 	    tree->loop(yieldsRow, efficiencyRow, uncertaintyRow, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
 	    if (nSample == 0) {
 	      tree->analysisSelectionManager.exportDefinition(&selectionDefinition);
-	      tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
-	      tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      if (whichAnalysis == "monojet") {
+		tree->analysisSelectionManager_monoJ.exportDefinition(&selectionDefinition_monoJ);
+		tree->analysisSelectionManager_monoV.exportDefinition(&selectionDefinition_monoV);
+	      }
 	    }
 	  } 
 
@@ -877,9 +892,11 @@ int main(int argc, char* argv[]) {
   //   efficiencyRow_monoJ.push_back(0.0);
   //   efficiencyRow_monoV.push_back(0.0);
   // }
-  addSumMCinYieldsVector(sampleName, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ);
-  addSumMCinYieldsVector(sampleName, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
-  
+  if (whichAnalysis == "monojet") {
+    addSumMCinYieldsVector(sampleName, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ);
+    addSumMCinYieldsVector(sampleName, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+  }  
+
   cout << "yieldsRow.size() = "<<yieldsRow.size() <<"\t\tselectionDefinition.size() = "<<selectionDefinition.size()<<endl;
   cout << "yieldsRow_monoJ.size() = "<<yieldsRow_monoJ.size() <<"\t\tselectionDefinition_monoJ.size() = "<<selectionDefinition_monoJ.size()<<endl;
   cout << "yieldsRow_monoV.size() = "<<yieldsRow_monoV.size() <<"\t\tselectionDefinition_monoV.size() = "<<selectionDefinition_monoV.size()<<endl;
@@ -987,9 +1004,11 @@ int main(int argc, char* argv[]) {
 
     buildFinalTable(fp, sampleName, selectionDefinition, yieldsRow, efficiencyRow, uncertaintyRow);
     fprintf(fp,"\n\n");
-    buildFinalTable(fp, sampleName, selectionDefinition_monoJ, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ);
-    fprintf(fp,"\n\n");
-    buildFinalTable(fp, sampleName, selectionDefinition_monoV, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+    if (whichAnalysis == "monojet") {
+      buildFinalTable(fp, sampleName, selectionDefinition_monoJ, yieldsRow_monoJ, efficiencyRow_monoJ, uncertaintyRow_monoJ);
+      fprintf(fp,"\n\n");
+      buildFinalTable(fp, sampleName, selectionDefinition_monoV, yieldsRow_monoV, efficiencyRow_monoV, uncertaintyRow_monoV);
+    }
 
     // The following commented part is put inside buildFinalTable(fp, sampleName, selectionDefinition, yieldsRow, uncertaintyRow, efficiencyRow);
     /*
@@ -1059,6 +1078,19 @@ int main(int argc, char* argv[]) {
     // ==================================
 
   } //end of table writing
+
+
+    // creating directories using bash script. Passing config file to retrieve the names of folders to create
+  std::string copyDirCommand = "source " + working_cmssw_path + "/myMonoJetCode/scripts/copyDirToWWW.sh " + configFileName + " " + directory_name;  
+  Int_t sys_ret_value = system(copyDirCommand.c_str());
+  //std::cout << "sys_ret_value = " << sys_ret_value << std::endl;
+  if (sys_ret_value != 0) {  // if my script return n, then system() returns 256*n, so I make the script return n > 0 to warn that an error occurred
+    std::cout << "Error occurred when copying directory using system()! EXIT" << std::endl; 
+    exit(EXIT_FAILURE);      
+  } else {
+    std::cout << "Call to system() was successful" << std::endl;
+  }
+
 
   cout << endl;
   cout << endl;

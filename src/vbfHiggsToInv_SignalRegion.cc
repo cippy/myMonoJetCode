@@ -60,15 +60,21 @@ vbfHiggsToInv_SignalRegion::vbfHiggsToInv_SignalRegion(TTree *tree) : vbfHiggsTo
 
 void vbfHiggsToInv_SignalRegion::setSelections() {
 
+  //cout << "CHECK ?!?"<< endl;
+
   vbfHiggsToInvAna::setSelections();
 
+  //cout << "CHECK VBFSIGREGION"<< endl;
   recoilC.set(Form("recoil > %2.0lf",METNOLEP_START),Form("metNoMu > %4.0lf",METNOLEP_START),"first cut on met");
   muonLooseVetoC.set("muon veto","muons veto");
   electronLooseVetoC.set("ele veto","electrons veto");
   gammaLooseVetoC.set("photon veto","photons veto");
+  //cout << "CHECK VBFSIGREGION"<< endl;
 
   selection::checkMaskLength();
   selection::printActiveSelections(cout); 
+
+
 
 }
 
@@ -114,9 +120,11 @@ void vbfHiggsToInv_SignalRegion::setMask() {
   analysisMask.append(electronLooseVetoC.get2ToId());
   analysisMask.append(gammaLooseVetoC.get2ToId());
   if (TAU_VETO_FLAG) analysisMask.append(tauLooseVetoC.get2ToId());
-  analysisMask.append(bjetVetoC.get2ToId());
-  analysisMask.append(jet1C.get2ToId());
+  if (B_VETO_FLAG) analysisMask.append(bjetVetoC.get2ToId());
+  analysisMask.append(vbfTaggedJets_jetsPtC.get2ToId());
   analysisMask.append(jetNoiseCleaningC.get2ToId());
+  analysisMask.append(vbfTaggedJets_inVMassC.get2ToId());
+  analysisMask.append(vbfTaggedJets_deltaEtaC.get2ToId());
   analysisMask.append(jetMetDphiMinC.get2ToId());
   if (METNOLEP_START != 0) analysisMask.append(recoilC.get2ToId());  
   //analysisMask.append(noVtagC.get2ToId());
@@ -129,49 +137,17 @@ void vbfHiggsToInv_SignalRegion::setMask() {
   analysisSelectionManager.append(&electronLooseVetoC);
   analysisSelectionManager.append(&gammaLooseVetoC);
   if (TAU_VETO_FLAG) analysisSelectionManager.append(&tauLooseVetoC);
-  analysisSelectionManager.append(&bjetVetoC);
-  analysisSelectionManager.append(&jet1C);
+  if (B_VETO_FLAG) analysisSelectionManager.append(&bjetVetoC);
+  analysisSelectionManager.append(&vbfTaggedJets_jetsPtC);
   analysisSelectionManager.append(&jetNoiseCleaningC);
+  analysisSelectionManager.append(&vbfTaggedJets_inVMassC);
+  analysisSelectionManager.append(&vbfTaggedJets_deltaEtaC);
   analysisSelectionManager.append(&jetMetDphiMinC);
   if (METNOLEP_START != 0) analysisSelectionManager.append(&recoilC); 
   //analysisSelectionManager.append(&noVtagC);
 
-  // ========== Mono-J ==============
-
-  analysisMask_monoJ.setName("vbfHiggsToInv signal selection");
-  
-  analysisMask_monoJ.append(analysisMask.globalMask.back()); // all the common selections
-  analysisMask_monoJ.append(noVtagC.get2ToId());
-
-  analysisSelectionManager_monoJ.SetMaskPointer(&analysisMask_monoJ);
-
-  analysisSelectionManager_monoJ.append("all cuts");
-  analysisSelectionManager_monoJ.append(&noVtagC);
-
-  // ========== Mono-V ==============
-
-  analysisMask_monoV.setName("monoV signal selection");
-  
-  analysisMask_monoV.append(analysisMask.globalMask.back()); // all the common selections                                                                               
-  // analysisMask_monoV.append(VtagC.get2ToId());                                                                                                                       
-  analysisMask_monoV.append(ak8jet1C.get2ToId());
-  analysisMask_monoV.append(ak8Tau2OverTau1C.get2ToId());
-  analysisMask_monoV.append(ak8prunedMassC.get2ToId());
-  analysisMask_monoV.append(harderRecoilC.get2ToId());
-
-  analysisSelectionManager_monoV.SetMaskPointer(&analysisMask_monoV);
-
-  analysisSelectionManager_monoV.append("all cuts");
-  // analysisSelectionManager_monoV.append(&VtagC);                                                                                                                     
-  analysisSelectionManager_monoV.append(&ak8jet1C);
-  analysisSelectionManager_monoV.append(&ak8Tau2OverTau1C);
-  analysisSelectionManager_monoV.append(&ak8prunedMassC);
-  analysisSelectionManager_monoV.append(&harderRecoilC);
-
-  // creating collection of pointers to mask used in the analysis                                                                                                       
   anaMasksPtrCollection.push_back(&analysisMask);
-  anaMasksPtrCollection.push_back(&analysisMask_monoJ);
-  anaMasksPtrCollection.push_back(&analysisMask_monoV);
+
 
 }
 
@@ -226,8 +202,8 @@ Double_t vbfHiggsToInv_SignalRegion::computeEventWeight() {
   else {
     // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
     // return LUMI * weight * vtxWeight * SF_BTag * sf_nlo_weight; //SF_BTag is in evVarFriend, not sfFriend
-    Double_t tmp = LUMI * weight * vtxWeight * SF_BTag * SF_NLO_QCD * SF_NLO_EWK;
-    if (hasSFfriend_flag != 0) tmp *= SF_trigmetnomu;
+    Double_t tmp = LUMI * weight * puw; // for now no BTag scale factor
+    if (hasSFfriend_flag != 0) tmp = tmp * SF_NLO_QCD * SF_NLO_EWK * SF_trigmetnomu;
     if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") return tmp / 1.23; //SF_BTag is in evVarFriend, not sfFriend
     else if (suffix == "WJetsToLNu") return tmp / 1.21; //SF_BTag is in evVarFriend, not sfFriend
     else return tmp; //SF_BTag is in evVarFriend, not sfFriend
@@ -239,19 +215,16 @@ Double_t vbfHiggsToInv_SignalRegion::computeEventWeight() {
 //===============================================                                                                                                                       
 
 
-void vbfHiggsToInv_SignalRegion::fillEventMask(UInt_t & eventMask) {
+void vbfHiggsToInv_SignalRegion::fillEventMask(ULong64_t & eventMask) {
 
   vbfHiggsToInvAna::fillEventMask(eventMask);
 
   eventMask += muonLooseVetoC.addToMask(nMu10V < 0.5);
   eventMask += electronLooseVetoC.addToMask(nEle10V < 0.5);
   eventMask += gammaLooseVetoC.addToMask(nGamma15V < 0.5);
-  if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5); 
+  if ( HLT_FLAG != 0) eventMask += HLTC.addToMask(HLT_MonoJetMetNoMuMHT90 > 0.5 || HLT_MonoJetMetNoMuMHT120 > 0.5 || HLT_Met170 > 0.5); // will modify this 
   //HLT_* variables are stored as float, so using "== 1" might yield unexpected results
-  eventMask += VtagC.addToMask(Vtagged_flag);
-  eventMask += noVtagC.addToMask(!Vtagged_flag);
   eventMask += recoilC.addToMask(metNoMu_pt > METNOLEP_START);
-  eventMask += harderRecoilC.addToMask(metNoMu_pt > 250.);     
 
 }
 
@@ -282,7 +255,8 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    fChain->SetBranchStatus("nTauClean18V",1);
 
    fChain->SetBranchStatus("dphijj",1);          // dphi between 1st and 2nd jet, 999 if second jet doesn't exist
-   fChain->SetBranchStatus("nJetClean30",1);    // # of jet with pt > 30 & eta < 2.5 and cleaning for against muons misidentified as PFjets   
+   //fChain->SetBranchStatus("nJetClean30",1);    // # of jet with pt > 30 & eta < 2.5 and cleaning for against muons misidentified as PFjets   
+   fChain->SetBranchStatus("nJetClean",1);    // # of jet with pt > 30 & eta < 4.7 and cleaning for against muons misidentified as PFjets   
    fChain->SetBranchStatus("JetClean_pt",1);  
    fChain->SetBranchStatus("JetClean_eta",1);  
    
@@ -317,12 +291,18 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    fChain->SetBranchStatus("HLT_Met170",1);
 
    // met filters to be used (the config file has a parameter saying whether they should be used or not)
-   fChain->SetBranchStatus("cscfilter",1);
-   fChain->SetBranchStatus("ecalfilter",1);
-   fChain->SetBranchStatus("hbheFilterNew25ns",1);
-   fChain->SetBranchStatus("hbheFilterIso",1);
+   // fChain->SetBranchStatus("cscfilter",1);
+   // fChain->SetBranchStatus("ecalfilter",1);
+   // fChain->SetBranchStatus("hbheFilterNew25ns",1);
+   // fChain->SetBranchStatus("hbheFilterIso",1);
+   // fChain->SetBranchStatus("Flag_eeBadScFilter",1);
+   fChain->SetBranchStatus("Flag_EcalDeadCellTriggerPrimitiveFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseFilter",1);
+   fChain->SetBranchStatus("Flag_HBHENoiseIsoFilter",1);
+   fChain->SetBranchStatus("Flag_goodVertices",1);
    fChain->SetBranchStatus("Flag_eeBadScFilter",1);
-
+   fChain->SetBranchStatus("Flag_globalTightHalo2016Filter",1);
+  
    //added on November 2015. These are new variables (except for weight, which has just changed in the definition)
    fChain->SetBranchStatus("nBTag15",1);  // for b-jet veto
    fChain->SetBranchStatus("dphijm",1);          // flag for dphi minimum between met and any of the jets in the event (using only the first four jets
@@ -331,12 +311,21 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    fChain->SetBranchStatus("JetClean_leadClean",1); // has new cleaning on energy fractions (added on 17 November 2015) 
 
    // For mon-V categhory the following variables are needed.  -- > WARNING: this collection was made with |eta| < 2.4, not 2.5
-   fChain->SetBranchStatus("nFatJetClean",1);             // at least one for mono-V
-   fChain->SetBranchStatus("FatJetClean_pt",1);           // leading jet is required to be > 250
-   fChain->SetBranchStatus("FatJetClean_eta",1);          // just for the histogram
-   fChain->SetBranchStatus("FatJetClean_prunedMass",1);   // in 65-105 for leading jet in V-tag
-   fChain->SetBranchStatus("FatJetClean_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
-   fChain->SetBranchStatus("FatJetClean_tau2",1);   
+   // fChain->SetBranchStatus("nFatJetClean",1);             // at least one for mono-V
+   // fChain->SetBranchStatus("FatJetClean_pt",1);           // leading jet is required to be > 250
+   // fChain->SetBranchStatus("FatJetClean_eta",1);          // just for the histogram
+   // fChain->SetBranchStatus("FatJetClean_prunedMass",1);   // in 65-105 for leading jet in V-tag
+   // fChain->SetBranchStatus("FatJetClean_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
+   // fChain->SetBranchStatus("FatJetClean_tau2",1);   
+
+   fChain->SetBranchStatus("dphijmAllJets",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_deltaEta",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_invMass",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_leadJetPt",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_trailJetPt",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_leadJetEta",1);   
+   fChain->SetBranchStatus("vbfTaggedJet_trailJetEta",1);   
+
 
    //added on 23/01/2016
    fChain->SetBranchStatus("nEle40T",1);
@@ -358,8 +347,9 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
      // fChain->SetBranchStatus("GenPart_motherIndex",1);
 
      //fChain->SetBranchStatus("vtxW",1);   // weight to have better agreement between data and MC (will not be always used)  ** NOW OBSOLETE **
-     fChain->SetBranchStatus("vtxWeight",1);   // weight to have better agreement between data and MC (added the 10th of October, substituting vtxW in the new set of trees, keeping both for backward compatibility)
+     //fChain->SetBranchStatus("vtxWeight",1);   // weight to have better agreement between data and MC (added the 10th of October, substituting vtxW in the new set of trees, keeping both for backward compatibility)
      //fChain->SetBranchStatus("xsec",1);  
+     fChain->SetBranchStatus("puw",1); // added on 21 Sept 2016, substituting vtxWeight
  
      //added on 23/01/2016
      fChain->SetBranchStatus("SF_BTag",1);
@@ -433,7 +423,7 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
      nb = fChain->GetEntry(jentry);   nbytes += nb;
      // if (Cut(ientry) < 0) continue;   
 
-     UInt_t eventMask = 0; 
+     ULong64_t eventMask = 0; 
 
      if (jentry%500000 == 0) {
        cout << "entry: " << jentry << endl;
@@ -450,8 +440,8 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
      nTotalWeightedEvents += newwgt;  // counting events with weights
 
      // beginning of eventMask building
-     if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
-     else Vtagged_flag = 0;
+     // if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
+     // else Vtagged_flag = 0;
      //if (Vtagged_flag == 1) cout << "jentry n: "<<jentry << " V TAGGED!"<<endl;
 
      fillEventMask(eventMask);
@@ -459,10 +449,10 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
      // end of eventMask building
 
      analysisMask.countEvents(eventMask,newwgt);
-     analysisMask_monoJ.countEvents(eventMask,newwgt);
-     analysisMask_monoV.countEvents(eventMask,newwgt);
+     // analysisMask_monoJ.countEvents(eventMask,newwgt);
+     // analysisMask_monoV.countEvents(eventMask,newwgt);
 
-     if ( ((eventMask & analysisMask_monoJ.globalMask.back()) == analysisMask_monoJ.globalMask.back()) ) {
+     if ( ((eventMask & analysisMask.globalMask.back()) == analysisMask.globalMask.back()) ) {
        
        // this histogram holds the final yields in bins of MET
        HYieldsMetBin->Fill(metNoMu_pt,newwgt);
@@ -470,15 +460,17 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
        HhtDistribution->Fill(htJet25,newwgt);
        HrecoilDistribution->Fill(metNoMu_pt,newwgt);
        HvtxDistribution->Fill(nVert,newwgt);
-       HnjetsDistribution->Fill(nJetClean30,newwgt);
+       HnjetsDistribution->Fill(nJetClean,newwgt);
        Hjet1etaDistribution->Fill(JetClean_eta[0],newwgt);
        Hjet1ptDistribution->Fill(JetClean_pt[0],newwgt);
        HjetMetDphiMinDistribution->Fill(dphijm,newwgt);
-       if (nJetClean30 >= 2) {
-	 Hj1j2dphiDistribution->Fill(dphijj,newwgt);
-	 Hjet2etaDistribution->Fill(JetClean_eta[1],newwgt);
-	 Hjet2ptDistribution->Fill(JetClean_pt[1],newwgt);
-       }
+       HjetMetDphiMinAllJets->Fill(dphijmAllJets,newwgt);
+       Hjet2etaDistribution->Fill(JetClean_eta[1],newwgt);
+       Hjet2ptDistribution->Fill(JetClean_pt[1],newwgt);
+       HvbfTaggedJets_mT->Fill(vbfJetsMT(),newwgt);
+       HvbfTaggedJets_deltaEta->Fill(fabs(JetClean_eta[0]-JetClean_eta[1]),newwgt);
+       HvbfTaggedJets_invMass->Fill(vbfJetsInvMass(),newwgt);
+       if (nJetClean > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
 
        if (hasScaledHistograms_flag) {
 
@@ -494,42 +486,42 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
        }
 
 
-     } else if (((eventMask & analysisMask_monoV.globalMask.back()) == analysisMask_monoV.globalMask.back())) {
+     } // else if (((eventMask & analysisMask_monoV.globalMask.back()) == analysisMask_monoV.globalMask.back())) {
 
-       HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
+     //   HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
 	 
-       HhtDistribution_monoV->Fill(htJet25,newwgt);
-       HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
-       HvtxDistribution_monoV->Fill(nVert,newwgt);
-       HnjetsDistribution_monoV->Fill(nJetClean30,newwgt);
-       Hjet1etaDistribution_monoV->Fill(FatJetClean_eta[0],newwgt);
-       Hjet1ptDistribution_monoV->Fill(FatJetClean_pt[0],newwgt);
-       HprunedMassDistribution_monoV->Fill(FatJetClean_prunedMass[0],newwgt);
-       Htau2OverTau1Distribution_monoV->Fill(FatJetClean_tau2[0]/FatJetClean_tau1[0],newwgt);
+     //   HhtDistribution_monoV->Fill(htJet25,newwgt);
+     //   HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
+     //   HvtxDistribution_monoV->Fill(nVert,newwgt);
+     //   HnjetsDistribution_monoV->Fill(nJetClean,newwgt);
+     //   Hjet1etaDistribution_monoV->Fill(FatJetClean_eta[0],newwgt);
+     //   Hjet1ptDistribution_monoV->Fill(FatJetClean_pt[0],newwgt);
+     //   HprunedMassDistribution_monoV->Fill(FatJetClean_prunedMass[0],newwgt);
+     //   Htau2OverTau1Distribution_monoV->Fill(FatJetClean_tau2[0]/FatJetClean_tau1[0],newwgt);
 
-       if (hasScaledHistograms_flag) {
+     //   if (hasScaledHistograms_flag) {
 
-	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
-	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
-	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
-	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
+     // 	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
+     // 	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
+     // 	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
 
-       }
+     //   }
 
-     }
+     // }
        
    }                        // end of loop on entries
 
    mySpaces(cout,2);
    selection::printSelectionFlowAndYields(cout, LUMI, nTotalWeightedEvents, &analysisMask);
-   mySpaces(cout,2);
-   selection::printSelectionFlowAndYields(cout, LUMI, nTotalWeightedEvents, &analysisMask_monoJ);
-   mySpaces(cout,2);
-   selection::printSelectionFlowAndYields(cout, LUMI, nTotalWeightedEvents, &analysisMask_monoV);
+   // mySpaces(cout,2);
+   // selection::printSelectionFlowAndYields(cout, LUMI, nTotalWeightedEvents, &analysisMask_monoJ);
+   // mySpaces(cout,2);
+   // selection::printSelectionFlowAndYields(cout, LUMI, nTotalWeightedEvents, &analysisMask_monoV);
 
    mySpaces(cout,2);
    myPrintYieldsMetBinInStream(cout, HYieldsMetBin, metBinEdgesVector.data(), nMetBins);
@@ -550,10 +542,10 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    mySpaces(myfile,3);
    selection::printSelectionFlowAndYields(myfile, LUMI, nTotalWeightedEvents, &analysisMask);
    mySpaces(myfile,3);
-   selection::printSelectionFlowAndYields(myfile, LUMI, nTotalWeightedEvents, &analysisMask_monoJ);
-   mySpaces(myfile,2);
-   selection::printSelectionFlowAndYields(myfile, LUMI, nTotalWeightedEvents, &analysisMask_monoV);
-   mySpaces(myfile,2);
+   // selection::printSelectionFlowAndYields(myfile, LUMI, nTotalWeightedEvents, &analysisMask_monoJ);
+   // mySpaces(myfile,2);
+   // selection::printSelectionFlowAndYields(myfile, LUMI, nTotalWeightedEvents, &analysisMask_monoV);
+   // mySpaces(myfile,2);
    myPrintYieldsMetBinInStream(myfile, HYieldsMetBin, metBinEdgesVector.data(), nMetBins);
 
    myfile.close();
@@ -576,8 +568,8 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    // }
 
    fillRowVector(nTotalWeightedEvents, analysisSelectionManager, analysisMask, yRow, eRow, uncRow,0);
-   fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoJ, analysisMask_monoJ, yRow_monoJ, eRow_monoJ, uncRow_monoJ,0);
-   fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoV, analysisMask_monoV, yRow_monoV, eRow_monoV, uncRow_monoV,0);
+   // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoJ, analysisMask_monoJ, yRow_monoJ, eRow_monoJ, uncRow_monoJ,0);
+   // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoV, analysisMask_monoV, yRow_monoV, eRow_monoV, uncRow_monoV,0);
 
    // following was put in function above
 

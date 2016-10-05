@@ -83,13 +83,21 @@ void vbfHiggsToInvAna::setVarFromConfigFile() {
 
 void vbfHiggsToInvAna::setSelections() {
 
+  //  cout << "CHECK VBFANA yyy"<< endl;
   AnalysisDarkMatter::setSelections();
+  //cout << "CHECK VBFANA xxx"<< endl;
 
-  vbfTaggedJets_deltaEtaC.set("|Deta(j1,j2)|",Form("|Deta(j1,j2)| > %2.1f",DELTAETAMIN_VBFJETS));
+  vbfTaggedJets_deltaEtaC.set("|Deta(j1,j2)|",Form("|Deta(j1,j2)| > %1.1f",DELTAETAMIN_VBFJETS));
+  //cout << "CHECK VBFANA aaa"<< endl;
   vbfTaggedJets_inVMassC.set("M(j1,j2)",Form("Inv.Mass(j1,j2) > %3.0f",INVMASS_VBFJETS));
+  //cout << "CHECK VBFANA bbb"<< endl;
   vbfTaggedJets_jetsPtC.set("VBF jets pT",Form("pT j1(j2) > %2.0f(%2.0f)",JET1PT_VBFJETS,JET2PT_VBFJETS));
-  jetMetDphiMinC.set("Dphi(j,MET)",Form("Dphi(jets,MET) > %1.1f",JMET_DPHI_MIN),"Dphi between any jet (pT>30, |eta|<4.7) and MET");
-
+  //cout << "CHECK VBFANA 3"<< endl;
+  //  jetMetDphiMinC.set("Dphi(j,MET)",Form("Dphi(jets,MET) > %1.1f",JMET_DPHI_MIN),"Dphi between any jet (pT>30, |eta|<4.7) and MET");
+  jetNoiseCleaningC.set("jet1 noise clean","noise cleaning","energy fractions (only for jet1 in |eta| < 2.5): CHF > 0.1; NHF < 0.8");
+  jetMetDphiMinC.set("Dphi(j,MET)",Form("Dphi(jets,MET) > %1.1f",JMET_DPHI_MIN),"Dphi between first 4 jets (pT>30, |eta|<4.7) and MET");
+  if (MET_FILTERS_FLAG != 0) metFiltersC.set("met filters","met filters","EcalDeadCellTriggerPrimitiveFilter, HBHENoiseFilter, HBHENoiseIsoFilter, goodVertices, eeBadScFilter, globalTightHalo2016Filter");
+  
   selection::checkMaskLength();
 
 }
@@ -100,12 +108,10 @@ void vbfHiggsToInvAna::setHistograms() {
 
   AnalysisDarkMatter::setHistograms();
 
+  HjetMetDphiMinAllJets = new TH1D("HjetMetDphiMinAllJets","",32,0.0,3.2);
+  HvbfTaggedJets_mT = new TH1D("HvbfTaggedJets_mT","",150,0.0,3000.0);
   HvbfTaggedJets_deltaEta = new TH1D("HvbfTaggedJets_deltaEta","",100,0.0,10.0);
-  HvbfTaggedJets_invMass = new TH1D("HvbfTaggedJets_invMass","",100,600.0,1600.0);
-  HvbfTaggedJets_jet1pt = new TH1D("HvbfTaggedJets_jet1pt","",120,0.0,1200.0);
-  HvbfTaggedJets_jet2pt = new TH1D("HvbfTaggedJets_jet2pt","",100,0.0,100.0);
-  HvbfTaggedJets_jet1eta = new TH1D("HvbfTaggedJets_jet1eta","",100,-5.0,5.0);
-  HvbfTaggedJets_jet2eta = new TH1D("HvbfTaggedJets_jet2eta","",100,-5.0,5.0);
+  HvbfTaggedJets_invMass = new TH1D("HvbfTaggedJets_invMass","",450,500.0,5000.0);
 
 }
 
@@ -116,8 +122,7 @@ void vbfHiggsToInvAna::setHistogramLastBinAsOverFlow(const Int_t hasScaledHistog
   AnalysisDarkMatter::setHistogramLastBinAsOverFlow(hasScaledHistograms);
 
   myAddOverflowInLastBin(HvbfTaggedJets_invMass);
-  myAddOverflowInLastBin(HvbfTaggedJets_jet1pt);
-  myAddOverflowInLastBin(HvbfTaggedJets_jet2pt);
+  myAddOverflowInLastBin(HvbfTaggedJets_mT);
 
 }
 
@@ -132,13 +137,36 @@ void vbfHiggsToInvAna::createSystematicsHistogram() {
 //===============================================
 
 
-void vbfHiggsToInvAna::fillEventMask(UInt_t & eventMask) {
+void vbfHiggsToInvAna::fillEventMask(ULong64_t & eventMask) {
 
   AnalysisDarkMatter::fillEventMask(eventMask);  
   
-  eventMask += vbfTaggedJets_deltaEtaC.addToMask(vbfTaggedJet_deltaEta > DELTAETAMIN_VBFJETS);
-  eventMask += vbfTaggedJets_inVMassC.addToMask(vbfTaggedJet_invMass > INVMASS_VBFJETS);
-  eventMask += vbfTaggedJets_jetsPtC.addToMask(vbfTaggedJet_leadJetPt > JET1PT_VBFJETS && vbfTaggedJet_trailJetPt > JET2PT_VBFJETS);
+  eventMask += vbfTaggedJets_deltaEtaC.addToMask((JetClean_eta[0] * JetClean_eta[1]) < 0.0 && fabs(JetClean_eta[0] - JetClean_eta[1]) > DELTAETAMIN_VBFJETS);
+  eventMask += vbfTaggedJets_inVMassC.addToMask(vbfJetsInvMass() > INVMASS_VBFJETS);
+  eventMask += vbfTaggedJets_jetsPtC.addToMask( JetClean_pt[0] > JET1PT_VBFJETS && JetClean_pt[1] > JET2PT_VBFJETS);
+  if (fabs(JetClean_eta[0]) < 2.5) eventMask += jetNoiseCleaningC.addToMask(JetClean_leadClean[0] > 0.5);
+  else eventMask += jetNoiseCleaningC.addToMask(1);  // consider cut passed if jet is not central
+  if (MET_FILTERS_FLAG != 0) eventMask += metFiltersC.addToMask(Flag_EcalDeadCellTriggerPrimitiveFilter == 1 && Flag_HBHENoiseFilter == 1 && Flag_HBHENoiseIsoFilter == 1 && Flag_goodVertices == 1 && Flag_eeBadScFilter == 1 && Flag_globalTightHalo2016Filter == 1);
+  //  eventMask += jetMetDphiMinC.addToMask(fabs(dphijmAllJets) > JMET_DPHI_MIN);
+  eventMask += jetMetDphiMinC.addToMask(fabs(dphijm) > JMET_DPHI_MIN);
+
+}
+
+//===============================================
+
+Double_t vbfHiggsToInvAna::vbfJetsMT() {
+
+  return TMath::Sqrt( 2. * JetClean_pt[0] * JetClean_pt[1] * (1. - TMath::Cos(dphijj)) );
+
+}
+
+//===============================================
+
+Double_t vbfHiggsToInvAna::vbfJetsInvMass() {
+
+  TLVjet1.SetPtEtaPhiM(JetClean_pt[0],JetClean_eta[0],JetClean_phi[0],0.0);
+  TLVjet2.SetPtEtaPhiM(JetClean_pt[1],JetClean_eta[1],JetClean_phi[1],0.0);
+  return (TLVjet1 + TLVjet2).Mag();
 
 }
 
