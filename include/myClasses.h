@@ -139,12 +139,12 @@ class selection {
   std::string getName() const { return name_; }
   std::string getDefinition() const {return definition_; }
   Int_t getId() const { return id_; }
-  UInt_t get2ToId() const { return twoToId_; }
+  ULong64_t get2ToId() const { return twoToId_; }
   // other member functions
   void print(std::ostream &, Bool_t) const;
   void printAllInfo(std::ostream &) const;
   Bool_t isPassed(Bool_t input);
-  UInt_t addToMask(Bool_t input) {return input ? (this->get2ToId()) : 0; }
+  ULong64_t addToMask(Bool_t input) {return input ? (this->get2ToId()) : 0; }
   Bool_t isActive() const { return flag_; }
 
   static Int_t getNSelections() { return nSelections_; }

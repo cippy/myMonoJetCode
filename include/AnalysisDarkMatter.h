@@ -36,6 +36,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   selection tauLooseVetoC;
   selection gammaLooseVetoC;
   selection jetMetDphiMinC;
+  selection jetNoiseCleaningC;
 
   mask analysisMask;
   selectionManager analysisSelectionManager;
@@ -43,6 +44,9 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   selectionManager analysisSelectionManager_monoJ;
   mask analysisMask_monoV;
   selectionManager analysisSelectionManager_monoV;
+
+  // mask analysisMask_preSel; 
+  // selectionManager analysisSelectionManager_preSel; 
 
   std::vector<mask*> anaMasksPtrCollection; // list of pointers to masks in the class 
 
@@ -57,7 +61,8 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   virtual void setHistogramLastBinAsOverFlow(const Int_t);
   virtual void createSystematicsHistogram(); //build histograms with systematic uncertainties
   virtual void fillRowVector(const Double_t, const selectionManager &, const mask &, std::vector<Double_t> &, std::vector<Double_t> &, std::vector<Double_t> &, const Int_t);
-  virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections
+  virtual void fillEventMask(ULong64_t &); // method to set eventMask event-by-event depending on some selections
+  //  virtual void fillEventMask(UInt_t &); // method to set eventMask event-by-event depending on some selections (using 32 bit for backward compatibility)
   /* virtual void set_SF_NLO_name(const std::string); */
   /* virtual void set_SF_NLO_pointers(const std::string sf_option, Float_t *ptrQCD, Float_t *ptrEWK); */
   //virtual Double_t computeEventWeight() const;   // return weight for the event
@@ -68,6 +73,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   char TEX_FNAME[100];
 
   Double_t LUMI;
+  Int_t B_VETO_FLAG;
   Int_t TAU_VETO_FLAG;
   Int_t HLT_FLAG;                  // usage depends on specific analysis
   Double_t METNOLEP_START;
