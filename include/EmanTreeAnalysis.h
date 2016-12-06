@@ -28,6 +28,7 @@ namespace myAnalyzerTEman {
     virtual void setSelections(); 
     virtual void setHistograms();
     virtual void setHistogramLastBinAsOverFlow(const Int_t);
+    virtual void setBranchStatusForAnalysis();
     virtual void setNumberParameterValue(const std::string, const Double_t);
     virtual void setVarFromConfigFile();
     virtual void createSystematicsHistogram();
@@ -66,6 +67,7 @@ namespace myAnalyzerTEman {
     void setMask();
     void setHistograms();
     void setHistogramLastBinAsOverFlow(const Int_t);
+    void setBranchStatusForAnalysis();
     void setNumberParameterValue(const std::string, const Double_t);
     void setVarFromConfigFile();
     Double_t computeEventWeight();
@@ -87,6 +89,7 @@ namespace myAnalyzerTEman {
     virtual void setHistograms();
     virtual void setScaleFactorHistograms();
     virtual void setHistogramLastBinAsOverFlow(const Int_t);
+    virtual void setBranchStatusForAnalysis();
     virtual void createSystematicsHistogram();
     virtual void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     virtual void setControlSampleSpecificParameter();
@@ -172,6 +175,7 @@ namespace myAnalyzerTEman {
     void setHistograms();
     void setScaleFactorHistograms();
     void setHistogramLastBinAsOverFlow(const Int_t);
+    void setBranchStatusForAnalysis();
     void createSystematicsHistogram();
     void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     void setControlSampleSpecificParameter();
@@ -231,6 +235,7 @@ namespace myAnalyzerTEman {
     void setScaleFactorHistograms();
     void setHistogramsForTests();
     void setHistogramLastBinAsOverFlow(const Int_t);
+    void setBranchStatusForAnalysis();
     void createSystematicsHistogram();
     void setNumberParameterValue(const std::string, const Double_t);  // set some numeric variables if they are in config file
     void setControlSampleSpecificParameter();

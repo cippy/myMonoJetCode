@@ -131,6 +131,7 @@ class AnalysisDarkMatter : public edimarcoTree_v7 {
   TH1D *HrecoilDistribution = NULL;
   TH1D *Hjet1ptDistribution = NULL;
   TH1D *Hjet2ptDistribution = NULL;
+  TH1D *Hjet1CHEF = NULL;
   TH1D *HmetBinEdges = NULL;
   //following histograms filled using different scale factor for NLO xsec for Z and W to be used for systematic computation in ratio between MET in signal and control region
   TH1D *HYieldsMetBin_qcdRenScaleUp = NULL;

@@ -137,6 +137,36 @@ void vbfHiggsToInv_LeptonControlRegion::setHistogramLastBinAsOverFlow(const Int_
 
 }
 
+void vbfHiggsToInv_LeptonControlRegion::setBranchStatusForAnalysis() {
+
+  vbfHiggsToInvAna::setBranchStatusForAnalysis();
+
+  fChain->SetBranchStatus("HLT_SingleEl",1);
+
+  fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (isolation included)                                                                     
+  fChain->SetBranchStatus("nEle40T",1);
+
+  fChain->SetBranchStatus("nLepGood",1);
+  fChain->SetBranchStatus("LepGood_pdgId",1);  // must be 13 for muons ( -13 for mu+), 11 for electrons and 15 for taus                                                
+  fChain->SetBranchStatus("LepGood_pt",1);
+  fChain->SetBranchStatus("LepGood_eta",1);
+  fChain->SetBranchStatus("LepGood_phi",1);
+  fChain->SetBranchStatus("LepGood_mass",1);
+
+  if (!ISDATA_FLAG) {
+    fChain->SetBranchStatus("nGenPart",1);
+    fChain->SetBranchStatus("GenPart_pdgId",1);
+    fChain->SetBranchStatus("GenPart_motherId",1);
+    fChain->SetBranchStatus("GenPart_pt",1);
+    fChain->SetBranchStatus("GenPart_eta",1);
+    fChain->SetBranchStatus("GenPart_phi",1);
+    fChain->SetBranchStatus("GenPart_mass",1);
+    fChain->SetBranchStatus("GenPart_motherIndex",1);
+
+  }
+
+}
+
 //===============================================
 
 void vbfHiggsToInv_LeptonControlRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {

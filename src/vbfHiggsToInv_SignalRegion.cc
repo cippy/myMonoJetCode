@@ -176,6 +176,12 @@ void vbfHiggsToInv_SignalRegion::setHistogramLastBinAsOverFlow(const Int_t hasSc
 
 }
 
+void vbfHiggsToInv_SignalRegion::setBranchStatusForAnalysis() {
+
+  vbfHiggsToInvAna::setBranchStatusForAnalysis();
+
+}
+
 //===============================================
 
 void vbfHiggsToInv_SignalRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {
@@ -202,7 +208,7 @@ Double_t vbfHiggsToInv_SignalRegion::computeEventWeight() {
   else {
     // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
     // return LUMI * weight * vtxWeight * SF_BTag * sf_nlo_weight; //SF_BTag is in evVarFriend, not sfFriend
-    Double_t tmp = LUMI * weight * puw; // for now no BTag scale factor
+    Double_t tmp = LUMI * weight * puw * SF_BTag ;
     if (hasSFfriend_flag != 0) tmp = tmp * SF_NLO_QCD * SF_NLO_EWK * SF_trigmetnomu;
     if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") return tmp / 1.23; //SF_BTag is in evVarFriend, not sfFriend
     else if (suffix == "WJetsToLNu") return tmp / 1.21; //SF_BTag is in evVarFriend, not sfFriend
@@ -212,7 +218,7 @@ Double_t vbfHiggsToInv_SignalRegion::computeEventWeight() {
 
 }
 
-//===============================================                                                                                                                       
+//=============================================== 
 
 
 void vbfHiggsToInv_SignalRegion::fillEventMask(ULong64_t & eventMask) {
@@ -240,160 +246,10 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
 
    if (fChain == 0) return;
 
-   fChain->SetBranchStatus("*",0);  
-   // warning: in Emanuele's trees non integer values are float
-
-   //fChain->SetBranchStatus("LHEorigWeight",1); // contains negative values: the weight in the event is weight*LHEorigWeight
-
-   //fChain->SetBranchStatus("genWeight",1); 
-
-   fChain->SetBranchStatus("nMu10V",1);  // # of muons passing loose selection
-   fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
-   fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
-   //fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (pt > 20 + everything else)
-   //fChain->SetBranchStatus("nTau18V",1);
-   fChain->SetBranchStatus("nTauClean18V",1);
-
-   fChain->SetBranchStatus("dphijj",1);          // dphi between 1st and 2nd jet, 999 if second jet doesn't exist
-   //fChain->SetBranchStatus("nJetClean30",1);    // # of jet with pt > 30 & eta < 2.5 and cleaning for against muons misidentified as PFjets   
-   fChain->SetBranchStatus("nJetClean",1);    // # of jet with pt > 30 & eta < 4.7 and cleaning for against muons misidentified as PFjets   
-   fChain->SetBranchStatus("JetClean_pt",1);  
-   fChain->SetBranchStatus("JetClean_eta",1);  
-   
-   fChain->SetBranchStatus("nLepGood",1);
-   fChain->SetBranchStatus("LepGood_pdgId",1);  // must be 13 for muons ( -13 for mu+), 11 for electrons and 15 for taus
-   fChain->SetBranchStatus("LepGood_pt",1);
-   fChain->SetBranchStatus("LepGood_eta",1);
-   fChain->SetBranchStatus("LepGood_phi",1);   
-   fChain->SetBranchStatus("LepGood_mass",1);
-   //fChain->SetBranchStatus("LepGood_charge",1);
-   fChain->SetBranchStatus("LepGood_tightId",1);
-   fChain->SetBranchStatus("LepGood_relIso04",1);
-   // fChain->SetBranchStatus("ngenLep",1);         // not needed, using GenPart to study generator level quantities
-   // fChain->SetBranchStatus("genLep_pdgId",1);
-   // fChain->SetBranchStatus("genLep_pt",1);
-   // fChain->SetBranchStatus("genLep_eta",1);
-   // fChain->SetBranchStatus("genLep_phi",1);
-   // fChain->SetBranchStatus("mZ1",1);  // best m(ll) SF/OS
-
-   //fChain->SetBranchStatus("met_pt",1);
-   //fChain->SetBranchStatus("met_eta",1);
-   //fChain->SetBranchStatus("met_phi",1);
-
-   fChain->SetBranchStatus("metNoMu_pt",1);
-   //fChain->SetBranchStatus("metNoMu_eta",1);
-   fChain->SetBranchStatus("metNoMu_phi",1);
-   fChain->SetBranchStatus("htJet25",1);
-
-   fChain->SetBranchStatus("nVert",1);  // number of good vertices 
-   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
-   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
-   fChain->SetBranchStatus("HLT_Met170",1);
-
-   // met filters to be used (the config file has a parameter saying whether they should be used or not)
-   // fChain->SetBranchStatus("cscfilter",1);
-   // fChain->SetBranchStatus("ecalfilter",1);
-   // fChain->SetBranchStatus("hbheFilterNew25ns",1);
-   // fChain->SetBranchStatus("hbheFilterIso",1);
-   // fChain->SetBranchStatus("Flag_eeBadScFilter",1);
-   fChain->SetBranchStatus("Flag_EcalDeadCellTriggerPrimitiveFilter",1);
-   fChain->SetBranchStatus("Flag_HBHENoiseFilter",1);
-   fChain->SetBranchStatus("Flag_HBHENoiseIsoFilter",1);
-   fChain->SetBranchStatus("Flag_goodVertices",1);
-   fChain->SetBranchStatus("Flag_eeBadScFilter",1);
-   fChain->SetBranchStatus("Flag_globalTightHalo2016Filter",1);
-  
-   //added on November 2015. These are new variables (except for weight, which has just changed in the definition)
-   fChain->SetBranchStatus("nBTag15",1);  // for b-jet veto
-   fChain->SetBranchStatus("dphijm",1);          // flag for dphi minimum between met and any of the jets in the event (using only the first four jets
-   fChain->SetBranchStatus("weight",1);   // modified since 17 November 2015: now it includes the whol weight, e.g. 1000*xsec*genWeight ...
-   fChain->SetBranchStatus("events_ntot",1);    // equivalent to SUMWEIGHTS for samples before 17 November 2015
-   fChain->SetBranchStatus("JetClean_leadClean",1); // has new cleaning on energy fractions (added on 17 November 2015) 
-
-   // For mon-V categhory the following variables are needed.  -- > WARNING: this collection was made with |eta| < 2.4, not 2.5
-   // fChain->SetBranchStatus("nFatJetClean",1);             // at least one for mono-V
-   // fChain->SetBranchStatus("FatJetClean_pt",1);           // leading jet is required to be > 250
-   // fChain->SetBranchStatus("FatJetClean_eta",1);          // just for the histogram
-   // fChain->SetBranchStatus("FatJetClean_prunedMass",1);   // in 65-105 for leading jet in V-tag
-   // fChain->SetBranchStatus("FatJetClean_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
-   // fChain->SetBranchStatus("FatJetClean_tau2",1);   
-
-   fChain->SetBranchStatus("dphijmAllJets",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_deltaEta",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_invMass",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_leadJetPt",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_trailJetPt",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_leadJetEta",1);   
-   fChain->SetBranchStatus("vbfTaggedJet_trailJetEta",1);   
-
-
-   //added on 23/01/2016
-   fChain->SetBranchStatus("nEle40T",1);
-   // fChain->SetBranchStatus("nCalibEle",1);
-   // fChain->SetBranchStatus("CalibEle_pt",1);
-   // fChain->SetBranchStatus("CalibEle_energy",1);
-   // fChain->SetBranchStatus("CalibEle_eta",1);
-   // fChain->SetBranchStatus("CalibEle_phi",1);
-   // fChain->SetBranchStatus("CalibEle_mass",1);
-
-   if (!ISDATA_FLAG) {
-     // fChain->SetBranchStatus("nGenPart",1);
-     // fChain->SetBranchStatus("GenPart_pdgId",1);
-     // fChain->SetBranchStatus("GenPart_motherId",1);
-     // fChain->SetBranchStatus("GenPart_pt",1);
-     // fChain->SetBranchStatus("GenPart_eta",1);
-     // fChain->SetBranchStatus("GenPart_phi",1);
-     // fChain->SetBranchStatus("GenPart_mass",1);
-     // fChain->SetBranchStatus("GenPart_motherIndex",1);
-
-     //fChain->SetBranchStatus("vtxW",1);   // weight to have better agreement between data and MC (will not be always used)  ** NOW OBSOLETE **
-     //fChain->SetBranchStatus("vtxWeight",1);   // weight to have better agreement between data and MC (added the 10th of October, substituting vtxW in the new set of trees, keeping both for backward compatibility)
-     //fChain->SetBranchStatus("xsec",1);  
-     fChain->SetBranchStatus("puw",1); // added on 21 Sept 2016, substituting vtxWeight
- 
-     //added on 23/01/2016
-     fChain->SetBranchStatus("SF_BTag",1);
-     //variables in sfFriend tree
-     fChain->SetBranchStatus("SF_trig1lep",1);
-     fChain->SetBranchStatus("SF_trigmetnomu",1);
-     fChain->SetBranchStatus("SF_LepTightLoose",1);
-     fChain->SetBranchStatus("SF_LepTightLooseUp",1);
-     fChain->SetBranchStatus("SF_LepTightLooseDown",1);
-     fChain->SetBranchStatus("SF_LepTight",1);
-     fChain->SetBranchStatus("SF_LepTightUp",1);
-     fChain->SetBranchStatus("SF_LepTightDown",1);
-     //fChain->SetBranchStatus("SF_NLO",1);
-     fChain->SetBranchStatus("SF_NLO_QCD",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_renScaleDown",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_facScaleUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_facScaleDown",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_pdfUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_pdfDown",1);
-     fChain->SetBranchStatus("SF_NLO_EWK",1);
-     fChain->SetBranchStatus("SF_NLO_EWK_up",1);
-     fChain->SetBranchStatus("SF_NLO_EWK_down",1);
-
-   }
-
-   // vector< Double_t > &yRow = *(yieldsVectorList[0]);
-   // vector< Double_t > &eRow = *(efficiencyVectorList[0]); 
-   // vector< Double_t > &uncRow = *(uncertaintyVectorList[0]);
-   // vector< Double_t > &yRow_monoJ = *(yieldsVectorList[1]);
-   // vector< Double_t > &eRow_monoJ = *(efficiencyVectorList[1]); 
-   // vector< Double_t > &uncRow_monoJ = *(uncertaintyVectorList[1]);
-   // vector< Double_t > &yRow_monoV = *(yieldsVectorList[2]);
-   // vector< Double_t > &eRow_monoV = *(efficiencyVectorList[2]); 
-   // vector< Double_t > &uncRow_monoV = *(uncertaintyVectorList[2]);
-
-   //cout << "CHECK1 " << endl;
+   setBranchStatusForAnalysis();
    setVarFromConfigFile();
-   //cout << "CHECK2 " << endl;
    setSelections();
-   //cout << "CHECK3 " << endl;
    setMask();
-   //cout << "CHECK4 " << endl;
-   //set_SF_NLO_pointers(sf_nlo, ptr_sf_nlo_QCD, ptr_sf_nlo_EWK);
 
    cout << "Opening file " <<ROOT_FNAME<< " in folder " << outputFolder << endl;
 
@@ -409,6 +265,17 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
    TVirtualFitter::SetDefaultFitter("Minuit");
   
    setHistograms();
+
+   // =====================================
+
+   ofstream wfile("weights.txt",ios::out);
+
+   if ( !wfile.is_open() ) {
+     cout<<"Error: unable to open file weights.txt !"<<endl;
+     exit(EXIT_FAILURE);
+   }
+
+   //======================================
 
    Long64_t nentries = fChain->GetEntriesFast();
    cout<<"vbfHiggsToInv_SignalRegion::loop()"<<endl;
@@ -429,23 +296,13 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
        cout << "entry: " << jentry << endl;
      }
 
-     // if (ISDATA_FLAG || unweighted_event_flag) newwgt = 1.0;
-     // else {
-
-     //   newwgt = LUMI * vtxWeight * weight * SF_trigmetnomu * SF_BTag;/* / events_ntot*/;  // starting from 17 November, "events_ntot" substitutes SUMWEIGHT and is already present in the trees. Same for weight, which is now defined as "1000 * xsec * genWeight" (1000*xsec is the cross section in fb, since xsec is in pb.)
-
-     // }
-
      newwgt = computeEventWeight();
      nTotalWeightedEvents += newwgt;  // counting events with weights
 
-     // beginning of eventMask building
-     // if ((nFatJetClean > 0.5) && (FatJetClean_pt[0] > 250.) && (fabs(FatJetClean_eta[0]) < 2.4) && (FatJetClean_prunedMass[0] > 65.) && (FatJetClean_prunedMass[0] < 105.) && ((FatJetClean_tau2[0]/FatJetClean_tau1[0]) < 0.6) && (metNoMu_pt > 250.)) Vtagged_flag = 1;
-     // else Vtagged_flag = 0;
-     //if (Vtagged_flag == 1) cout << "jentry n: "<<jentry << " V TAGGED!"<<endl;
+     if (suffix == "ZJetsToNuNu") wfile << jentry << " " << newwgt << endl;
 
-     fillEventMask(eventMask);
-     
+     // beginning of eventMask building
+     fillEventMask(eventMask);     
      // end of eventMask building
 
      analysisMask.countEvents(eventMask,newwgt);
@@ -470,6 +327,7 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
        HvbfTaggedJets_mT->Fill(vbfJetsMT(),newwgt);
        HvbfTaggedJets_deltaEta->Fill(fabs(JetClean_eta[0]-JetClean_eta[1]),newwgt);
        HvbfTaggedJets_invMass->Fill(vbfJetsInvMass(),newwgt);
+       Hjet1CHEF->Fill(Jet_chHEF[0],newwgt);
        if (nJetClean > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
 
        if (hasScaledHistograms_flag) {
@@ -486,34 +344,8 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
        }
 
 
-     } // else if (((eventMask & analysisMask_monoV.globalMask.back()) == analysisMask_monoV.globalMask.back())) {
+     } 
 
-     //   HYieldsMetBin_monoV->Fill(metNoMu_pt,newwgt);
-	 
-     //   HhtDistribution_monoV->Fill(htJet25,newwgt);
-     //   HrecoilDistribution_monoV->Fill(metNoMu_pt,newwgt);
-     //   HvtxDistribution_monoV->Fill(nVert,newwgt);
-     //   HnjetsDistribution_monoV->Fill(nJetClean,newwgt);
-     //   Hjet1etaDistribution_monoV->Fill(FatJetClean_eta[0],newwgt);
-     //   Hjet1ptDistribution_monoV->Fill(FatJetClean_pt[0],newwgt);
-     //   HprunedMassDistribution_monoV->Fill(FatJetClean_prunedMass[0],newwgt);
-     //   Htau2OverTau1Distribution_monoV->Fill(FatJetClean_tau2[0]/FatJetClean_tau1[0],newwgt);
-
-     //   if (hasScaledHistograms_flag) {
-
-     // 	 HYieldsMetBin_qcdRenScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleUp/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_qcdRenScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_renScaleDown/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_qcdFacScaleUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleUp/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_qcdFacScaleDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_facScaleDown/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_qcdPdfUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfUp/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_qcdPdfDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_QCD_pdfDown/ SF_NLO_QCD));
-     // 	 HYieldsMetBin_ewkUp_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_up/ SF_NLO_EWK));
-     // 	 HYieldsMetBin_ewkDown_monoV->Fill(metNoMu_pt,(newwgt * SF_NLO_EWK_down/ SF_NLO_EWK));
-
-     //   }
-
-     // }
-       
    }                        // end of loop on entries
 
    mySpaces(cout,2);
@@ -550,104 +382,22 @@ void vbfHiggsToInv_SignalRegion::loop(vector< Double_t > &yRow, vector< Double_t
 
    myfile.close();
 
-   // filling with yields and efficiency: I will use efficiency with respect to total and not to previous step, but I could make this choice in the config file
-
-   // entry point
-   // yRow.push_back(nTotalWeightedEvents);
-   // eRow.push_back(1.0000);
-   // uncRow.push_back(sqrt(nTotalWeightedEvents)); //should use a kind of myGetUncertainty function, but I don't save sum of newwgt^2 so I can't use MC uncertainty
-
-   // for(Int_t i = 0; i < selStep.size(); i++) {
-  
-   //   yRow.push_back(analysisMask.nEvents[selStep[i]]);
-   //   uncRow.push_back(myGetUncertainty(&analysisMask, selStep[i], uncertainty));
-   //   if (i == 0) eRow.push_back(analysisMask.nEvents[selStep[i]]/nTotalWeightedEvents);
-   //   else if( (i != 0) && (analysisMask.nEvents[selStep[i]-1] == 0) ) eRow.push_back(1.0000);
-   //   else eRow.push_back(analysisMask.nEvents[selStep[i]]/analysisMask.nEvents[selStep[i]-1]);
-
-   // }
 
    fillRowVector(nTotalWeightedEvents, analysisSelectionManager, analysisMask, yRow, eRow, uncRow,0);
    // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoJ, analysisMask_monoJ, yRow_monoJ, eRow_monoJ, uncRow_monoJ,0);
    // fillRowVector(nTotalWeightedEvents, analysisSelectionManager_monoV, analysisMask_monoV, yRow_monoV, eRow_monoV, uncRow_monoV,0);
 
-   // following was put in function above
-
-   // // entry point  
-   // yRow.push_back(nTotalWeightedEvents); // [0] 
-   // eRow.push_back(1.0000);
-   // uncRow.push_back(sqrt(nTotalWeightedEvents)); //should use a kind of myGetUncertainty function, but I don't save sum of newwgt^2 so I can't use MC uncertainty
-  
-
-   // for(Int_t i = 0; i < analysisSelectionManager.getVectorSize(); i++) {
-     
-   //   yRow.push_back(analysisMask.nEvents[analysisSelectionManager.getStepIndex(i)]);
-   //   //uncRow.push_back(sqrt(yRow.back()));
-   //   uncRow.push_back(myGetUncertainty(&analysisMask, analysisSelectionManager.getStepIndex(i), uncertainty));
-   //   if (i == 0) eRow.push_back(analysisMask.nEvents[analysisSelectionManager.getStepIndex(i)]/nTotalWeightedEvents);
-   //   else if( (i != 0) && (analysisMask.nEvents[analysisSelectionManager.getStepIndex(i)-1] == 0) ) eRow.push_back(1.0000);
-   //   else eRow.push_back(analysisMask.nEvents[analysisSelectionManager.getStepIndex(i)]/analysisMask.nEvents[analysisSelectionManager.getStepIndex(i)-1]);
-   
-   // }
-
    // filling last bin with overflow
    setHistogramLastBinAsOverFlow(hasScaledHistograms_flag);
    if (hasScaledHistograms_flag) createSystematicsHistogram();
 
-   /*
-   if (suffix == "ZJetsToNuNu" || suffix == "WJetsToLNu") {
-
-   // following is in function above
-     
-   myAddOverflowInLastBin(HYieldsMetBin_qcdRenScaleUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdRenScaleDown);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdFacScaleUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdFacScaleDown);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdPdfUp);
-   myAddOverflowInLastBin(HYieldsMetBin_qcdPdfDown);
-   myAddOverflowInLastBin(HYieldsMetBin_ewkUp);
-   myAddOverflowInLastBin(HYieldsMetBin_ewkDown);
-
-   // computing systematic uncertainties and saving them as histograms.
-   myBuildSystematicsHistogram(HSyst_qcdRenScale, HYieldsMetBin, HYieldsMetBin_qcdRenScaleUp, HYieldsMetBin_qcdRenScaleDown);
-   myBuildSystematicsHistogram(HSyst_qcdFacScale, HYieldsMetBin, HYieldsMetBin_qcdFacScaleUp, HYieldsMetBin_qcdFacScaleDown);
-   myBuildSystematicsHistogram(HSyst_qcdPdf, HYieldsMetBin, HYieldsMetBin_qcdPdfUp, HYieldsMetBin_qcdPdfDown);
-   myBuildSystematicsHistogram(HSyst_ewk, HYieldsMetBin, HYieldsMetBin_ewkUp, HYieldsMetBin_ewkDown);
-
-   // define an empty histogram to sum uncertainties in a clean way
-   TH1D *Htmp = new TH1D("Htmp","",nMetBins,metBinEdgesVector.data());
-   vector<TH1D*> hptr;
-   hptr.push_back(HSyst_qcdRenScale);
-   hptr.push_back(HSyst_qcdFacScale);
-   hptr.push_back(HSyst_qcdPdf);
-   hptr.push_back(HSyst_ewk);
-     
-   for (UInt_t i = 0; i < hptr.size(); i++) {
-   Htmp->Multiply(hptr[i],hptr[i]); // square of bin content for each single systematic histogram
-   HSyst_total->Add(Htmp);             // adding the squares
-   }
-
-   for (Int_t i = 0; i <= (HSyst_total->GetNbinsX() + 1); i++) {  // computing square root of each bin's content (from underflow to overflow bin, but they should be empty)
-   HSyst_total->SetBinContent(i, sqrt(HSyst_total->GetBinContent(i)));
-   }
-
-   delete Htmp;
-     
-   }
-   */   
-
- 
-
    rootFile->Write();
-
    rootFile->Close();
    delete rootFile;
 
    //creating a .tex file to build tables with data
-
    //myCreateTexTable(TEX_FNAME, outputFolder, LUMI,nTotalWeightedEvents, &analysisMask);
    myCreateTexTable(TEX_FNAME, outputFolder, LUMI,nTotalWeightedEvents, anaMasksPtrCollection);
-
    // end of tex file
 
    mySpaces(cout,2);

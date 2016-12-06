@@ -250,6 +250,7 @@ void doROC(const string TMVAdir     = "outputTMVA/",
 
   TH1F *htmp = NULL;
   vector<TH1F*> histo;
+  vector <TH1F*> histo_sign; // significance as epsilonS/sqrt(epsilonB)
 
   vector<Int_t> histColor;
   setHistColor(histColor,fname.size());
@@ -276,6 +277,12 @@ void doROC(const string TMVAdir     = "outputTMVA/",
     }
     histo.push_back((TH1F*) htmp->Clone());
 
+    histo_sign.push_back((TH1F*) htmp->Clone());
+    Int_t rebinFactor = 4;
+    histo_sign.back()->Rebin(rebinFactor);
+    histo_sign.back()->Scale(1./rebinFactor);
+    // histo_sign.push_back( ( (TH1F*) ( (TH1F*) htmp->Clone() )->Rebin( rebinFactor, Form("hist_sign%d",i) ) ) );
+
   }
 
   ///////////////
@@ -287,7 +294,7 @@ void doROC(const string TMVAdir     = "outputTMVA/",
 
   histo[0]->Draw("L");
   histo[0]->SetTitle("");;
-  histo[0]->GetYaxis()->SetTitle("1 / #varepsilon _{B}");
+  histo[0]->GetYaxis()->SetTitle("1 - #varepsilon _{B}");
   histo[0]->GetYaxis()->SetLabelSize(0.035);
   histo[0]->GetYaxis()->SetTitleSize(0.05);
   histo[0]->GetYaxis()->SetTitleOffset(0.9);
@@ -320,6 +327,64 @@ void doROC(const string TMVAdir     = "outputTMVA/",
   c->SaveAs((cname + ".png").c_str());
 
   delete c;
+
+  Double_t max_sign = 0.0;
+  Double_t min_sign = 10000000.0;
+  // now significances
+  for (UInt_t h = 0; h < histo_sign.size(); h++ ) {
+    //    histo_sign[h] = (TH1F*) histo_sign[h]->Rebin(rebinFactor);
+    for (Int_t i = 1; i <= histo_sign[h]->GetNbinsX(); i++) {
+      histo_sign[h]->SetBinContent(i, histo_sign[h]->GetBinCenter(i) / sqrt( 1 - histo_sign[h]->GetBinContent(i)) );  // epsilonS/ sqrt(epsilonB)
+    }
+    if (max_sign  <= histo_sign[h]->GetBinContent( histo_sign[h]->GetMaximumBin() ) ) max_sign = histo_sign[h]->GetBinContent( histo_sign[h]->GetMaximumBin() );
+    if (min_sign  >= histo_sign[h]->GetBinContent( histo_sign[h]->GetMinimumBin() ) ) min_sign = histo_sign[h]->GetBinContent( histo_sign[h]->GetMinimumBin() );
+  }
+
+  TCanvas* c_sig = new TCanvas("c_sig","",700,700);
+  TLegend *leg_sig = new TLegend(*leg);
+
+  gPad->SetTickx();
+  gPad->SetTicky();
+
+  histo_sign[0]->Draw("C");
+  histo_sign[0]->SetTitle("");
+  histo_sign[0]->SetMaximum(max_sign * 1.1);  
+  histo_sign[0]->SetMinimum(min_sign * 0.9);  
+  histo_sign[0]->GetYaxis()->SetTitle("#varepsilon_{S} / #sqrt{#varepsilon _{B}}");
+  histo_sign[0]->GetYaxis()->SetLabelSize(0.035);
+  histo_sign[0]->GetYaxis()->SetTitleSize(0.05);
+  histo_sign[0]->GetYaxis()->SetTitleOffset(0.9);
+ 
+  histo_sign[0]->GetXaxis()->SetTitle("#varepsilon_{S}");
+  histo_sign[0]->GetXaxis()->SetLabelSize(0.035);
+  histo_sign[0]->GetXaxis()->SetTitleSize(0.05);
+  histo_sign[0]->GetXaxis()->SetTitleOffset(0.8);
+
+  for (UInt_t i = 0; i < histo_sign.size(); i++) {
+    histo_sign[i]->Draw("C SAME");
+    histo_sign[i]->SetLineWidth(2);
+    histo_sign[i]->SetLineColor(histColor[i]);
+    //histo_sign[i]->SetFillColor(histColor[i]);
+    //leg_sig->AddEntry(histo_sign[i],leg_text[i].c_str(),"lf");
+  }
+
+  gStyle->SetStatStyle(0);
+  leg_sig->SetFillStyle(0);  // transparent legend    
+  leg_sig->SetFillColor(0);
+  leg_sig->SetBorderSize(0);
+  leg_sig->Draw();
+  leg_sig->SetMargin(0.3);
+  leg_sig->SetBorderSize(0);
+
+  cname = outdir + "significance_" + ftype + "_" + method;
+  if (ftype == "double" || ftype == "combo") cname = outdir + "significance_" + ftype + "_" + method + "_" + varCompared;
+  if (ftype == "best_of_type") cname = outdir + "significance_bestROCs";
+  c_sig->SaveAs((cname + ".pdf").c_str());
+  c_sig->SaveAs((cname + ".png").c_str());
+
+  delete c_sig;
+
+
  
 }
 
@@ -342,5 +407,14 @@ void doAllROC(string TMVAdir     = "outputTMVA",
   doROC(TMVAdir, outdir, "double", "Likelihood", "mjj");
   doROC(TMVAdir, outdir, "combo", "BDT", "detajj");
   doROC(TMVAdir, outdir, "best_of_type", "", "");
+
+}
+
+void doAllROC_multiple() {
+  
+  doAllROC("outputTMVABasicPreselection","baseSel");
+  doAllROC("outputTMVABasicPreselectionQCD","baseSel_QCD_bckg");
+  doAllROC("outputTMVABasicPreselectionEWK","baseSel_EWK_bckg");
+  doAllROC("outputTMVATightPreselection","tightSel");
 
 }

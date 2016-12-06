@@ -342,6 +342,9 @@ void AnalysisDarkMatter::setHistograms() {
   Hjet1ptDistribution = new TH1D("Hjet1ptDistribution","",100,0.0,1500.0); 
   Hjet2ptDistribution = new TH1D("Hjet2ptDistribution","",100,0.0,1500.0);
 
+
+  Hjet1CHEF = new TH1D("Hjet1CHEF","",100,0.0,1.0);
+
   // saving histograms with bin edges of other histograms used (e.g. content of metBinEdges array ...)
   HmetBinEdges = new TH1D("HmetBinEdges","bin edges for met distributions",nMetBins+1,0.0,nMetBins+1);
   for (Int_t i = 0; i <= nMetBins; i++) {

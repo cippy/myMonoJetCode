@@ -245,6 +245,14 @@ void vbfHiggsToInv_wlnuControlRegion::setHistogramLastBinAsOverFlow(const Int_t 
 
 }
 
+//===============================================                   
+
+void vbfHiggsToInv_wlnuControlRegion::setBranchStatusForAnalysis() {
+
+  vbfHiggsToInv_LeptonControlRegion::setBranchStatusForAnalysis();
+
+}
+
 //===============================================
 
 void vbfHiggsToInv_wlnuControlRegion::setNumberParameterValue(const std::string parameterName, const Double_t value) {
@@ -254,14 +262,11 @@ void vbfHiggsToInv_wlnuControlRegion::setNumberParameterValue(const std::string 
   // N.B.: if there are more checks, the first must be an "if", the successive can be "else if" or "if" (but "else if" is better because when parameter is ound the query ends
 
   //if (parameterName == "<PAR_NAME>") PAR_NAME = value;
-
   // if (!ISDATA_FLAG) {
-
   //   if (parameterName == "<PAR_NAME>") PAR_NAME = value;
-
   // }
+  //}
 
-  //cout << "CHECK " << endl;
   if (parameterName == "MT_UP") MT_UP = value;
 
 }
@@ -312,18 +317,13 @@ Double_t vbfHiggsToInv_wlnuControlRegion::computeEventWeight() {
   if (ISDATA_FLAG || unweighted_event_flag) return 1.0;
   else {
 
-    //Double_t tmp = LUMI * weight * vtxWeight * SF_BTag; //SF_BTag is in evVarFriend, not sfFriend
-    Double_t tmp = LUMI * weight * puw; // no SF_BTag for now
-    
+    Double_t tmp = LUMI * weight * puw * SF_BTag; 
+
     if (suffix == "ZJetsToNuNu" || suffix == "DYJetsToLL") tmp /= 1.23;
     else if (suffix == "WJetsToLNu") tmp/= 1.21; 
 
     if (hasSFfriend_flag != 0) { 
 
-      // sf_nlo_weight = (*ptr_sf_nlo_QCD) * (*ptr_sf_nlo_EWK);
-      // if (fabs(LEP_PDG_ID) == 13) tmp *= SF_trigmetnomu;
-      // else if (fabs(LEP_PDG_ID) == 11) tmp *=  SF_trig1lep;
-      // return tmp * sf_nlo_weight * SF_LepTight;
       if (fabs(LEP_PDG_ID) == 13) tmp *= SF_trigmetnomu;
       else if (fabs(LEP_PDG_ID) == 11) tmp *=  SF_trig1lep;
       return tmp * SF_NLO_QCD * SF_NLO_EWK * SF_LepTight;
@@ -365,10 +365,6 @@ void vbfHiggsToInv_wlnuControlRegion::createSystematicsHistogram() {
 
   delete Htmp;
 
-
-  delete Htmp;
-  
-
 }
 
 
@@ -404,141 +400,7 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
 
    if (fChain == 0) return;
 
-   fChain->SetBranchStatus("*",0);  
-   // warning: in Emanuele's trees non integer values are float
-
-   //fChain->SetBranchStatus("LHEorigWeight",1); // contains negative values: the weight in the event is weight*LHEorigWeight
-
-   //fChain->SetBranchStatus("genWeight",1); 
-
-   fChain->SetBranchStatus("nMu10V",1);  // # of muons passing loose selection
-   fChain->SetBranchStatus("nEle10V",1);  // # of electrons passing loose selection for electron veto
-   fChain->SetBranchStatus("nGamma15V",1);  // # of photons passing loose selection for photon veto
-   fChain->SetBranchStatus("nMu20T",1);  // # of muons passing tight selection (isolation included)
-   //fChain->SetBranchStatus("nEle20T",1);  // # of electrons passing tight selection (isolation included)
-   //fChain->SetBranchStatus("nTau18V",1);
-   fChain->SetBranchStatus("nTauClean18V",1);
-
-   fChain->SetBranchStatus("dphijj",1);          // dphi between 1st and 2nd jet, 999 if second jet doesn't exist
-   fChain->SetBranchStatus("nJetClean",1);    // # of jet with pt > 30 & eta < 4.7 and cleaning for against muons misidentified as PFjets   
-   fChain->SetBranchStatus("JetClean_pt",1);  
-   fChain->SetBranchStatus("JetClean_eta",1); 
-
-   fChain->SetBranchStatus("dphijmAllJets",1);
-   fChain->SetBranchStatus("vbfTaggedJet_deltaEta",1);
-   fChain->SetBranchStatus("vbfTaggedJet_invMass",1);
-   fChain->SetBranchStatus("vbfTaggedJet_leadJetPt",1);
-   fChain->SetBranchStatus("vbfTaggedJet_trailJetPt",1);
-   fChain->SetBranchStatus("vbfTaggedJet_leadJetEta",1);
-   fChain->SetBranchStatus("vbfTaggedJet_trailJetEta",1);
- 
-   fChain->SetBranchStatus("nLepGood",1);
-   fChain->SetBranchStatus("LepGood_pdgId",1);  // must be 13 for muons ( -13 for mu+), 11 for electrons and 15 for taus
-   fChain->SetBranchStatus("LepGood_pt",1);
-   fChain->SetBranchStatus("LepGood_eta",1);
-   fChain->SetBranchStatus("LepGood_phi",1);   
-   fChain->SetBranchStatus("LepGood_mass",1);
-   //fChain->SetBranchStatus("LepGood_charge",1);
-   fChain->SetBranchStatus("LepGood_tightId",1);
-   fChain->SetBranchStatus("LepGood_relIso04",1);
-   // fChain->SetBranchStatus("ngenLep",1);         // not needed, using GenPart to study generator level quantities
-   // fChain->SetBranchStatus("genLep_pdgId",1);
-   // fChain->SetBranchStatus("genLep_pt",1);
-   // fChain->SetBranchStatus("genLep_eta",1);
-   // fChain->SetBranchStatus("genLep_phi",1);
-   fChain->SetBranchStatus("mZ1",1);  // best m(ll) SF/OS
-
-   fChain->SetBranchStatus("met_pt",1);
-   //fChain->SetBranchStatus("met_eta",1);
-   fChain->SetBranchStatus("met_phi",1);
-
-   fChain->SetBranchStatus("metNoMu_pt",1);
-   //fChain->SetBranchStatus("metNoMu_eta",1);
-   fChain->SetBranchStatus("metNoMu_phi",1);
-   fChain->SetBranchStatus("htJet25",1);
-
-   fChain->SetBranchStatus("nVert",1);  // number of good vertices 
-   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT90",1);
-   fChain->SetBranchStatus("HLT_MonoJetMetNoMuMHT120",1);
-   fChain->SetBranchStatus("HLT_Met170",1);
-   fChain->SetBranchStatus("HLT_SingleEl",1);
-   //fChain->SetBranchStatus("HLT_SinglePho",1);
- 
-   // // met filters to be used (the config file has a parameter saying whether they should be used or not)
-   // fChain->SetBranchStatus("cscfilter",1);
-   // fChain->SetBranchStatus("ecalfilter",1);
-   // fChain->SetBranchStatus("hbheFilterNew25ns",1);
-   // fChain->SetBranchStatus("hbheFilterIso",1);
-   // fChain->SetBranchStatus("Flag_eeBadScFilter",1);
-   fChain->SetBranchStatus("Flag_EcalDeadCellTriggerPrimitiveFilter",1);
-   fChain->SetBranchStatus("Flag_HBHENoiseFilter",1);
-   fChain->SetBranchStatus("Flag_HBHENoiseIsoFilter",1);
-   fChain->SetBranchStatus("Flag_goodVertices",1);
-   fChain->SetBranchStatus("Flag_eeBadScFilter",1);
-   fChain->SetBranchStatus("Flag_globalTightHalo2016Filter",1);
-
-   //added on November 2015. These are new variables (except for weight, which has just changed in the definition)
-   fChain->SetBranchStatus("nBTag15",1);  // for b-jet veto
-   fChain->SetBranchStatus("dphijm",1);          // flag for dphi minimum between met and any of the jets in the event (using only the first four jets
-   fChain->SetBranchStatus("weight",1);   // modified since 17 November 2015: now it includes the whol weight, e.g. 1000*xsec*genWeight ...
-   fChain->SetBranchStatus("events_ntot",1);    // equivalent to SUMWEIGHTS for samples before 17 November 2015
-   fChain->SetBranchStatus("JetClean_leadClean",1); // has new cleaning on energy fractions (added on 17 November 2015) 
-
-   // For mon-V categhory the following variables are needed.  -- > WARNING: this collection was made with |eta| < 2.4, not 2.5
-   // fChain->SetBranchStatus("nFatJetClean",1);             // at least one for mono-V
-   // fChain->SetBranchStatus("FatJetClean_pt",1);           // leading jet is required to be > 250
-   // fChain->SetBranchStatus("FatJetClean_eta",1);          // just for the histogram
-   // fChain->SetBranchStatus("FatJetClean_prunedMass",1);   // in 65-105 for leading jet in V-tag
-   // fChain->SetBranchStatus("FatJetClean_tau1",1);         // tau2/tau1 < 0.6 (I guess for the leading jet)
-   // fChain->SetBranchStatus("FatJetClean_tau2",1);
-
-   //added on 23/01/2016
-   fChain->SetBranchStatus("nEle40T",1);   
-   // fChain->SetBranchStatus("nCalibEle",1);
-   // fChain->SetBranchStatus("CalibEle_pt",1);
-   // fChain->SetBranchStatus("CalibEle_energy",1);
-   // fChain->SetBranchStatus("CalibEle_eta",1);
-   // fChain->SetBranchStatus("CalibEle_phi",1);
-   // fChain->SetBranchStatus("CalibEle_mass",1);
-
-   if (!ISDATA_FLAG) {
-     fChain->SetBranchStatus("nGenPart",1);
-     fChain->SetBranchStatus("GenPart_pdgId",1);
-     fChain->SetBranchStatus("GenPart_motherId",1);
-     fChain->SetBranchStatus("GenPart_pt",1);
-     fChain->SetBranchStatus("GenPart_eta",1);
-     fChain->SetBranchStatus("GenPart_phi",1);
-     fChain->SetBranchStatus("GenPart_mass",1);
-     fChain->SetBranchStatus("GenPart_motherIndex",1);
-
-     //fChain->SetBranchStatus("xsec",1);
-     //     fChain->SetBranchStatus("vtxWeight",1);   // weight to have better agreement between data and MC (added in tree from 06/10/15)
-     fChain->SetBranchStatus("puw",1); // added on 21 Sept 2016, substituting vtxWeight       
-     //added on 23/01/2016
-     fChain->SetBranchStatus("SF_BTag",1);
-     //variables in sfFriend tree
-     fChain->SetBranchStatus("SF_trig1lep",1);
-     fChain->SetBranchStatus("SF_trigmetnomu",1);
-     fChain->SetBranchStatus("SF_LepTightLoose",1);
-     //fChain->SetBranchStatus("SF_LepTightLooseUp",1);
-     //fChain->SetBranchStatus("SF_LepTightLooseDown",1);
-     fChain->SetBranchStatus("SF_LepTight",1);
-     fChain->SetBranchStatus("SF_LepTightUp",1);
-     fChain->SetBranchStatus("SF_LepTightDown",1);
-     //fChain->SetBranchStatus("SF_NLO",1);
-     fChain->SetBranchStatus("SF_NLO_QCD",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_renScaleUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_renScaleDown",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_facScaleUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_facScaleDown",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_pdfUp",1);
-     fChain->SetBranchStatus("SF_NLO_QCD_pdfDown",1);
-     fChain->SetBranchStatus("SF_NLO_EWK",1);
-     fChain->SetBranchStatus("SF_NLO_EWK_up",1);
-     fChain->SetBranchStatus("SF_NLO_EWK_down",1);
-
-   }
-
+   setBranchStatusForAnalysis();
    setVarFromConfigFile();
    setSelections();
    setMask();
@@ -786,6 +648,7 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
 	 HvbfTaggedJets_mT->Fill(vbfJetsMT(),newwgt);
 	 HvbfTaggedJets_deltaEta->Fill(fabs(JetClean_eta[0]-JetClean_eta[1]),newwgt);
 	 HvbfTaggedJets_invMass->Fill(vbfJetsInvMass(),newwgt);
+	 Hjet1CHEF->Fill(Jet_chHEF[0],newwgt);
 	 if (nJetClean > 1) Hj1j2dphiDistribution->Fill(dphijj,newwgt);
 
   	 Hlep1ptDistribution->Fill(ptr_lepton_pt[0],newwgt);
@@ -848,6 +711,8 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
    mySpaces(myfile,3);
    myPrintYieldsMetBinInStream(myfile, HYieldsMetBin, metBinEdgesVector.data(), nMetBins);
 
+   //cout << "check" << endl;
+
    myfile.close();
 
    // filling with yields and efficiency: I will use efficiency with respect to total and not to previous step, but I could make this choice in the config file
@@ -858,9 +723,13 @@ void vbfHiggsToInv_wlnuControlRegion::loop(vector< Double_t > &yRow, vector< Dou
      fillRowVector(nTotalWeightedEvents, analysisSelectionManager, analysisMask, yRow, eRow, uncRow,0);
    }
 
+   //cout << "check 2" << endl;
+
    // fill last bin with overflow 
    setHistogramLastBinAsOverFlow(hasScaledHistograms_flag);
    if (hasScaledHistograms_flag) createSystematicsHistogram();
+
+   //   cout << "check 3" << endl;
 
    if (ENABLE_HISTOGRAM_FOR_TESTS_FLAG != 0) {
 

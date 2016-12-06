@@ -1211,9 +1211,9 @@ void edimarcoTree_v7::Init(TTree *tree)
    fChain->SetBranchAddress("puw", &puw, &b_puw);
 
    //obsolete keeping for backward compatibility
-   fChain->SetBranchAddress("vtxWeight", &vtxWeight, &b_vtxWeight);
-   fChain->SetBranchAddress("cscfilter", &cscfilter, &b_cscfilter);
-   fChain->SetBranchAddress("ecalfilter", &ecalfilter, &b_ecalfilter);
+   /* fChain->SetBranchAddress("vtxWeight", &vtxWeight, &b_vtxWeight); */
+   /* fChain->SetBranchAddress("cscfilter", &cscfilter, &b_cscfilter); */
+   /* fChain->SetBranchAddress("ecalfilter", &ecalfilter, &b_ecalfilter); */
 
 
    //setting branches for sfFriend variables
