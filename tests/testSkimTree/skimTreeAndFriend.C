@@ -16,6 +16,14 @@
 
 using namespace std;
 
+bool fileExists(const string& fname) {
+  
+  std::ifstream infile(fname);
+  return infile.good();
+
+}
+
+
 void doSkim(const string& path = "./",
 	    const string& sampleName = "",
 	    const string& dirPatternTag = "/",
@@ -44,6 +52,7 @@ void doSkim(const string& path = "./",
   // create directories for output
   string createDirCommand = "";
   if (dirPatternTag == "/") createDirCommand = "mkdir -p " + outpath + sampleName + dirPattern; 
+  system(createDirCommand.c_str());
 
   string outfileName         = outpath +                                     sampleName + dirPattern + "tree.root";
   string outfileFriendName   = outpath + evVarFriend_path + "evVarFriend_" + sampleName +                  ".root";
@@ -55,6 +64,8 @@ void doSkim(const string& path = "./",
   cout << sampleName << endl;
   cout << "----------------------" << endl;
 
+  ////////////////////////////
+  // base tree
 
   TFile* infile = new TFile(infileName.c_str());
   if (!infile || infile->IsZombie()) {
@@ -62,8 +73,10 @@ void doSkim(const string& path = "./",
     exit(EXIT_FAILURE);
   }
   TTree* intree = (TTree*)infile->Get("tree");
-  if (!intree) intree = (TTree*)infile->Get("tree");
   Long64_t nentries = intree->GetEntries();
+
+  //////////////////////////////
+  // evVarFriend
 
   TFile* infileFriend = new TFile(infileFriendName.c_str());
   if (!infileFriend || infileFriend->IsZombie()) {
@@ -71,8 +84,11 @@ void doSkim(const string& path = "./",
     exit(EXIT_FAILURE);
   }
   TTree* infriend = (TTree*)infileFriend->Get("mjvars/t");
-  if (!infriend) infriend = (TTree*)infileFriend->Get("mjvars/t");
   Long64_t nentriesFriend = infriend->GetEntries();
+
+
+  //////////////////////////////
+  // sfFriend if any
 
   TFile* infileSfFriend = NULL;
   TTree* insffriend = NULL;
@@ -86,11 +102,29 @@ void doSkim(const string& path = "./",
       exit(EXIT_FAILURE);
     }
     insffriend = (TTree*)infileSfFriend->Get("sf/t");
-    if (!insffriend) insffriend = (TTree*)infileSfFriend->Get("sf/t");
     nentriesSfFriend = insffriend->GetEntries();
 
   }
+
+
+  //////////////////////////////
+  // evVarFriend (VM or SR, depending on the other)
+
+  TFile* infileFriend_bis = NULL;
+  TTree* infriend_bis = NULL;
+  Long64_t nentriesFriend_bis = -1;
   
+  if (evVarFriend_path_bis != "") {
+
+    infileFriend_bis = new TFile(infileFriendName_bis.c_str());
+    if (!infileFriend_bis || infileFriend_bis->IsZombie()) {
+      std::cout << "Cannot open file " << infileFriendName_bis << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    infriend_bis = (TTree*)infileFriend_bis->Get("mjvars/t");
+    nentriesFriend_bis = infriend_bis->GetEntries();
+
+  } 
 
   if (nentries != nentriesFriend) {
     
@@ -108,22 +142,40 @@ void doSkim(const string& path = "./",
 
   }
 
+  if ( evVarFriend_path_bis != "" && nentries != nentriesFriend_bis) {
+    
+    std::cout << "Warning: input tree and evVar friend have different number of entries" << std::endl;
+    std::cout << "End of programme" << std::endl;
+    exit(EXIT_FAILURE);
+
+  }
+
   intree->AddFriend(infriend);  // no need to attach sfFriend, evVarFriend is needed to cut on variables
 
   //intree->SetBranchStatus("*",1);
   Float_t recoil_pt;
-  //Int_t *LepGood_pdgId = NULL;
+  Int_t nTauClean18V;
+  Float_t nBTag20;
   intree->SetBranchAddress("recoil_pt",&recoil_pt);
-  //intree->SetBranchAddress("LepGood_pdgId",LepGood_pdgId);
+  intree->SetBranchAddress("nTauClean18V",&nTauClean18V);
+  intree->SetBranchAddress("nBTag20",&nBTag20);
+  
+  Float_t recoil_pt_evVarFriend;
+  Float_t recoil_pt_evVarFriend_bis;
+  infriend->SetBranchAddress("recoil_pt",&recoil_pt_evVarFriend);
+  if (evVarFriend_path_bis != "") infriend_bis->SetBranchAddress("recoil_pt",&recoil_pt_evVarFriend_bis);
 
   intree->SetName("tree");
+  infriend->SetName("t");
+  insffriend->SetName("t");
+  if (evVarFriend_path_bis != "") infriend_bis->SetName("t");
 
   TFile* outfile = new TFile(outfileName.c_str(), "RECREATE");
   if (!outfile || outfile->IsZombie()) {
     std::cout << "Cannot open file " << outfileName << std::endl;
     exit(EXIT_FAILURE);
   }
-  TTree* outtree = intree->CopyTree("recoil_pt > 200.0");
+  TTree* outtree = intree->CopyTree("recoil_pt > 200.0 && nTauClean18V == 0 && ((Int_t) (nBTag20 + 0.5) == 0)");
 
   cout << "Entries before skim = " << nentries << endl;
   cout << "Entries after skim = " << outtree->GetEntries() << "\t(" << (Double_t) outtree->GetEntries()/nentries << " % efficiency)" << endl;
@@ -132,6 +184,9 @@ void doSkim(const string& path = "./",
   outfile->Close();
 
   //std::cout << "==== check ====" << std::endl;
+
+  ////////////////////////////
+  // evVarFriend
 
   TFile* outfileFriend = new TFile(outfileFriendName.c_str(), "RECREATE");
   if (!outfileFriend || outfileFriend->IsZombie()) {
@@ -144,7 +199,7 @@ void doSkim(const string& path = "./",
 
   for (Long64_t i=0; i<nentries; i++) {
     intree->GetEntry(i);
-    if (recoil_pt > 200.0) {
+    if (recoil_pt > 200.0 && nTauClean18V == 0 && ((Int_t) (nBTag20 + 0.5) == 0)) {
 	infriend->GetEntry(i);
 	outfriend->Fill();
     }
@@ -152,6 +207,9 @@ void doSkim(const string& path = "./",
 
   outfileFriend->Write();
   outfileFriend->Close();
+
+  //////////////////////////////////
+  // sfFriend
 
   TFile* outfileSfFriend = NULL;
   TDirectory *sfdir = NULL;
@@ -170,7 +228,7 @@ void doSkim(const string& path = "./",
     
     for (Long64_t i=0; i<nentries; i++) {
       intree->GetEntry(i);
-      if (recoil_pt > 200.0) {
+      if (recoil_pt > 200.0 && nTauClean18V == 0 && ((Int_t) (nBTag20 + 0.5) == 0)) {
 	insffriend->GetEntry(i);
 	outsffriend->Fill();
       }
@@ -180,6 +238,34 @@ void doSkim(const string& path = "./",
     outfileSfFriend->Close();
     
   }
+
+  //////////////////////////////////////////////
+  // VM or SR evVarFriend
+
+  if (evVarFriend_path_bis != "") {
+
+    TFile* outfileFriend = new TFile(outfileFriendName.c_str(), "RECREATE");
+    if (!outfileFriend || outfileFriend->IsZombie()) {
+      std::cout << "Cannot open file " << outfileFriendName << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    TDirectory *dir = outfileFriend->mkdir("mjvars");
+    dir->cd();
+    TTree* outfriend = infriend->CloneTree(0);
+    
+    for (Long64_t i=0; i<nentries; i++) {
+      intree->GetEntry(i);
+      if (recoil_pt > 200.0 && nTauClean18V == 0 && ((Int_t) (nBTag20 + 0.5) == 0)) {
+	infriend->GetEntry(i);
+	outfriend->Fill();
+      }
+    }
+
+    outfileFriend->Write();
+    outfileFriend->Close();
+    
+  }
+
 
   infile->Close();
   infileFriend->Close();
@@ -348,39 +434,52 @@ void skimTreeAndFriend(const string& path             = "/u2/emanuele/",
     sampleNameVector.push_back("VBF_HToInvisible_M800");
   }
 
-  sampleNameVector.clear();
-  sampleNameVector.push_back("ZJetsToNuNu_HT100to200");
-  sampleNameVector.push_back("ZJetsToNuNu_HT100to200_ext");
-
   for (UInt_t i = 0; i < sampleNameVector.size(); i++) {
-    doSkim(path+treeDir, sampleNameVector[i], dirPatternTag, evVarFriend_path, 1, sfFriend_path, outpath);
+
+    // check if tree exists (assume that if it exists then the friends are ok, so I recommend using checkTreeAndFriend.C before using this code)
+    string fname =  path + treeDir + sampleNameVector[i] + dirPatternTag + "treeProducerDarkMatterMonoJet" + dirPatternTag + "tree.root";
+    if (fileExists(fname)) {
+      doSkim(path+treeDir, sampleNameVector[i], dirPatternTag, evVarFriend_path, 1, sfFriend_path, outpath);
+    } else {
+      cout << "Following file does not exist. Skipping it" << endl;
+      cout << fname << endl;
+    }
+
   }
 
   ////////
   // Data samples
 
-  // vector<string> sampleNameDataVector;
+  vector<string> sampleNameDataVector;
 
-  // if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
-  //   sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v1_runs_272023_273146");
-  //   sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v2_runs_273150_275376");
-  //   sampleNameDataVector.push_back("MET_Run2016C_PromptReco_v2_runs_275420_276283");
-  //   sampleNameDataVector.push_back("MET_Run2016D_PromptReco_v2_runs_276315_276811");
-  //   sampleNameDataVector.push_back("MET_Run2016E_PromptReco_v2_runs_276830_277420");
-  //   sampleNameDataVector.push_back("MET_Run2016G_PromptReco_v1_runs_278817_279931");
-  // } else if (evVarFriend_path.find("VE") != string::npos) {
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v1_runs_272023_273146");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v2_runs_273150_275376");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016C_PromptReco_v2_runs_275420_276283");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016D_PromptReco_v2_runs_276315_276811");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016E_PromptReco_v2_runs_276830_277420");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016F_PromptReco_v1_runs_277820_278808");
-  //   sampleNameDataVector.push_back("SingleElectron_Run2016G_PromptReco_v1_runs_278817_279931");
-  // }
+  if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
+    sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v1_runs_272023_273146");
+    sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v2_runs_273150_275376");
+    sampleNameDataVector.push_back("MET_Run2016C_PromptReco_v2_runs_275420_276283");
+    sampleNameDataVector.push_back("MET_Run2016D_PromptReco_v2_runs_276315_276811");
+    sampleNameDataVector.push_back("MET_Run2016E_PromptReco_v2_runs_276830_277420");
+    sampleNameDataVector.push_back("MET_Run2016G_PromptReco_v1_runs_278817_279931");
+  } else if (evVarFriend_path.find("VE") != string::npos) {
+    sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v1_runs_272023_273146");
+    sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v2_runs_273150_275376");
+    sampleNameDataVector.push_back("SingleElectron_Run2016C_PromptReco_v2_runs_275420_276283");
+    sampleNameDataVector.push_back("SingleElectron_Run2016D_PromptReco_v2_runs_276315_276811");
+    sampleNameDataVector.push_back("SingleElectron_Run2016E_PromptReco_v2_runs_276830_277420");
+    sampleNameDataVector.push_back("SingleElectron_Run2016F_PromptReco_v1_runs_277820_278808");
+    sampleNameDataVector.push_back("SingleElectron_Run2016G_PromptReco_v1_runs_278817_279931");
+  }
 
-  // for (UInt_t i = 0; i < sampleNameDataVector.size(); i++) {
-  //   doSkim(path+treeDir, sampleNameDataVector[i], dirPatternTag, evVarFriend_path, 0, sfFriend_path, outpath);
-  // }
+  for (UInt_t i = 0; i < sampleNameDataVector.size(); i++) {
+
+    string fname =  path + treeDir + sampleNameDataVector[i] + dirPatternTag + "treeProducerDarkMatterMonoJet" + dirPatternTag + "tree.root";
+    if (fileExists(fname)) {
+      doSkim(path+treeDir, sampleNameDataVector[i], dirPatternTag, evVarFriend_path, 0, sfFriend_path, outpath);
+    } else {
+      cout << "Following file does not exist. Skipping it" << endl;
+      cout << fname << endl;
+    }
+
+  }
 
 
 
