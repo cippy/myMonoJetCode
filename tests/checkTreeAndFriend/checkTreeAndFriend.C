@@ -51,7 +51,7 @@ string getNewString(const string& strToModify, const string& match, const string
 }
 
 
-Long64_t readTree(const string& fname, const string& sampleName, const string& whichTree = "base") {
+Long64_t readTree(const string& fname, const string& sampleName, const string& whichTree = "base", const string& baseTreeName = "") {
 
   // which tree can be "base", "evVarFriend", "sfFriend"
   
@@ -61,6 +61,7 @@ Long64_t readTree(const string& fname, const string& sampleName, const string& w
     return -1;
   } else {
     string treePath = "tree";
+    if (baseTreeName != "") treePath = baseTreeName;
     if (whichTree == "evVarFriend") treePath = "mjvars/t";
     if (whichTree == "sfFriend") treePath = "sf/t";
     TTree* intree = (TTree*) infile->Get(treePath.c_str());
@@ -79,6 +80,7 @@ Long64_t readTree(const string& fname, const string& sampleName, const string& w
 void doCheck(const string& path = "./", 
 	     const string& sampleName = "", 
 	     const string& dirPatternTag = "/", 
+	     const string& treePatternTag = "treeProducerDarkMatterMonoJet", 
 	     const string& evVarFriend_path = "",
 	     const Int_t has_sfFriend = 0,
 	     const string& sfFriend_path = "") 
@@ -92,9 +94,15 @@ void doCheck(const string& path = "./",
 
   // evVarFriend_path and sfFriend_path tell say if friends are inside a folder (you pass the name) or at the same level of the base trees (default)
 
-  string dirPattern = dirPatternTag + "treeProducerDarkMatterMonoJet" + dirPatternTag;
+  string dirPattern = dirPatternTag + treePatternTag + dirPatternTag;
   
-  string infileName         = path +                                     sampleName + dirPattern + "tree.root";
+  string treeName = "";
+  if (treePatternTag == "treeProducerWMassEle") {
+    treeName = treePatternTag;
+    dirPattern += (treeName + "_");
+  }
+
+  string infileName         = path +                                     sampleName + dirPattern + "tree.root";  // cout << "infileName --> " << infileName << endl;
   string infileFriendName   = path + evVarFriend_path + "evVarFriend_" + sampleName +                  ".root";
   string infileSfFriendName = path + sfFriend_path    + "sfFriend_"    + sampleName +                  ".root";
   
@@ -107,7 +115,7 @@ void doCheck(const string& path = "./",
   cout << sampleName << endl;
   cout << "----------------------" << endl;
   
-  nentries                           = readTree(infileName,        sampleName,"base");
+  nentries                           = readTree(infileName,        sampleName,"base", treeName);
   nentriesFriend                     = readTree(infileFriendName,  sampleName,"evVarFriend");
   if (has_sfFriend) nentriesSfFriend = readTree(infileSfFriendName,sampleName,"sfFriend");
 
@@ -138,7 +146,7 @@ void doCheck(const string& path = "./",
     if ( nentries == -1 && fileExists(newInfileName) ) {
 
       cout << "Found base file with similar name ==> " << newSampleName << endl;  
-      nentries = readTree(newInfileName, newSampleName,"base");
+      nentries = readTree(newInfileName, newSampleName,"base", treeName);
 
     }
     
@@ -173,12 +181,14 @@ void doCheck(const string& path = "./",
 // root -l -b -q checkTreeAndFriend.C++
 // you can store the output inside a file. 
 // to use from terminal and change inputs:
-// root -l -b -q  'checkTreeAndFriend.C++("/u2/emanuele/","TREES_MET_80X_V4/", "/", "friends_VM/", "friends/")'
+// root -l -b -q  'checkTreeAndFriend.C++("/u2/emanuele/","TREES_MET_80X_V4/", "/", "treeProducerDarkMatterMonoJet", "friends_VM/", 1, "friends/")'
 
 void checkTreeAndFriend(const string& path             = "/u2/emanuele/",
 			const string& treeDir          = "TREES_MET_80X_V4/",
-			const string& dirPatternTag    = "/",
+			const string& dirPatternTag    = "/",			
+			const string& treePatternTag    = "treeProducerDarkMatterMonoJet",
 			const string& evVarFriend_path = "friends_SR/", // can be 'friends', 'friends_SR', 'friends_VM' or 'friends_VE'  
+			const Int_t has_sfFriend       = 0,             // pass 0 if no sfFriend trees are used for MC (data will automatically use 0 in doCheck())
 			const string& sfFriend_path    = "friends/")
 {
 
@@ -196,6 +206,7 @@ void checkTreeAndFriend(const string& path             = "/u2/emanuele/",
   cout << "Tree location: " << path + treeDir << endl;
   cout << "evVarFriend location: " << path + treeDir + evVarFriend_path << endl;
   cout << "sfFriend location: " << path + treeDir + sfFriend_path << endl;
+  cout << "Tree pattern: " << treePatternTag << endl;
   cout << endl;
 
   vector<string> sampleNameVector;
@@ -203,104 +214,148 @@ void checkTreeAndFriend(const string& path             = "/u2/emanuele/",
   /////////////
   // MC samples
 
-  // Zvv QCD
-  sampleNameVector.push_back("ZJetsToNuNu_HT100to200");
-  sampleNameVector.push_back("ZJetsToNuNu_HT100to200_ext");
-  sampleNameVector.push_back("ZJetsToNuNu_HT200to400");
-  sampleNameVector.push_back("ZJetsToNuNu_HT200to400_ext");
-  sampleNameVector.push_back("ZJetsToNuNu_HT400to600");
-  sampleNameVector.push_back("ZJetsToNuNu_HT400to600_ext");
-  sampleNameVector.push_back("ZJetsToNuNu_HT600to800");
-  sampleNameVector.push_back("ZJetsToNuNu_HT800to1200");
-  sampleNameVector.push_back("ZJetsToNuNu_HT800to1200_ext");
-  sampleNameVector.push_back("ZJetsToNuNu_HT1200to2500");
-  sampleNameVector.push_back("ZJetsToNuNu_HT1200to2500_ext");
-  sampleNameVector.push_back("ZJetsToNuNu_HT2500toInf");
-  sampleNameVector.push_back("ZJetsToNuNu_HT2500toInf_ext");
-  // Wlv QCD
-  sampleNameVector.push_back("WJetsToLNu_HT100to200");
-  sampleNameVector.push_back("WJetsToLNu_HT100to200_ext");
-  sampleNameVector.push_back("WJetsToLNu_HT200to400");
-  sampleNameVector.push_back("WJetsToLNu_HT200to400_ext");
-  sampleNameVector.push_back("WJetsToLNu_HT400to600");
-  sampleNameVector.push_back("WJetsToLNu_HT400to600_ext");
-  sampleNameVector.push_back("WJetsToLNu_HT600to800");
-  sampleNameVector.push_back("WJetsToLNu_HT800to1200");
-  sampleNameVector.push_back("WJetsToLNu_HT800to1200_ext");
-  sampleNameVector.push_back("WJetsToLNu_HT1200to2500");
-  sampleNameVector.push_back("WJetsToLNu_HT1200to2500_ext");
-  sampleNameVector.push_back("WJetsToLNu_HT2500toInf");
-  sampleNameVector.push_back("WJetsToLNu_HT2500toInf_ext");
-  // Top
-  sampleNameVector.push_back("TBar_tWch");
+  // // Zvv QCD
+  // sampleNameVector.push_back("ZJetsToNuNu_HT100to200");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT100to200_ext");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT200to400");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT200to400_ext");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT400to600");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT400to600_ext");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT600to800");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT800to1200");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT800to1200_ext");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT1200to2500");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT1200to2500_ext");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT2500toInf");
+  // sampleNameVector.push_back("ZJetsToNuNu_HT2500toInf_ext");
+  // // Wlv QCD
+  // sampleNameVector.push_back("WJetsToLNu_HT100to200");
+  // sampleNameVector.push_back("WJetsToLNu_HT100to200_ext");
+  // sampleNameVector.push_back("WJetsToLNu_HT200to400");
+  // sampleNameVector.push_back("WJetsToLNu_HT200to400_ext");
+  // sampleNameVector.push_back("WJetsToLNu_HT400to600");
+  // sampleNameVector.push_back("WJetsToLNu_HT400to600_ext");
+  // sampleNameVector.push_back("WJetsToLNu_HT600to800");
+  // sampleNameVector.push_back("WJetsToLNu_HT800to1200");
+  // sampleNameVector.push_back("WJetsToLNu_HT800to1200_ext");
+  // sampleNameVector.push_back("WJetsToLNu_HT1200to2500");
+  // sampleNameVector.push_back("WJetsToLNu_HT1200to2500_ext");
+  // sampleNameVector.push_back("WJetsToLNu_HT2500toInf");
+  // sampleNameVector.push_back("WJetsToLNu_HT2500toInf_ext");
+  // // Top
+  // sampleNameVector.push_back("TBar_tWch");
+  // sampleNameVector.push_back("TTJets");
+  // sampleNameVector.push_back("TToLeptons_sch");
+  // sampleNameVector.push_back("T_tWch");
+  // // Diboson
+  // sampleNameVector.push_back("ZZ");
+  // sampleNameVector.push_back("WW");
+  // sampleNameVector.push_back("WZ");
+  // // QCD
+  // sampleNameVector.push_back("QCD_HT200to300_ext");
+  // sampleNameVector.push_back("QCD_HT300to500");
+  // sampleNameVector.push_back("QCD_HT300to500_ext");
+  // sampleNameVector.push_back("QCD_HT500to700");
+  // sampleNameVector.push_back("QCD_HT500to700_ext");
+  // sampleNameVector.push_back("QCD_HT700to1000");
+  // sampleNameVector.push_back("QCD_HT700to1000_ext");
+  // sampleNameVector.push_back("QCD_HT1000to1500");
+  // sampleNameVector.push_back("QCD_HT1000to1500_ext");
+  // sampleNameVector.push_back("QCD_HT1500to2000");
+  // sampleNameVector.push_back("QCD_HT1500to2000_ext");
+  // sampleNameVector.push_back("QCD_HT2000toInf");
+  // sampleNameVector.push_back("QCD_HT2000toInf_ext");
+  // // Zll QCD
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT100to200");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT100to200_ext");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT200to400");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT200to400_ext");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT400to600");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT400to600_ext");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT600toInf");
+  // sampleNameVector.push_back("DYJetsToLL_M50_HT600toInf_ext");
+  // // Gamma
+  // sampleNameVector.push_back("GJets_HT40to100");
+  // sampleNameVector.push_back("GJets_HT100to200");
+  // sampleNameVector.push_back("GJets_HT400to600");
+  // sampleNameVector.push_back("GJets_HT600toInf");
+  // // Zvv EWK
+  // sampleNameVector.push_back("EWKZToNuNu2Jets");
+  // // Wlv EWK
+  // sampleNameVector.push_back("EWKWMinus2Jets");
+  // sampleNameVector.push_back("EWKWPlus2Jets");
+  // // Zll EWK
+  // sampleNameVector.push_back("EWKZToLL2Jets");
+  // // signals only for SR or VM (not VE)
+  // if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
+  //   // GGH signal
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M110");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M125");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M150");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M200");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M300");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M400");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M500");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M600");
+  //   sampleNameVector.push_back("GluGlu_HToInvisible_M800");
+  //   // VBF H signal
+  //   sampleNameVector.push_back("VBF_HToInvisible_M110");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M125");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M150");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M200");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M300");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M400");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M500");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M600");
+  //   sampleNameVector.push_back("VBF_HToInvisible_M800");
+  // }
+
+  // sampleNameVector.push_back("DYJetsToLL_M50_reHLT");
+  // sampleNameVector.push_back("WJetsToLNu_reHLT");
+  // sampleNameVector.push_back("QCD_Pt1000toInf_Mu5");
+  // sampleNameVector.push_back("QCD_Pt120to170_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt120to170_Mu5");
+  // sampleNameVector.push_back("QCD_Pt15to20_Mu5");
+  // sampleNameVector.push_back("QCD_Pt170to300_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt170to300_Mu5");
+  // sampleNameVector.push_back("QCD_Pt20to30_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt20to30_Mu5");
+  // sampleNameVector.push_back("QCD_Pt300to470_Mu5");
+  // sampleNameVector.push_back("QCD_Pt300to470_Mu5_ext");
+  // sampleNameVector.push_back("QCD_Pt300toInf_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt30to50_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt30to50_Mu5");
+  // sampleNameVector.push_back("QCD_Pt470to600_Mu5");
+  // sampleNameVector.push_back("QCD_Pt470to600_Mu5_ext");
+  // sampleNameVector.push_back("QCD_Pt50to80_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt50to80_Mu5");
+  // sampleNameVector.push_back("QCD_Pt600to800_Mu5");
+  // sampleNameVector.push_back("QCD_Pt600to800_Mu5_ext");
+  // sampleNameVector.push_back("QCD_Pt800to1000_Mu5");
+  // sampleNameVector.push_back("QCD_Pt800to1000_Mu5_ext");
+  // sampleNameVector.push_back("QCD_Pt80to120_EMEnriched");
+  // sampleNameVector.push_back("QCD_Pt80to120_Mu5");
+  // sampleNameVector.push_back("QCD_Pt_170to250_bcToE");
+  // sampleNameVector.push_back("QCD_Pt_250toInf_bcToE");
+  // sampleNameVector.push_back("QCD_Pt_30to80_bcToE");
+
+  // /u2/emanuele/TREES_1LEP_53X_V2/
+  sampleNameVector.push_back("DYJetsM50");
+  sampleNameVector.push_back("QCDMuPt15");
   sampleNameVector.push_back("TTJets");
-  sampleNameVector.push_back("TToLeptons_sch");
-  sampleNameVector.push_back("T_tWch");
-  // Diboson
-  sampleNameVector.push_back("ZZ");
-  sampleNameVector.push_back("WW");
-  sampleNameVector.push_back("WZ");
-  // QCD
-  sampleNameVector.push_back("QCD_HT200to300_ext");
-  sampleNameVector.push_back("QCD_HT300to500");
-  sampleNameVector.push_back("QCD_HT300to500_ext");
-  sampleNameVector.push_back("QCD_HT500to700");
-  sampleNameVector.push_back("QCD_HT500to700_ext");
-  sampleNameVector.push_back("QCD_HT700to1000");
-  sampleNameVector.push_back("QCD_HT700to1000_ext");
-  sampleNameVector.push_back("QCD_HT1000to1500");
-  sampleNameVector.push_back("QCD_HT1000to1500_ext");
-  sampleNameVector.push_back("QCD_HT1500to2000");
-  sampleNameVector.push_back("QCD_HT1500to2000_ext");
-  sampleNameVector.push_back("QCD_HT2000toInf");
-  sampleNameVector.push_back("QCD_HT2000toInf_ext");
-  // Zll QCD
-  sampleNameVector.push_back("DYJetsToLL_M50_HT100to200");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT100to200_ext");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT200to400");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT200to400_ext");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT400to600");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT400to600_ext");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT600toInf");
-  sampleNameVector.push_back("DYJetsToLL_M50_HT600toInf_ext");
-  // Gamma
-  sampleNameVector.push_back("GJets_HT40to100");
-  sampleNameVector.push_back("GJets_HT100to200");
-  sampleNameVector.push_back("GJets_HT400to600");
-  sampleNameVector.push_back("GJets_HT600toInf");
-  // Zvv EWK
-  sampleNameVector.push_back("EWKZToNuNu2Jets");
-  // Wlv EWK
-  sampleNameVector.push_back("EWKWMinus2Jets");
-  sampleNameVector.push_back("EWKWPlus2Jets");
-  // Zll EWK
-  sampleNameVector.push_back("EWKZToLL2Jets");
-  // signals only for SR or VM (not VE)
-  if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
-    // GGH signal
-    sampleNameVector.push_back("GluGlu_HToInvisible_M110");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M125");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M150");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M200");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M300");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M400");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M500");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M600");
-    sampleNameVector.push_back("GluGlu_HToInvisible_M800");
-    // VBF H signal
-    sampleNameVector.push_back("VBF_HToInvisible_M110");
-    sampleNameVector.push_back("VBF_HToInvisible_M125");
-    sampleNameVector.push_back("VBF_HToInvisible_M150");
-    sampleNameVector.push_back("VBF_HToInvisible_M200");
-    sampleNameVector.push_back("VBF_HToInvisible_M300");
-    sampleNameVector.push_back("VBF_HToInvisible_M400");
-    sampleNameVector.push_back("VBF_HToInvisible_M500");
-    sampleNameVector.push_back("VBF_HToInvisible_M600");
-    sampleNameVector.push_back("VBF_HToInvisible_M800");
-  }
+  sampleNameVector.push_back("Tbarsch");
+  sampleNameVector.push_back("TbartW");
+  sampleNameVector.push_back("Tbartch");
+  sampleNameVector.push_back("Tsch");
+  sampleNameVector.push_back("TtW");
+  sampleNameVector.push_back("Ttch");
+  sampleNameVector.push_back("WJets");
+  sampleNameVector.push_back("WWJets");
+  sampleNameVector.push_back("WZJets");
+
 
   for (UInt_t i = 0; i < sampleNameVector.size(); i++) {
-    doCheck(path+treeDir, sampleNameVector[i], dirPatternTag, evVarFriend_path, 1, sfFriend_path);
+    doCheck(path+treeDir, sampleNameVector[i], dirPatternTag, treePatternTag, evVarFriend_path, has_sfFriend, sfFriend_path);
   }
 
   ////////
@@ -308,25 +363,53 @@ void checkTreeAndFriend(const string& path             = "/u2/emanuele/",
 
   vector<string> sampleNameDataVector;
 
-  if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
-    sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v1_runs_272023_273146");
-    sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v2_runs_273150_275376");
-    sampleNameDataVector.push_back("MET_Run2016C_PromptReco_v2_runs_275420_276283");
-    sampleNameDataVector.push_back("MET_Run2016D_PromptReco_v2_runs_276315_276811");
-    sampleNameDataVector.push_back("MET_Run2016E_PromptReco_v2_runs_276830_277420");
-    sampleNameDataVector.push_back("MET_Run2016G_PromptReco_v1_runs_278817_279931");
-  } else if (evVarFriend_path.find("VE") != string::npos) {
-    sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v1_runs_272023_273146");
-    sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v2_runs_273150_275376");
-    sampleNameDataVector.push_back("SingleElectron_Run2016C_PromptReco_v2_runs_275420_276283");
-    sampleNameDataVector.push_back("SingleElectron_Run2016D_PromptReco_v2_runs_276315_276811");
-    sampleNameDataVector.push_back("SingleElectron_Run2016E_PromptReco_v2_runs_276830_277420");
-    sampleNameDataVector.push_back("SingleElectron_Run2016F_PromptReco_v1_runs_277820_278808");
-    sampleNameDataVector.push_back("SingleElectron_Run2016G_PromptReco_v1_runs_278817_279931");
-  }
+  // if (evVarFriend_path.find("SR") != string::npos || evVarFriend_path.find("VM") != string::npos) {
+  //   sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v1_runs_272023_273146");
+  //   sampleNameDataVector.push_back("MET_Run2016B_PromptReco_v2_runs_273150_275376");
+  //   sampleNameDataVector.push_back("MET_Run2016C_PromptReco_v2_runs_275420_276283");
+  //   sampleNameDataVector.push_back("MET_Run2016D_PromptReco_v2_runs_276315_276811");
+  //   sampleNameDataVector.push_back("MET_Run2016E_PromptReco_v2_runs_276830_277420");
+  //   sampleNameDataVector.push_back("MET_Run2016G_PromptReco_v1_runs_278817_279931");
+  // } else if (evVarFriend_path.find("VE") != string::npos) {
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v1_runs_272023_273146");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016B_PromptReco_v2_runs_273150_275376");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016C_PromptReco_v2_runs_275420_276283");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016D_PromptReco_v2_runs_276315_276811");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016E_PromptReco_v2_runs_276830_277420");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016F_PromptReco_v1_runs_277820_278808");
+  //   sampleNameDataVector.push_back("SingleElectron_Run2016G_PromptReco_v1_runs_278817_279931");
+  // }
+
+   // sampleNameDataVector.push_back("DoubleEG_Run2016B_23Sep2016_v3_runs_273150_275376");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016C_23Sep2016_v1_runs_271036_284044");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016D_23Sep2016_v1_runs_271036_284044");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016E_23Sep2016_v1_runs_271036_284044");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016F_23Sep2016_v1_runs_271036_284044");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016G_23Sep2016_v1_runs_271036_284044");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016H_PromptReco_v1_runs_281085_281201");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016H_PromptReco_v2_runs_281207_284035");
+   // sampleNameDataVector.push_back("DoubleEG_Run2016H_PromptReco_v3_runs_284036_284044");
+
+   // /u2/emanuele/TREES_1LEP_53X_V2/
+   sampleNameDataVector.push_back("DoubleElectronAB");
+   sampleNameDataVector.push_back("DoubleElectronC");
+   sampleNameDataVector.push_back("DoubleElectronD");
+   sampleNameDataVector.push_back("DoubleMuAB");
+   sampleNameDataVector.push_back("DoubleMuC");
+   sampleNameDataVector.push_back("DoubleMuD");
+   sampleNameDataVector.push_back("MuEGAB");
+   sampleNameDataVector.push_back("MuEGC");
+   sampleNameDataVector.push_back("MuEGD");
+   sampleNameDataVector.push_back("SingleElectronAB");
+   sampleNameDataVector.push_back("SingleElectronC");
+   sampleNameDataVector.push_back("SingleElectronD");
+   sampleNameDataVector.push_back("SingleMuAB");
+   sampleNameDataVector.push_back("SingleMuC");
+   sampleNameDataVector.push_back("SingleMuD");
+
 
   for (UInt_t i = 0; i < sampleNameDataVector.size(); i++) {
-    doCheck(path+treeDir, sampleNameDataVector[i], dirPatternTag, evVarFriend_path, 0, sfFriend_path);
+    doCheck(path+treeDir, sampleNameDataVector[i], dirPatternTag, treePatternTag, evVarFriend_path, 0, sfFriend_path);
   }
 
 
