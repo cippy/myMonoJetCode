@@ -60,8 +60,8 @@ Long64_t readTree(const string& fname, const string& sampleName, const string& w
     cout << "Missing " << whichTree << " file ==> " << sampleName << endl;
     return -1;
   } else {
-    string treePath = "tree";
-    if (baseTreeName != "") treePath = baseTreeName;
+    string treePath = "tree"; // dafault, overwritten below
+    if (whichTree == "base" && baseTreeName != "") treePath = baseTreeName;
     if (whichTree == "evVarFriend") treePath = "mjvars/t";
     if (whichTree == "sfFriend") treePath = "sf/t";
     TTree* intree = (TTree*) infile->Get(treePath.c_str());
@@ -94,13 +94,14 @@ void doCheck(const string& path = "./",
 
   // evVarFriend_path and sfFriend_path tell say if friends are inside a folder (you pass the name) or at the same level of the base trees (default)
 
-  string dirPattern = dirPatternTag + treePatternTag + dirPatternTag;
-  
-  string treeName = "";
+  string dirPatternInit = dirPatternTag + treePatternTag + dirPatternTag;
+  string dirPattern = dirPatternInit;  
+
+  string treeName = "tree";
   if (treePatternTag == "treeProducerWMassEle") {
     treeName = treePatternTag;
-    dirPattern += (treeName + "_");
-  }
+    dirPattern = (dirPatternInit + treeName + "_");
+  } 
 
   string infileName         = path +                                     sampleName + dirPattern + "tree.root";  // cout << "infileName --> " << infileName << endl;
   string infileFriendName   = path + evVarFriend_path + "evVarFriend_" + sampleName +                  ".root";
@@ -116,6 +117,22 @@ void doCheck(const string& path = "./",
   cout << "----------------------" << endl;
   
   nentries                           = readTree(infileName,        sampleName,"base", treeName);
+  // try to manage the fact that sometimes the tree is named "tree" and is inside tree.root file despite the fact that "treePatternTag = treeProducerWMassEle"
+  // usually "treePatternTag = treeProducerWMassEle" --> "infileName = /.../treeProducerWMassEle_tree.root" and "treeName = tree"  
+  if (nentries == -1 && treeName == "treeProducerWMassEle") {
+    cout << "\n#######\n";
+    cout << "### WARNING: attempt to open file 'treeProducerWMassEle_tree.root' looking for TTree named 'treeProducerWMassEle' was unsuccessful.\n";
+    cout << "### Trying again with 'infileName = tree.root' and 'treeName = tree' ...\n";
+    // setting again parameters
+    dirPattern = dirPatternInit;
+    infileName = path + sampleName + dirPattern + "tree.root";
+    treeName = "tree";
+    // check again with new parameters
+    cout << "#######\n" << endl;
+    nentries = readTree(infileName, sampleName, "base", treeName);
+    // if (nentries >= 0) cout << "File and tree read successfully!" << endl;
+  }
+
   nentriesFriend                     = readTree(infileFriendName,  sampleName,"evVarFriend");
   if (has_sfFriend) nentriesSfFriend = readTree(infileSfFriendName,sampleName,"sfFriend");
 
@@ -397,9 +414,9 @@ void checkTreeAndFriend(const string& path             = "/u2/emanuele/",
    sampleNameDataVector.push_back("DoubleMuAB");
    sampleNameDataVector.push_back("DoubleMuC");
    sampleNameDataVector.push_back("DoubleMuD");
-   sampleNameDataVector.push_back("MuEGAB");
-   sampleNameDataVector.push_back("MuEGC");
-   sampleNameDataVector.push_back("MuEGD");
+   // sampleNameDataVector.push_back("MuEGAB");
+   // sampleNameDataVector.push_back("MuEGC");
+   // sampleNameDataVector.push_back("MuEGD");
    sampleNameDataVector.push_back("SingleElectronAB");
    sampleNameDataVector.push_back("SingleElectronC");
    sampleNameDataVector.push_back("SingleElectronD");
