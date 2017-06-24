@@ -102,6 +102,15 @@ void doCheck(const string& path = "./",
     treeName = treePatternTag;
     dirPattern = (dirPatternInit + treeName + "_");
   } 
+ 
+  // try to manage the fact that sometimes the tree is named "tree" and is inside tree.root file despite the fact that "treePatternTag = treeProducerWMassEle"
+  // usually "treePatternTag = treeProducerWMassEle" --> "infileName = /.../treeProducerWMassEle_tree.root" and "treeName = tree"  
+  // this happens with the skimmed sample
+  if (path.find("WSKIM_V") != string::npos || path.find("QCDSKIM_V") != string::npos || path.find("ZEESKIM_V") != string::npos) {
+    dirPattern = dirPatternInit;
+    treeName = "tree";
+  }
+
 
   string infileName         = path +                                     sampleName + dirPattern + "tree.root";  // cout << "infileName --> " << infileName << endl;
   string infileFriendName   = path + evVarFriend_path + "evVarFriend_" + sampleName +                  ".root";
@@ -119,19 +128,19 @@ void doCheck(const string& path = "./",
   nentries                           = readTree(infileName,        sampleName,"base", treeName);
   // try to manage the fact that sometimes the tree is named "tree" and is inside tree.root file despite the fact that "treePatternTag = treeProducerWMassEle"
   // usually "treePatternTag = treeProducerWMassEle" --> "infileName = /.../treeProducerWMassEle_tree.root" and "treeName = tree"  
-  if (nentries == -1 && treeName == "treeProducerWMassEle") {
-    cout << "\n#######\n";
-    cout << "### WARNING: attempt to open file 'treeProducerWMassEle_tree.root' looking for TTree named 'treeProducerWMassEle' was unsuccessful.\n";
-    cout << "### Trying again with 'infileName = tree.root' and 'treeName = tree' ...\n";
-    // setting again parameters
-    dirPattern = dirPatternInit;
-    infileName = path + sampleName + dirPattern + "tree.root";
-    treeName = "tree";
-    // check again with new parameters
-    cout << "#######\n" << endl;
-    nentries = readTree(infileName, sampleName, "base", treeName);
-    // if (nentries >= 0) cout << "File and tree read successfully!" << endl;
-  }
+  // if (nentries == -1 && treeName == "treeProducerWMassEle") {
+  //   cout << "\n#######\n";
+  //   cout << "### WARNING: attempt to open file 'treeProducerWMassEle_tree.root' looking for TTree named 'treeProducerWMassEle' was unsuccessful.\n";
+  //   cout << "### Trying again with 'infileName = tree.root' and 'treeName = tree' ...\n";
+  //   // setting again parameters
+  //   dirPattern = dirPatternInit;
+  //   infileName = path + sampleName + dirPattern + "tree.root";
+  //   treeName = "tree";
+  //   // check again with new parameters
+  //   cout << "#######\n" << endl;
+  //   nentries = readTree(infileName, sampleName, "base", treeName);
+  //   // if (nentries >= 0) cout << "File and tree read successfully!" << endl;
+  // }
 
   nentriesFriend                     = readTree(infileFriendName,  sampleName,"evVarFriend");
   if (has_sfFriend) nentriesSfFriend = readTree(infileSfFriendName,sampleName,"sfFriend");
